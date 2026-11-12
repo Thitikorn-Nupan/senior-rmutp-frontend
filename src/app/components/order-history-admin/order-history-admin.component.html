@@ -1,0 +1,143 @@
+<ng-container *ngIf="(orderHistoriesAdmin === undefined) else orderHistoryAdminExist">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border mt-3" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #orderHistoryAdminExist>
+  <div class="container w-100 mt-1" style="max-width: 1450px;margin: 0 auto">
+    <div class="section-content section-content-p30">
+      <div class="container-fluid">
+
+        <ng-container *ngIf="orderHistoriesAdmin">
+
+          <ng-container *ngIf="form">
+            <div class="form-check form-switch " style="margin: 0 auto;justify-content: center;display: flex;">
+              <input (change)="onSwitchMode()" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" style="cursor: pointer">
+              <label class="form-check-label" for="flexSwitchCheckDefault" style="margin-left: 15px;">Standard Search / Check The Sell out</label>
+            </div>
+
+            <ng-container *ngIf="enableForm">
+              <form
+                [formGroup]="form"
+                (ngSubmit)="search()"
+                style="margin: 0 auto;width: 650px"
+                class="card mt-4" id="form1">
+                <div class="form-data ">
+                  <div class="input-group">
+                    <input [formControlName]="'trackingNumber'"
+                           [placeholder]="'Search by Tracking Number'"
+                           type="text"
+                           id="trackingNumber"
+                           class="form-control rounded-start-3" autocomplete="off"/>
+                    <button type="submit" class="btn btn-secondary">Search</button>
+                    <button type="reset" class="btn btn-secondary" (click)="onClearSearch()">Clear</button>
+                    <button (click)="seePerfumesSaleOut()" class="btn btn-secondary">
+                      Check Perfumes sell out + Print File
+                      <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                  </div>
+
+                </div>
+              </form>
+            </ng-container>
+          </ng-container>
+
+
+          <h3 class="mb-4">All Bill History</h3>
+
+          <table class="table table-bordered d-block overflow-auto" style="max-height: 60vh;width: fit-content"><!---->
+            <tbody class="text-center">
+            <tr class="table table-secondary">
+              <th>Order Tracking</th>
+              <th>Customer's mail</th>
+              <th>Image</th>
+              <th>Sku</th>
+              <th>Name</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Date</th>
+              <th>Status Payment</th>
+              <th>Slip Payment</th>
+              <th>Image Slip</th>
+              <th>Confirm Payment</th>
+            </tr>
+            <!-- Loop for display cart items-->
+            <tr *ngFor="let order of orderHistoriesAdminSearchMode;">
+              <td>
+                {{ order.orderTrackingNumber.length > 10 ? order.orderTrackingNumber.substring(0, 8)+'...' : order.orderTrackingNumber }}
+              </td>
+              <td>
+                {{ order.email }}
+              </td>
+              <td>
+                <img [src]="order.imageUrl" style="width: 40px; height: 40px;">
+              </td>
+              <td>
+                {{ order.sku }}
+              </td>
+              <td>
+                {{ order.name.length > 8 ? order.name.substring(0,7)+'...' : order.name}}
+              </td>
+              <td>
+                {{ order.quantity }}
+              </td>
+              <td>
+                {{ order.price | currency : "THB" }}
+              </td>
+              <td>
+                <!-- common date pipe -->
+                {{ order.dateCreated | date:'shortDate' }}
+              </td>
+              <td>
+                <ng-container *ngIf="order.statusPurchase else elseWaiting" >
+                  <span class="badge rounded-pill bg-success">Success</span>
+                </ng-container>
+                <ng-template #elseWaiting>
+                  <span class="badge rounded-pill bg-warning text-dark">Waiting</span>
+                </ng-template>
+              </td>
+              <td>
+                <a *ngIf="!order.statusPurchase"
+                   [href]="urlDownloadSlip(order.qrPurchaseUrl)"
+                   class="btn btn-secondary edit"
+                   title="Download slip payment">
+                  <i class="fa-solid fa-download"></i>
+                </a>
+              </td>
+              <td>
+                <img *ngIf="!order.statusPurchase" [src]="order.qrPurchaseUrl" style="width: 60px;padding: 5px;height: 60px;cursor: pointer" (click)="onOpenSlip(order.qrPurchaseUrl)"/>
+              </td>
+              <td>
+                <button *ngIf="!order.statusPurchase" class="btn btn-secondary edit" title="change status payment"
+                        (click)="updateStatusPayment(order.orderTrackingNumber)">
+                  <i class="fa-solid fa-clipboard-check"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+            <!-- add footer -->
+            <tfoot>
+            <tr>
+              <td colspan="12" class="text-center">
+                <p class="mt-3">Total Sale Out : {{ getTotalPrice() | currency : "THB" }}</p>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<pop-up
+  [visible]="visible"
+  [headerTitle]="headerTitle"
+  [iconMode]="iconMode"
+  [body]="body"
+  (closeEvent)="setCloseEvent()"
+  (okEvent)="setOkEvent()">
+</pop-up>

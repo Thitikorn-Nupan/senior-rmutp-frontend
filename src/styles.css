@@ -1,0 +1,19 @@
+@font-face {
+  font-family: Roboto;
+  /* **** Remember you have to start on assets folder
+    if you set on angular.json like below
+    "assets": [
+              ...
+              "src/assets/fonts",
+              ...
+            ]
+     cut src/ will work good
+   */
+  src: url('assets/fonts/Roboto-Black.ttf');
+}
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Roboto;
+}
+

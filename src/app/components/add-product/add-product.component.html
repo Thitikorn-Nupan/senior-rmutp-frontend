@@ -1,0 +1,166 @@
+<ng-container
+  *ngIf="form">
+  <div class="container mt-5" style="margin-top: 150px; display: inline">
+    <div class="container-fluid " style="  margin-top: 50px;">
+      <form
+        [formGroup]="form"
+        (ngSubmit)="add()"
+        style=";max-width: 750px;margin: 0 auto;"
+        enctype="multipart/form-data">
+        <div class="form-area ">
+          <h3>Add New Perfume</h3>
+
+          <div class="row">
+            <!-- ** Firstname -->
+            <div class="row">
+              <div class="col-md-2">
+                <label>
+                  <label *ngIf="form.get('sku')?.hasError('required') && form.get('sku')?.touched" class="text-danger">
+                    *
+                  </label>
+                  Sku
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <input [formControlName]="'sku'"
+                         class="form-control rounded-5"
+                         placeholder="sku..."
+                         type="text">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+                <label>
+                  <label *ngIf="form.get('name')?.hasError('required') && form.get('name')?.touched" class="text-danger">
+                    *
+                  </label>
+                  Name
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <input [formControlName]="'name'"
+                         class="form-control rounded-5"
+                         placeholder="name..."
+                         type="text">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+                <label>
+                  <label *ngIf="form.get('description')?.hasError('required') && form.get('description')?.touched" class="text-danger">
+                    *
+                  </label>
+                  Description
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <textarea [formControlName]="'description'"
+                            rows="15"
+                            placeholder="description..."
+                            class="form-control rounded-5"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+                <label>
+                  <label *ngIf="form.get('price')?.hasError('required') && form.get('price')?.touched" class="text-danger">
+                    *
+                  </label>
+                  Price
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <input [formControlName]="'price'"
+                         class="form-control rounded-5"
+                         placeholder="price..."
+                         type="number">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+                <label>
+                  <label *ngIf="form.get('unitInStock')?.hasError('required') && form.get('unitInStock')?.touched" class="text-danger">
+                    *
+                  </label>
+                  Unit
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <input [formControlName]="'unitInStock'"
+                         class="form-control rounded-5"
+                         placeholder="in stock..."
+                         type="number">
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-2">
+                <label>Categories</label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <!-- For change event -->
+                  <select [formControlName]="'productCategory'" type="text" > <!-- (change)="selectProvinceOnBillingAddress($event)" -->
+                    <option *ngFor="let productCategory of productCategories; let i = index" [value]="productCategory.pcId">
+                      {{ productCategory.categoryName }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-2">
+                <label>
+                  <label *ngIf="file === undefined || file === null" class="text-danger">
+                    *
+                  </label>
+                  Image
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <input class="form-control" type="file" name="file" (change)="uploadFileToAttr($event)" #fileInput>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-group w-25" style="margin: 0 auto">
+              <button type="submit" class="btn btn-secondary mt-4">Add</button>
+              <button type="reset" class="btn btn-secondary mt-4" (click)="clear()">Clear</button>
+            </div>
+
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</ng-container>
+
+
+
+<pop-up
+  [visible]="visible"
+  [headerTitle]="headerTitle"
+  [iconMode]="iconMode"
+  [body]="body"
+  (closeEvent)="setCloseEvent()"
+  (okEvent)="setOkEvent()">
+</pop-up>

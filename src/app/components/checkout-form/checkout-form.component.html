@@ -1,0 +1,308 @@
+<ng-container
+  *ngIf="form">
+  <div class="container mt-4" style="margin-top: 150px; display: inline">
+    <div class="container-fluid " style="  margin-top: 50px;">
+      <form [formGroup]="form"
+            (ngSubmit)="checkout()"
+            style=";max-width: 750px;margin: 0 auto;"
+            enctype="multipart/form-data">
+
+        <!-- Customer Form -->
+        <ng-container *ngIf="form?.get('customer')">
+          <div [formGroupName]="'customer'"
+               class="form-area ">
+            <h3>Customer</h3>
+            <div class="row">
+              <!-- ** Firstname -->
+              <div class="row">
+                <div class="col-md-2">
+                  <label>
+                    <label *ngIf="form.get('customer')?.get('firstname')?.hasError('required') && form.get('customer')?.get('firstname')?.touched" class="text-danger">
+                      *
+                    </label>
+                    Firstname
+                  </label>
+                </div>
+                <div class="col-md-9">
+                  <div class="input-space">
+                    <input [formControlName]="'firstname'"
+                           class="form-control rounded-5"
+                           type="text"
+                            placeholder="firstname...">
+                  </div>
+                </div>
+              </div>
+              <!-- ** Lastname -->
+              <div class="row">
+                <div class="col-md-2">
+                  <label>
+                    <label *ngIf="form.get('customer')?.get('lastname')?.hasError('required') && form.get('customer')?.get('lastname')?.touched" class="text-danger">
+                      *
+                    </label>
+                    Lastname
+                  </label>
+                </div>
+                <div class="col-md-9">
+                  <div class="input-space">
+                    <input [formControlName]="'lastname'"
+                           class="form-control rounded-5"
+                           type="text"
+                           placeholder="lastname...">
+                  </div>
+                </div>
+              </div>
+              <!-- ** Email -->
+              <div class="row">
+                <div class="col-md-2">
+                  <label>
+                    <label *ngIf="form.get('customer')?.get('email')?.hasError('required') && form.get('customer')?.get('email')?.touched" class="text-danger">
+                      *
+                    </label>
+                    Email
+                  </label>
+                </div>
+                <div class="col-md-9">
+                  <div class="input-space">
+                    <input [formControlName]="'email'"
+                           placeholder="email..."
+                           class="form-control rounded-5"
+                           style="border-width: 1px;border-style: solid;border-color: #c6c6c6;"
+                           type="email">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+
+        <!-- Shipping Address Form -->
+        <ng-container *ngIf="form?.get('shippingAddress')">
+          <div [formGroupName]="'shippingAddress'"
+               class="form-area">
+            <h3>Shipping Address</h3>
+            <!-- Street -->
+            <div class="row">
+              <div class="col-md-2">
+                <label>
+                  <label *ngIf="form.get('shippingAddress')?.get('street')?.hasError('required') && form.get('shippingAddress')?.get('street')?.touched" class="text-danger">
+                    *
+                  </label>
+                  Street
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <input [formControlName]="'street'" type="text"  placeholder="street...">
+                </div>
+              </div>
+            </div>
+            <!-- Province -->
+            <div class="row">
+              <div class="col-md-2">
+                <label>Province</label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <!-- For change event -->
+                  <select [formControlName]="'province'" type="text" (change)="selectProvinceOnShippingAddress($event)" style="cursor: pointer">
+                    <option *ngFor="let province of provinces;let i = index" [value]="province.name">
+                      {{ province.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- District -->
+            <div class="row">
+              <div class="col-md-2">
+                <label>District</label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <select [formControlName]="'district'" type="text" style="cursor: pointer">
+                    <option *ngFor="let district of shippingAddressDistrict" [value]="district.name" >
+                      {{ district.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Zipcode -->
+            <div class="row">
+              <div class="col-md-2">
+                <label>
+                  <label *ngIf="form.get('shippingAddress')?.get('zipcode')?.hasError('required') && form.get('shippingAddress')?.get('zipcode')?.touched" class="text-danger">
+                    *
+                  </label>
+                  Zipcode
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <input [formControlName]="'zipcode'"  placeholder="zipcode..." style="
+                      width: 25%;
+                      height: 40px;
+                      border-radius: 30px;
+                      outline: 0;
+                      padding: 10px;
+                      border: 1px solid #ccc;" type="text" maxlength="5" oninput="this.value=this.value.replace(/[^0-9]/g,'');"> <!-- maxlength did not work on type number  -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+
+        <!-- check box for copy shipping to billing -->
+        <div class="input-space">
+          <label class="au-checkbox">
+            <input type="checkbox" (change)="copyShippingAddressToBillingAddress($event)" [checked]="isCopy">
+            <span class="au-checkmark"></span>
+            Billing Address same Shipping Address
+          </label>
+        </div>
+
+
+        <!-- Billing Address Form -->
+        <ng-container *ngIf="form?.get('billingAddress')">
+          <div [formGroupName]="'billingAddress'"
+               class="form-area">
+            <h3>Billing Address</h3>
+            <!-- Street -->
+            <div class="row">
+              <div class="col-md-2">
+                <label>
+                  <label *ngIf="form.get('billingAddress')?.get('street')?.hasError('required') && form.get('billingAddress')?.get('street')?.touched" class="text-danger">
+                    *
+                  </label>
+                  Street
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <input [formControlName]="'street'" type="text"  placeholder="street...">
+                </div>
+              </div>
+            </div>
+            <!-- Province -->
+            <div class="row">
+              <div class="col-md-2">
+                <label>Province</label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <!-- For change event -->
+                  <select [formControlName]="'province'" type="text"  (change)="selectProvinceOnBillingAddress($event)" style="cursor: pointer">
+                    <option *ngFor="let province of provinces;let i = index" [value]="province.name">
+                      {{ province.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- District -->
+            <div class="row">
+              <div class="col-md-2">
+                <label>District</label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <select [formControlName]="'district'" type="text" style="cursor: pointer">
+                    <option *ngFor="let district of billingAddressDistrict" [value]="district.name">
+                      {{ district.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Zipcode -->
+            <div class="row">
+              <div class="col-md-2">
+                <label>
+                  <label *ngIf="form.get('billingAddress')?.get('zipcode')?.hasError('required') && form.get('billingAddress')?.get('zipcode')?.touched" class="text-danger">
+                    *
+                  </label>
+                  Zipcode
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-space">
+                  <input [formControlName]="'zipcode'"  placeholder="zipcode..."
+                         style="
+                                width: 25%;
+                                height: 40px;
+                                border-radius: 30px;
+                                outline: 0;
+                                padding: 10px;
+                                border: 1px solid #ccc;" type="text" maxlength="5" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+
+        <div class="input-space">
+          <label class="au-checkbox">
+            <input type="checkbox" (change)="enablePromptPayQRCode()">
+            <span class="au-checkmark"></span>
+            Prompt Pay QRCode
+          </label>
+        </div>
+
+
+        <!-- Stripe Api Form -->
+        <ng-container *ngIf="!checkPromptPayQRCode">
+          <div class="form-area">
+            <h3 class="mb-3">Credit or Debit Cart</h3>
+            <div id="card-element" style="font-size: 30px">
+              <!-- stripe element will be inserted here -->
+            </div>
+            <div id="card-errors" class="text-danger mt-4"></div>
+          </div>
+        </ng-container>
+
+
+        <ng-container *ngIf="checkPromptPayQRCode">
+          <div class="form-area">
+            <h3 class="mb-3">Scan and upload your receipt</h3>
+            <div style="font-size: 30px;margin: 0 auto;max-width: max-content;">
+              <img [src]="'assets/images/ppqr.jpg'" width="450px">
+              <!-- stripe element will be inserted here -->
+              <div class="mb-3 mt-3">
+                <input class="form-control" type="file" name="file" (change)="uploadFileToAttr($event)" #fileInput>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+
+        <ng-container *ngIf="totalQuantity > 0">
+          <div class="form-area mt-5">
+            <h3>Review Your Order</h3>
+            <p>Total quantity : {{ totalQuantity }} Psc.</p>
+            <p>Shipping : Free</p>
+            <p>Total Price :  {{ totalPrice | currency : 'THB' }}</p>
+          </div>
+        </ng-container>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-secondary mt-4" [disabled]="disablePurchase">Purchase</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</ng-container>
+
+
+
+<pop-up
+  [visible]="visible"
+  [headerTitle]="headerTitle"
+  [iconMode]="iconMode"
+  [body]="body"
+  (closeEvent)="setCloseEvent()"
+  (okEvent)="setOkEvent()">
+</pop-up>

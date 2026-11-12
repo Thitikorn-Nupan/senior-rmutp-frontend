@@ -1,0 +1,12 @@
+.btn-custom {
+  transition: 0.5s;
+}
+
+.btn-custom:hover {opacity: 1}
+
+.active > .page-link, .page-link.active {
+  z-index: 3;
+  color: var(--bs-pagination-active-color);
+  background-color: #494848;
+  border-color: gray;
+}

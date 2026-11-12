@@ -1,0 +1,34 @@
+<ng-container *ngIf="(product === undefined) else productExist">
+  <div  class="d-flex justify-content-center">
+    <div class="spinner-border mt-3"  role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #productExist>
+  <ng-container *ngIf="product">
+    <div class="container mt-5" style="margin: 0 auto;  max-width: 825px;">
+      <div class="card text-bg-secondary " style="width: 50rem;">
+        <img width="50px" [src]="product.imageUrl" class="card-img-top p-3" alt="" >
+        <div class="card-body">
+          <h4 class="card-title">{{ product.name }} | {{ product?.price | currency : "THB" }}</h4>
+          <h6>{{ product.sku }}</h6>
+          <p class="card-text">{{ product.description }}</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+              <button type="button" (click)="addItem(product)" class="btn btn-sm btn btn-light ">Add to cart</button>
+              <button [routerLink]="'products'" type="button" class="btn btn-sm btn btn-light">Back</button>
+            </div>
+            <small class="badge bg-white text-secondary position-relative">Stock {{ product.unitInStock }} Pcs.
+              <span class="position-absolute top-0 start-100 translate-middle p-2 bg-success border border-light rounded-circle">
+                  <span class="visually-hidden">New alerts</span>
+                </span>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ng-template>
+

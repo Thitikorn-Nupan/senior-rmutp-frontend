@@ -1,0 +1,39 @@
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column" style="margin-bottom: -40px">
+  <ng-container>
+    <header class="mb-auto">
+      <strong class="float-md-start mb-0 p-lg-2" style="color: rgba(12,7,7,0.55)">
+        <img [src]="'logo.png'" width="35px" height="35px" style="margin-right: 15px" />
+        Perfumes Shop
+      </strong>
+      <nav class="nav nav-masthead justify-content-center float-md-end">
+        <ecm-product-categories></ecm-product-categories>
+        <!-- I have dynamic buttons as login,register -->
+        <ecm-registers-status></ecm-registers-status>
+        <!-- as cart in stock-->
+        <ecm-cart-status></ecm-cart-status>
+      </nav>
+    </header>
+  </ng-container>
+
+  <ng-container *ngIf="user">
+    <div class="container " style="">
+      <div class="row">
+        <div class="col-9"></div>
+        <div class="col-3">
+          <div class="mb-auto" style=" margin-top: 20px; ">
+            <div class="card p-3 mt-2 " style="width: 375px; height: 125px; display:  block; border: 3px solid rgb(107, 116, 124);"><!-- box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 15px;-->
+              <strong style="font-size: 15px;  " class="badge badge-success bg-success ">Active</strong> <!---->
+              <br/>
+              <div style="margin-bottom: 20px; margin-top: 10px">
+                User : {{ user.username }}
+                <br/>
+                Time expiry : {{ UsefulFunctionService.convertUnixTimeToRealTime(tokenExpire!)}} (1 hour)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+

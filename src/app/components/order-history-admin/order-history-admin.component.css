@@ -1,0 +1,71 @@
+.btn {
+  transition: 0.5s;
+}
+
+.btn:hover {opacity: 1}
+
+@media only screen and (max-width: 400px) {
+
+  img {
+    max-width: 10px;
+    max-height: 10px;
+  }
+  table {
+    font-size: 3px;
+  }
+  .container  {
+    margin: 0;
+  }
+
+  .edit {
+    max-width: 0px;
+    max-height: 5px;
+    height: 0px;
+    width: 0px;
+    font-size: 5px;
+  }
+}
+
+@media only screen and (max-width: 415px) {
+
+  img {
+    max-width: 10px;
+    max-height: 10px;
+  }
+  table {
+    font-size: 3px;
+  }
+  .container  {
+    margin: 0;
+  }
+
+  .edit {
+    max-width: 0px;
+    max-height: 5px;
+    height: 0px;
+    width: 0px;
+    font-size: 5px;
+  }
+}
+
+@media only screen and (max-width: 430px) {
+
+  img {
+    max-width: 10px;
+    max-height: 10px;
+  }
+  table {
+    font-size: 3px;
+  }
+  .container  {
+    margin: 0;
+  }
+
+  .edit {
+    max-width: 0px;
+    max-height: 5px;
+    height: 0px;
+    width: 0px;
+    font-size: 5px;
+  }
+}

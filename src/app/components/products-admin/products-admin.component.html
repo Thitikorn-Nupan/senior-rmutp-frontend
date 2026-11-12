@@ -1,0 +1,285 @@
+<ng-container *ngIf="(products === undefined) else productsAdminExist" xmlns="http://www.w3.org/1999/html">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border mt-3" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #productsAdminExist>
+  <div class="container mt-1" style="margin: 0 auto;max-width: 1550px;">
+    <div class="section-content section-content-p30">
+      <div class="container-fluid" >
+
+        <ng-container *ngIf="products">
+
+          <div class="btn-group" >
+            <h3 class="mb-4" style="margin-right: 18px;margin-left: 50px;">Perfumes </h3>
+            <div class="dropdown">
+              <button
+                (click)="toggle()"
+                class="btn btn-secondary dropdown-toggle rounded-start-3 rounded-end-0" type="button" >
+                Category
+              </button>
+              <ul class="dropdown-menu  p-0 {{isToggle ? 'd-block' : ''}}">
+                <div class="bg-secondary">
+                  <ng-container *ngFor="let productCategory of productCategories">
+                    <li><button class="btn btn-secondary w-100" style="display: inline-flex" (click)="switch(productCategory)" >{{ productCategory.categoryName }}</button></li>
+                  </ng-container>
+                </div>
+              </ul>
+            </div>
+            <button class="btn btn-secondary disabled h-25 rounded-start-0 rounded-end-3" >{{productCategory.categoryName}}</button>
+          </div>
+
+          <table class="table table-bordered d-block overflow-auto" style="max-height: 60vh;width: max-content;max-width: 1400px;margin: 0 auto;"><!---->
+            <tbody class="text-center">
+            <tr class="table table-secondary">
+              <th>ID</th>
+              <th>Image</th>
+              <th width="150px">Sku</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th width="100px">In Stock</th>
+              <th >Option</th>
+            </tr>
+            <!-- Loop for display cart items-->
+            <tr *ngFor="let product of products;">
+              <td>
+                {{ product.pid }}
+              </td>
+              <td>
+                <img [src]="product.imageUrl" style="width: 50px; height: 50px;">
+              </td>
+              <td>
+                {{ product.sku }}
+              </td>
+              <td>
+                {{ product.name }}
+              </td>
+              <td>
+                {{ product.description.length > 150 ? product.description.substring(0,110) +'...' : product.description}}
+              </td>
+              <td>
+                {{ product.price | currency : "THB"}}
+              </td>
+              <td>
+                {{ product.unitInStock }}
+              </td>
+              <td>
+               <div class="btn-group">
+                 <button
+                   (click)="enableEditForm(product)"
+                   class="btn btn-secondary edit"
+                   title="Edit">
+                   <i class="fa-solid fa-pen"></i>
+                 </button>
+                 <button
+                   class="btn btn-secondary edit"
+                   title="Delete">
+                   <i class="fa-solid fa-trash"></i>
+                 </button>
+               </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="isEnableForm">
+
+    <div class="modal d-block bg-opacity-50 bg-secondary" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+      <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content" style="width: 810px;height: fit-content;margin: 100px auto 0;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalToggleLabel">Form Edit</h5> <!-- Text On Tile-->
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="clear()"></button>
+          </div>
+          <div class="modal-body">
+            <div class="container" style="margin-top: 10px; display: inline">
+              <div class="container-fluid " >
+                <form
+                  [formGroup]="form"
+                  (ngSubmit)="edit()"
+                  style=";max-width: 750px;margin: 0 auto;"
+                  enctype="multipart/form-data">
+                  <div class="form-area ">
+                    <h3>Perfume ID {{productForShowOnForm.pid}}</h3>
+                    <!--<div class="cancel">
+                      <button
+                        (click)="isEnableForm = false"
+                        class="btn btn-secondary edit"
+                        title="Edit">
+                        <i class="fa-solid fa-xmark"></i>
+                      </button>
+                    </div>-->
+
+                    <div class="row">
+                      <!-- ** Firstname -->
+                      <div>
+                        <div class="col-md-12 text-center mb-4">
+                          <img [src]="productForShowOnForm.imageUrl" style="width: 150px; height: 150px;border-radius: 100px">
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-2">
+                          <label>
+                            <label *ngIf="form.get('sku')?.hasError('required') && form.get('sku')?.touched" class="text-danger">
+                              *
+                            </label>
+                            Sku
+                          </label>
+                        </div>
+                        <div class="col-md-9">
+                          <div class="input-space">
+                            <input [formControlName]="'sku'"
+                                   class="form-control rounded-5"
+                                   type="text"
+                                   placeholder="sku...">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-2">
+                          <label>
+                            <label *ngIf="form.get('name')?.hasError('required') && form.get('name')?.touched" class="text-danger">
+                              *
+                            </label>
+                            Name
+                          </label>
+                        </div>
+                        <div class="col-md-9">
+                          <div class="input-space">
+                            <input [formControlName]="'name'"
+                                   class="form-control rounded-5"
+                                   type="text"
+                                   placeholder="name...">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-2">
+                          <label>
+                            <label *ngIf="form.get('description')?.hasError('required') && form.get('description')?.touched" class="text-danger">
+                              *
+                            </label>
+                            Description
+                          </label>
+                        </div>
+                        <div class="col-md-9">
+                          <div class="input-space">
+                  <textarea [formControlName]="'description'"
+                            rows="15"
+                            class="form-control rounded-5"
+                            placeholder="description..."></textarea>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-2">
+                          <label>
+                            <label *ngIf="form.get('price')?.hasError('required') && form.get('price')?.touched" class="text-danger">
+                              *
+                            </label>
+                            Price
+                          </label>
+                        </div>
+                        <div class="col-md-9">
+                          <div class="input-space">
+                            <input [formControlName]="'price'"
+                                   class="form-control rounded-5"
+                                   type="number"
+                                   placeholder="price...">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-2">
+                          <label>
+                            <label *ngIf="form.get('unitInStock')?.hasError('required') && form.get('unitInStock')?.touched" class="text-danger">
+                              *
+                            </label>
+                            Unit
+                          </label>
+                        </div>
+                        <div class="col-md-9">
+                          <div class="input-space">
+                            <input [formControlName]="'unitInStock'"
+                                   class="form-control rounded-5"
+                                   type="number"
+                                   placeholder="unit...">
+                          </div>
+                        </div>
+                      </div>
+
+
+                      <div class="row">
+                        <div class="col-md-2">
+                          <label>Categories</label>
+                        </div>
+                        <div class="col-md-9">
+                          <div class="input-space">
+                            <!-- For change event -->
+                            <select [formControlName]="'productCategory'" type="text"  style="cursor: pointer"> <!-- (change)="selectProvinceOnBillingAddress($event)" -->
+                              <option *ngFor="let productCategory of productCategories; let i = index" [value]="productCategory.pcId">
+                                {{ productCategory.categoryName }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+
+                      <div class="row">
+                        <div class="col-md-2">
+                          <label>
+                            <label *ngIf="file === undefined || file === null" class="text-danger">
+                              *
+                            </label>
+                            New Image
+                          </label>
+                        </div>
+                        <div class="col-md-9">
+                          <div class="input-space">
+                            <input class="form-control" type="file" name="file" (change)="uploadFileToAttr($event)" #fileInput>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="btn-group w-25" style="margin: 0 auto">
+                        <button type="submit" class="btn btn-secondary mt-4">Edit</button>
+                        <button type="reset" class="btn btn-secondary mt-4" (click)="clearForm()">Clear</button> <!-- (click)="clear()" -->
+                      </div>
+
+                    </div>
+                  </div>
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+</ng-template>
+
+<pop-up
+  [visible]="visible"
+  [headerTitle]="headerTitle"
+  [iconMode]="iconMode"
+  [body]="body"
+  (closeEvent)="setCloseEvent()"
+  (okEvent)="setOkEvent()">
+</pop-up>
+

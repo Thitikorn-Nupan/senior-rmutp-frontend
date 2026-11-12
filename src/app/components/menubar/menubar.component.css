@@ -1,0 +1,29 @@
+.cover-container {
+  max-width: 85rem;
+}
+
+.active .badge  {
+  background-color: lightgray;
+}
+
+
+.btn:hover {
+  opacity: 1;
+}
+
+.btn {
+  transition: 0.5s;
+}
+
+
+
+
+/*.card{*/
+/*  transition-delay: 0.30s;*/
+/*}*/
+
+/*.card:hover {*/
+/*  background: #828482;*/
+/*  transition-delay: 0.35s; !* Delay the transition by 1 second *!*/
+/*}*/
+

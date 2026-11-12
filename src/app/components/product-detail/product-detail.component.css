@@ -1,0 +1,25 @@
+.btn {
+  transition: 0.5s;
+}
+
+.btn:hover {opacity: 1}
+
+@media only screen and (max-width: 400px) {
+  .card {
+    max-width: fit-content;
+  }
+}
+
+@media only screen and (max-width: 415px) {
+
+  .card {
+    max-width: fit-content;
+  }
+}
+
+@media only screen and (max-width: 430px) {
+
+  .card {
+    max-width: fit-content;
+  }
+}

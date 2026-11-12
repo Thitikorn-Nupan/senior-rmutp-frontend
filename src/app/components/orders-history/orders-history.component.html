@@ -1,0 +1,113 @@
+<ng-container *ngIf="(orderHistories === undefined) else orderHistoryExist">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border mt-3" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #orderHistoryExist>
+  <div class="container mt-1">
+    <div class="section-content section-content-p30">
+      <div class="container-fluid" style="margin: 0 auto;width: max-content">
+        <h3 class="mb-4">The Orders History</h3>
+
+        <table class="table table-bordered overflow-auto" style="height: 600px;max-height: 600px;margin: 0 auto;max-width: fit-content;width: 800px; display: block">
+          <tbody class="text-center">
+
+          <tr class="table table-secondary">
+            <th >Order Tracking Number</th>
+            <th>Total Price</th>
+            <th>Total Quantity</th>
+            <th>Date Created</th>
+            <th>Action</th>
+          </tr>
+          <!-- Loop for display cart items-->
+          <tr *ngFor="let order of orderHistories">
+            <td>
+              {{ order.orderTrackingNumber }}
+            </td>
+            <td>
+              {{ order.totalPrice | currency : 'THB' }}
+            </td>
+            <td>
+              {{ order.totalQuantity }}
+            </td>
+            <td>
+              <!-- common date pipe -->
+              {{ order.dateCreated | date : 'shortDate' }}
+            </td>
+            <td>
+              <button class="btn btn-secondary edit" title="see detail" (click)="seeDetail(order.orderTrackingNumber)">
+                <i class="fa-solid fa-clipboard-list"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+
+        <ng-container *ngIf="orderHistoriesDetails">
+          <div class="modal d-block bg-opacity-50 bg-secondary" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+            <div class="modal-dialog modal-fullscreen">
+              <div class="modal-content" style="width: 810px;height: fit-content;margin: 400px auto 0;">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalToggleLabel">Bill Id {{ trackingNumber }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="onCloseOrderHistory()"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="container w-100 mt-1">
+                    <div class="section-content section-content-p30">
+                      <div class="container-fluid" style="margin: 0 auto;width: 780px;">
+                        <!--<h3 class="mb-4">Bill Of {{ trackingNumber.substring(0, 60) }}...</h3>-->
+                        <table class="table table-bordered overflow-auto" style="max-height: 60vh;width: 730px;display: inline-table">
+                          <tbody class="text-center">
+                          <tr class="table table-secondary">
+                            <th>Sku</th>
+                            <th>Name</th>
+                            <th>Image Perfume</th>
+                            <th>Quantity</th>
+                            <th>Price / Psc</th>
+                          </tr>
+                          <tr *ngFor="let order of orderHistoriesDetails;">
+                            <td>
+                              {{ order.sku }}
+                            </td>
+                            <td>
+                              {{ order.name }}
+                            </td>
+                            <td>
+                              <img [src]="order.imageUrl" style="width: 60px; height: 60px;" class="">
+                            </td>
+                            <td>
+                              {{ order.quantity }}
+                            </td>
+                            <td>
+                              {{ order.price | currency : "THB" }}
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+
+<pop-up
+  [visible]="visible"
+  [headerTitle]="headerTitle"
+  [iconMode]="iconMode"
+  [body]="body"
+  (closeEvent)="setCloseEvent()"
+  (okEvent)="setOkEvent()">
+</pop-up>
