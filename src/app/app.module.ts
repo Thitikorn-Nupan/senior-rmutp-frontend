@@ -18,10 +18,13 @@ import {CheckoutFormComponent} from './components/checkout-form/checkout-form.co
 import {FooterComponent} from './components/footer/footer.component';
 import {OrdersHistoryComponent} from './components/orders-history/orders-history.component';
 import {OrderHistoryAdminComponent} from './components/order-history-admin/order-history-admin.component';
-import {OrderHistoryOnlyPerfumesAdminComponent} from './components/order-history-only-perfumes-admin/order-history-only-perfumes-admin.component';
-import { AddProductComponent } from './components/add-product/add-product.component';
-import { ProductsAdminComponent } from './components/products-admin/products-admin.component';
-import { PopUpComponent } from './components/pop-up/pop-up.component';
+import {
+  OrderHistoryOnlyPerfumesAdminComponent
+} from './components/order-history-only-perfumes-admin/order-history-only-perfumes-admin.component';
+import {AddProductComponent} from './components/add-product/add-product.component';
+import {ProductsAdminComponent} from './components/products-admin/products-admin.component';
+import {PopUpComponent} from './components/pop-up/pop-up.component';
+import {CheckoutSelectComponent} from './components/checkout-form/checkout-select/checkout-select.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +52,8 @@ import { PopUpComponent } from './components/pop-up/pop-up.component';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CheckoutSelectComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

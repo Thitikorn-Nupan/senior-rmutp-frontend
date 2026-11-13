@@ -1,0 +1,20 @@
+﻿.transfer-stage { min-width: 0; }
+.transfer-state { text-align: center; padding: 48px 24px; }
+.transfer-state p, .saved-contact, .saved-address { color: #68756e; font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; margin: 16px 0; }
+.transfer-success { border-color: #b7cbb2; background: #f1f6ed; }
+.transfer-success p, .expired-order p { color: #68756e; font-size: 14px; line-height: 1.8; }
+.transfer-success a, .transfer-state a { display: inline-flex; align-items: center; min-height: 44px; color: #243d35; font-size: 13px; text-underline-offset: 4px; }
+.payment-deadline { font-size: 12px; line-height: 1.7; color: #68756e; }
+.payment-deadline strong { color: #243d35; }
+.receipt-preview { border: 1px solid #e2e7df; border-radius: 10px; padding: 12px; margin-top: 16px; text-align: center; }
+.receipt-preview img { width: 100%; max-height: 340px; object-fit: contain; }
+.receipt-preview p { overflow-wrap: anywhere; color: #68756e; font-size: 12px; margin: 12px 0 0; }
+details summary { cursor: pointer; min-height: 44px; padding: 12px 0; font-size: 12px; color: #46584f; }
+.checkout-error { padding: 16px; background: #fff2ef; border: 1px solid #ecd0c9; border-radius: 10px; margin-bottom: 20px; font-size: 13px; color: #8b3c33; }
+.checkout-error a { display: inline-block; padding: 12px; color: #243d35; }
+.checkout-error button, .expired-order button, .transfer-success button { padding: 10px 14px; min-height: 44px; margin: 4px 8px 4px 0; background: white; color: #243d35; border: 1px solid #dce3dc; border-radius: 8px; font-size: 12px; }
+.summary-items { list-style: none; padding: 0; margin: 20px 0; }
+.summary-items li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; font-size: 12px; line-height: 1.6; border-bottom: 1px solid #e2e7df; }
+.summary-items span { overflow-wrap: anywhere; }
+.summary-items strong { font-weight: 500; flex-shrink: 0; }
+.order-reference { font-size: 11px; overflow-wrap: anywhere; color: #68756e; }

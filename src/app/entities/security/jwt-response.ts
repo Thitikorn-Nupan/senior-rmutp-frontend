@@ -4,6 +4,7 @@
   "roles": {...}
 }*/
 export class JwtResponse {
+  public user?: import('../user').User;
   public token: string
   public username: string
   public roles: object[]

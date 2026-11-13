@@ -1,12 +1,60 @@
-.btn-custom {
-  transition: 0.5s;
+﻿:host{display:block;color:#243d35;font-family:Arial,sans-serif}
+:host *{box-sizing:border-box;font-family:inherit}
+.catalog{background:#f8f9f5;min-height:65vh}
+.catalog-inner{max-width:1200px;margin:auto;padding:40px 24px}
+.collection-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px}
+.eyebrow{color:#8a6b41;font-size:10px;font-weight:700;letter-spacing:2px;margin:0 0 10px}
+h1{font-size:clamp(26px,4vw,38px);font-weight:500;letter-spacing:-1px;margin:0}
+.collection-description,.results-count{color:#68756e;font-size:14px;margin:10px 0 0}
+.results-count{font-size:12px;white-space:nowrap}
+.search-form{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 16px;background:white;border:1px solid #dce3dc;border-radius:12px;margin-bottom:28px}
+.search-form svg{flex-shrink:0}
+.search-form input{flex:1;min-width:0;width:100%;min-height:44px;border:0;outline:none;background:transparent;font-size:16px}
+.search-form:focus-within{outline:2px solid #708b75}
+.search-button,.add-button{border:0;border-radius:8px;color:white;background:#243d35;min-height:44px;padding:10px 16px;font-size:13px;font-weight:600}
+.search-button:hover,.add-button:hover{background:#38594b}
+.clear-search{border:0;background:transparent;min-width:44px;min-height:44px;font-size:24px}
+.product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.product-card{min-width:0;display:flex;flex-direction:column;border:1px solid #e2e7df;border-radius:14px;background:white;overflow:hidden}
+.product-image{display:block;aspect-ratio:1.2;background:#eff1eb}
+.product-image img{width:100%;height:100%;object-fit:contain;padding:20px}
+.product-info{display:flex;flex:1;flex-direction:column;padding:20px}
+.product-sku{font-size:10px;letter-spacing:1px;color:#778278;margin:0 0 7px;overflow-wrap:anywhere}
+h2{font-size:19px;line-height:1.35;font-weight:600;margin:0 0 12px;overflow-wrap:anywhere}
+h2 a{color:inherit;text-decoration:none}
+.product-price{font-size:20px;font-weight:600;margin:auto 0 8px;overflow-wrap:anywhere}
+.product-stock{display:flex;align-items:center;gap:6px;font-size:11px;color:#68756e;margin:0 0 18px}
+.product-stock span{width:6px;height:6px;border-radius:50%;background:#528361;flex-shrink:0}
+.product-stock.unavailable span{background:#9b9e98}
+.product-actions{display:flex;gap:8px}
+.detail-button{display:grid;place-items:center;padding:10px 14px;min-height:44px;border:1px solid #dce3dc;border-radius:8px;color:#243d35;text-decoration:none;font-size:13px}
+.add-button{flex:1}
+button:disabled{opacity:.45;cursor:not-allowed}
+a:focus-visible,button:focus-visible{outline:3px solid #ad7f45;outline-offset:3px}
+.catalog-state{padding:60px 16px;text-align:center}
+.catalog-state p{color:#68756e;font-size:14px;margin:16px 0}
+.cart-feedback{color:#38594b;margin:16px 0 0;font-size:13px}
+.catalog-pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:20px}
+.catalog-pagination button{min-width:44px;min-height:44px;background:white;color:#243d35;border:1px solid #dce3dc;border-radius:8px;padding:8px 12px;font-size:13px}
+.page-numbers{display:flex;gap:6px;overflow-x:auto}
+.page-numbers button{flex-shrink:0}
+.catalog-pagination .selected{background:#243d35;color:white}
+@media(max-width:900px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}}
+@media(max-width:640px){
+.catalog-inner{padding:28px 16px}
+.collection-heading{display:block;margin-bottom:20px}
+.results-count{display:block;margin-top:12px}
+.search-form{gap:4px;margin-bottom:20px;padding-left:12px}
+.search-button{padding:10px 12px}
+.product-grid{gap:12px}
+.product-image{aspect-ratio:1}
+.product-image img,.product-info{padding:12px}
+h2{font-size:15px;margin-bottom:10px}
+.product-sku{font-size:9px;letter-spacing:.4px}
+.product-price{font-size:18px}
+.product-stock{font-size:10px;margin-bottom:14px}
+.product-actions{flex-direction:column;gap:6px}
+.detail-button,.add-button{font-size:12px}
+.catalog-pagination>button span{display:none}
 }
-
-.btn-custom:hover {opacity: 1}
-
-.active > .page-link, .page-link.active {
-  z-index: 3;
-  color: var(--bs-pagination-active-color);
-  background-color: #494848;
-  border-color: gray;
-}
+@media(max-width:359px){.product-grid{grid-template-columns:minmax(0,1fr)}}

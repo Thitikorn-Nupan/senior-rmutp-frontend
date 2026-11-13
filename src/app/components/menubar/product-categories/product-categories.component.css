@@ -1,81 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
-/*
- * Globals
- */
-
-
-/* Custom default button */
-
-
-
-/*
- * Base structure
- */
-
-
-.cover-container {
-  max-width: 42em;
+﻿:host {
+  display: block;
+  min-width: 0;
 }
 
-
-/*
- * Header
- */
-
-.nav-masthead .nav-link {
-  color: rgba(0, 0, 0, 0.5);
-  border-bottom: .25rem solid transparent;
+.category-links {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
-.nav-masthead .nav-link:focus {
-  border-bottom-color: rgba(255, 255, 255, .25);
-}
-.nav-masthead .nav-link:hover {
-  border-bottom-color: rgba(9, 2, 2, 0.45);
-}
-
-.nav-masthead .nav-link + .nav-link {
-  margin-left: 1rem;
-}
-
-.nav-masthead .active {
-  border-bottom-color: #fff;
+a {
+  flex-shrink: 0;
+  padding: 12px 2px 14px;
+  border-bottom: 3px solid transparent;
+  color: #68756e;
+  font: 500 14px Arial, sans-serif;
+  text-decoration: none;
+  text-transform: capitalize;
+  white-space: nowrap;
 }
 
-.nav-link {
-  transition: 0.5s;
+a:hover, a.active {
+  color: #243d35;
+  border-bottom-color: #243d35;
 }
 
-.nav-link:hover {opacity: 1}
+a:focus-visible {
+  outline: 2px solid #ad7f45;
+  outline-offset: -3px;
+}
 
-
-@media only screen and (max-width: 400px) {
-  nav {
-    font-size: 25px;
-    padding: 12px;
-
+@media (max-width: 640px) {
+  .category-links {
+    gap: 22px;
   }
-  nav .nav-link {
-    margin: 10px;
-  }
-}
 
-@media only screen and (max-width: 415px) {
-  nav {
-    font-size: 25px;
-
-  }
-  nav .nav-link {
-    margin: 10px;
-  }
-}
-
-@media only screen and (max-width: 430px) {
-  nav {
-    font-size: 25px;
-
-  }
-  nav .nav-link {
-    margin: 10px;
+  a {
+    padding-top: 4px;
+    font-size: 13px;
   }
 }

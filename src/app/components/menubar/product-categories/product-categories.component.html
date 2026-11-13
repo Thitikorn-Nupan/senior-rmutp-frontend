@@ -1,8 +1,5 @@
-<ng-container *ngIf="productCategories">
-  <nav class="nav nav-masthead justify-content-center float-md-end">
-    <ng-container *ngFor="let productCategory of productCategories">
-      <!-- way to pass path param on router link -->
-      <a [routerLink]="['category',productCategory.pcId]" class="nav-link fw-bold py-1 px-0 p-lg-2" >{{productCategory.categoryName}}</a>
-    </ng-container>
-  </nav>
-</ng-container>
+﻿<nav class="category-links" aria-label="Product categories">
+  <a routerLink="/products" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }">All products</a>
+  <a *ngFor="let productCategory of productCategories" [routerLink]="['/category', productCategory.pcId]"
+     routerLinkActive="active" ariaCurrentWhenActive="page">{{ productCategory.categoryName }}</a>
+</nav>

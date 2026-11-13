@@ -13,7 +13,9 @@ export class WebStorageService {
   public getTokenExpiry(): number | null {
     const jwtResponse = this.getSession("jwtResponse");
     if (jwtResponse) {
-      const payload = jwt_decode.jwtDecode(jwtResponse.token)
+      let payload;
+      try { payload = jwt_decode.jwtDecode(jwtResponse.token); }
+      catch { sessionStorage.removeItem('jwtResponse'); return null; }
       if (payload.exp) {
         return payload.exp;
       }
@@ -27,8 +29,15 @@ export class WebStorageService {
   public getUserFormToken() : User | null{
     const jwtResponse = this.getSession("jwtResponse");
     if (jwtResponse) {
-      const payload : any = jwt_decode.jwtDecode(jwtResponse.token)
-      return payload['user'];
+      const expiry = this.getTokenExpiry();
+      if (!expiry || expiry * 1000 <= Date.now()) {
+        sessionStorage.removeItem('jwtResponse');
+        return null;
+      }
+      if (jwtResponse.user) return jwtResponse.user;
+      // Old sessions cannot authenticate with Strapi. Require a fresh login.
+      sessionStorage.removeItem('jwtResponse');
+      return null;
     }
     else {
       return null;
@@ -57,11 +66,11 @@ export class WebStorageService {
   }
 
   public getSession(key: string): any {
-    const jwtResponse : JwtResponse = JSON.parse(sessionStorage.getItem(key)!)!;
-    if (jwtResponse) {
-      return jwtResponse;
-    } else {
-      return null
+    try {
+      return JSON.parse(sessionStorage.getItem(key) ?? 'null');
+    } catch {
+      sessionStorage.removeItem(key);
+      return null;
     }
   }
 

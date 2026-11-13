@@ -1,113 +1,259 @@
-.form-area{
-  background:#e5e5e5;
-  position:relative;
-  margin-bottom:45px;
-  padding:50px 20px;
-  border:3px solid #ccc
-}
-.form-area h3{
-  position:absolute;
-  top:-26px;
-  left:13px;
-  background:#e5e5e5;
-  padding:10px 20px;
-  font-weight:500;
-  z-index:23;
-  display:inline-block
-}
-.input-space{
-  margin-bottom:20px
-}
-.input-space label{
-  padding-left:31px;
-  font-size:14px;
-  margin-bottom:50px
-}
-.input-space input[type=text]{
-  width:100%;
-  height:40px;
-  border-radius:30px;
-  outline:0;
-  padding:10px;
-  border:1px solid #ccc
-}
-.input-space select{
-  width:100%;
-  height:40px;
-  border-radius:30px;
-  outline:0;
-  padding:0 10px;
-  border:1px solid #ccc
-}
-.au-checkbox{
-  display:block;
-  position:relative;
-  cursor:pointer;
-  font-size:22px;
-  -webkit-user-select:none;
-  -moz-user-select:none;
-  -ms-user-select:none;
-  user-select:none
-}
-.au-checkbox input{
-  position:absolute;
-  opacity:0;
-  cursor:pointer
-}
-.au-checkmark{
-  position:absolute;
-  top:0;
-  left:0;
-  height:22px;
-  width:22px;
-  background-color:#fff!important;
-  border:2px solid #e5e5e5;
-  -webkit-border-radius:2px;
-  -moz-border-radius:2px;
-  border-radius:2px
-}
-.au-checkbox:hover input~.au-checkmark{
-  background-color:transparent
-}
-.au-checkbox input:checked~.au-checkmark{
-  background-color:#fff
-}
-.au-checkmark:after{
-  content:"";
-  position:absolute;
-  display:none
-}
-.au-checkbox input:checked~.au-checkmark:after{
-  display:block
-}
-label.date{
-  padding-top:8px
-}
-.au-checkbox .au-checkmark:after{
-  left:5px;
-  top:-1px;
-  width:9px;
-  height:15px;
-  border:solid #0da8e4;
-  border-width:0 4px 4px 0;
-  -webkit-border-radius:2px;
-  -moz-border-radius:2px;
-  border-radius:2px;
-  -webkit-transform:rotate(45deg);
-  -moz-transform:rotate(45deg);
-  -ms-transform:rotate(45deg);
-  -o-transform:rotate(45deg);
-  transform:rotate(45deg)
-}
-/*option:first{*/
-/*  color:#ccc*/
-/*}*/
-select{
-  color:#828482
+﻿:host {
+  display: block;
+  color: #243d35;
+  font-family: Arial, sans-serif;
 }
 
-.btn {
-  transition: 0.5s;
+:host * {
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
-.btn:hover {opacity: 1}
+.checkout-page {
+  min-height: 65vh;
+  background: #f8f9f5;
+}
+
+.checkout-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 24px 24px 48px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 12px;
+  color: #68756e;
+  text-decoration: none;
+}
+
+.checkout-heading {
+  margin: 20px 0 28px;
+}
+
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #8a6b41;
+  margin: 0 0 12px;
+}
+
+h1 {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 500;
+  letter-spacing: -1px;
+  margin: 0 0 10px;
+}
+
+.checkout-heading > p:last-child {
+  color: #68756e;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.checkout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
+  align-items: start;
+}
+
+.checkout-sections {
+  min-width: 0;
+}
+
+.required-note {
+  color: #68756e;
+  font-size: 11px;
+  margin: 0 0 12px;
+}
+
+.form-section {
+  padding: 28px;
+  background: white;
+  border: 1px solid #e2e7df;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.section-number {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: 1px solid #dce3dc;
+  border-radius: 50%;
+  background: #f8f9f5;
+  font-size: 11px;
+}
+
+h2 {
+  font-size: 19px;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.section-heading p {
+  color: #68756e;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 16px;
+}
+
+.field {
+  min-width: 0;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.field label span {
+  color: #8a6b41;
+}
+
+.field input, .field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 12px;
+  background: white;
+  color: #243d35;
+  border: 1px solid #c9d3ca;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.field input::placeholder {
+  color: #7b857f;
+  font-size: 13px;
+}
+
+.field input:focus, .field select:focus {
+  border-color: #708b75;
+  outline: 2px solid #708b7533;
+  outline-offset: 1px;
+}
+
+.field [aria-invalid="true"] {
+  border-color: #ac4545;
+}
+
+.field-error {
+  color: #a33737;
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+
+.address-notice {
+  color: #a33737;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.address-notice button {
+  border: 1px solid #dce3dc;
+  border-radius: 6px;
+  background: white;
+  color: #243d35;
+  padding: 8px 12px;
+  min-height: 44px;
+}
+
+.field select:disabled, .copy-address input:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+
+.copy-address {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  background: #f2f5ef;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.copy-address input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: #243d35;
+}
+
+.copy-address small {
+  display: block;
+  color: #68756e;
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 4px;
+}
+
+a:focus-visible, button:focus-visible, .copy-address input:focus-visible {
+  outline: 3px solid #ad7f45;
+  outline-offset: 3px;
+}
+
+@media (max-width: 950px) {
+  .checkout-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}
+
+@media (max-width: 640px) {
+  .checkout-container {
+    padding: 12px 16px 32px;
+  }
+
+  .checkout-heading {
+    margin: 16px 0 24px;
+  }
+
+  .form-section {
+    padding: 20px 16px;
+  }
+
+  .field-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .section-heading {
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+}

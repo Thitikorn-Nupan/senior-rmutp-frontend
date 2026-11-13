@@ -1,11 +1,8 @@
-<nav class="nav nav-masthead justify-content-center float-md-end">
-  <div class="cart-area d-n" style="margin-left: 50px;">
-    <a [routerLink]="'cart-detail'">
-      <!-- now when u click div,i it will go to /cart-details-->
-      <div class="total mt-0" style="padding-left: 15px">
-        {{ totalPrice | currency : "THB" }} <span> {{ totalQuantity }} Psc.</span>
-      </div>
-      <i class="fa fa-shopping-cart" style="margin-top: 10px; color: rgb(107, 116, 124)" aria-hidden="true"></i>
-    </a>
-  </div>
-</nav>
+﻿<a class="cart-link" routerLink="/cart-detail" [attr.aria-label]="'View cart, ' + totalQuantity + ' items, ' + (totalPrice | currency:'THB')">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+    <path d="M3 3h2l2.4 12h11.2L21 7H6" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
+  </svg>
+  <span class="cart-price">{{ totalPrice | currency:'THB':'symbol-narrow' }}</span>
+  <span class="cart-count" aria-live="polite" aria-atomic="true">{{ totalQuantity }}</span>
+</a>

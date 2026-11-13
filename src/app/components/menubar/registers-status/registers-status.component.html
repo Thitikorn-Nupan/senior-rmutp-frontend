@@ -1,27 +1,19 @@
-<div class="cart-area d-n " style="margin-left: 50px;">
-  <!-- Default case -->
-  <div  class="btn-group" role="group" style="border-radius: 50px;">
-    <!-- if user didn't login -->
-    <a *ngIf="!isUserLogin" [routerLink]="'login'" class="btn btn-secondary">Login</a>
-    <a *ngIf="!isUserLogin" [routerLink]="'register'"  class="btn btn-secondary">Register</a>
-    <!-- basic condition -->
-    <ng-container *ngIf="user?.roles === 'ROLE_ADMIN' && isAdminLogin">
-      <div class="dropdown">
-        <button
-          (click)="toggle()"
-          class="btn btn-secondary dropdown-toggle rounded-end-0" type="button" >
-          Manage Products
-        </button>
-        <ul class="dropdown-menu  p-0 {{isToggle ? 'd-block' : ''}}">
-          <div class="bg-secondary">
-            <li><a  [routerLink]="'orders-history-admin'" class="btn btn-secondary w-100 rounded-0" (click)="toggle()">Sold out history</a></li>
-            <li><a  [routerLink]="'product-admin'" class="btn btn-secondary w-100 rounded-0" (click)="toggle()">Mange Perfumes</a></li>
-            <li><a  [routerLink]="'add-product'" class="btn btn-secondary w-100 rounded-0" (click)="toggle()">Add Perfume</a></li>
-          </div>
-        </ul>
-      </div>
-    </ng-container>
-    <a *ngIf="isUserLogin || isAdminLogin" [routerLink]="'orders-history'" class="btn btn-secondary">Orders history</a>
-    <button *ngIf="isUserLogin || isAdminLogin"  class="btn btn-secondary" (click)="logout()">Logout</button>
+﻿<nav class="account-links" aria-label="Your account">
+  <ng-container *ngIf="!isUserLogin">
+    <a routerLink="/login" routerLinkActive="current">Login</a>
+    <a routerLink="/register" class="register-link" routerLinkActive="current">Create account</a>
+  </ng-container>
+  <div *ngIf="user?.roles === 'ROLE_ADMIN' && isAdminLogin" class="management">
+    <button type="button" (click)="toggle()" [attr.aria-expanded]="isToggle" aria-controls="management-menu">Manage
+      products <span aria-hidden="true">⌄</span></button>
+    <ul *ngIf="isToggle" id="management-menu" class="management-menu" (keydown.escape)="isToggle = false">
+      <li><a routerLink="/orders-history-admin" (click)="toggle()">Sales history</a></li>
+      <li><a routerLink="/product-admin" (click)="toggle()">Manage perfumes</a></li>
+      <li><a routerLink="/add-product" (click)="toggle()">Add perfume</a></li>
+    </ul>
   </div>
-</div>
+  <ng-container *ngIf="isUserLogin || isAdminLogin">
+    <a routerLink="/orders-history" routerLinkActive="current">Orders history</a>
+    <button type="button" (click)="logout()">Logout</button>
+  </ng-container>
+</nav>

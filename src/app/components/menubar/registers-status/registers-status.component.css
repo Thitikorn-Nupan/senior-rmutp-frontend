@@ -1,58 +1,83 @@
-.cart-area.d-n{
-  display:block
+﻿:host {
+  display: block;
 }
 
-.cart-area i {
-  font-size:22px;
-  float:left;
-  margin-top:18px;
-  color:#fff;
-  margin-left:15px
+.account-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
 }
 
-.total{
-  background: rgba(2, 1, 1, 0.4);
-  line-height:42px;
-  color: #f1f1f1;
-  border-radius:10px;
-  float:left;
-  margin-top:15px;
+a, button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  color: #46584f;
+  background: transparent;
+  font: 500 13px Arial, sans-serif;
+  text-decoration: none;
 }
 
-.total span{
-  display:inline-block;
-  background:#fff;
-  padding:0 13px;
-  color: rgba(0, 0, 0, 0.63);
-  border-top-right-radius:10px;
-  border-bottom-right-radius:10px;
-  margin-left:20px;
-}
-.btn {
-  transition: 0.5s;
+a:hover, button:hover, .current {
+  background: #f2f5f1;
+  color: #243d35;
 }
 
-.btn:hover {opacity: 1}
+.register-link {
+  border: 1px solid #dce3dc;
+}
 
+a:focus-visible, button:focus-visible {
+  outline: 3px solid #ad7f45;
+  outline-offset: 2px;
+}
 
-@media only screen and (max-width: 400px) {
+.management {
+  position: relative;
+}
 
-  .btn-group {
-    margin: 10px;
+.management-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  min-width: 180px;
+  padding: 6px;
+  margin: 4px 0 0;
+  list-style: none;
+  background: white;
+  border: 1px solid #e0e6df;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px #243d351a;
+}
+
+.management-menu a {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .account-links {
+    gap: 2px;
+  }
+
+  .guest-links {
+    flex-wrap: nowrap;
+  }
+
+  a, button {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+
+  .guest-links a {
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 }
-
-@media only screen and (max-width: 415px) {
-
-  .btn-group {
-    margin: 10px;
-  }
-}
-
-@media only screen and (max-width: 430px) {
-
-  .btn-group {
-    margin: 10px;
-  }
-}
-

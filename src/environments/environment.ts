@@ -1,4 +1,5 @@
 export const environment = {
+  strapiUrl: 'http://localhost:1337',
   // baseUrl: "http://localhost:6060/api",
   // baseUrl: "http://www.thitikorn-nupan.com:6060/api",
   baseUrl: "http://www.thitikorn-nupan.com/service/ecomerce/api",

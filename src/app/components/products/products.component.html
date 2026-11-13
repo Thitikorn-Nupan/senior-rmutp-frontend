@@ -1,97 +1,97 @@
-<ng-container *ngIf="(productsByPageNumber === undefined) else productsExist">
-  <div  class="d-flex justify-content-center">
-    <div class="spinner-border mt-3"  role="status">
-      <span class="visually-hidden">Loading...</span>
+﻿<main class="catalog">
+  <div class="catalog-inner">
+    <header class="collection-heading">
+      <div>
+        <p class="eyebrow">THE FRAGRANCE COLLECTION</p>
+        <h1>Discover your next scent</h1>
+        <p class="collection-description">A little luxury, for every day.</p>
+      </div>
+      <span *ngIf="!errorMessage" class="results-count">{{ loading ? 'Updating collection…' : totalPageNumber + (totalPageNumber === 1 ? ' perfume' : ' perfumes') }}</span>
+    </header>
+
+    <form *ngIf="form" class="search-form" [formGroup]="form" (ngSubmit)="search()" role="search">
+      <label class="visually-hidden" for="perfume-search">Search perfumes by name</label>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+           aria-hidden="true">
+        <circle cx="10.5" cy="10.5" r="6.5"/>
+        <path d="m16 16 4 4" stroke-linecap="round"/>
+      </svg>
+      <input formControlName="name" id="perfume-search" type="search" placeholder="Search perfumes by name…"
+             autocomplete="off"/>
+      <button *ngIf="form.get('name')?.value" type="button" class="clear-search" (click)="clear()"
+              aria-label="Clear search">×
+      </button>
+      <button type="submit" class="search-button">Search</button>
+    </form>
+
+    <div *ngIf="loading" class="collection-loading" role="status" aria-live="polite" aria-atomic="true">
+      <span class="loading-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      Finding your fragrances…
     </div>
-  </div>
-</ng-container>
-<ng-template #productsExist>
-  <!-- Form Search -->
-  <ng-container *ngIf="form">
-    <div class="form-check form-switch p-8 py-2 mt-4" style="margin: 0 auto;justify-content: center;display: flex;">
-      <input (change)="onSwitchMode()" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" style="cursor: pointer">
-      <label class="form-check-label" for="flexSwitchCheckDefault" style="margin-left: 15px;">Standard Search</label>
-    </div>
-    <ng-container *ngIf="enableForm">
-      <form
-        [formGroup]="form"
-        (ngSubmit)="search()"
-        style="margin: 0 auto;width: 350px"
-        class="card" id="form1">
-        <div class="form-data">
-          <div class="input-group">
-            <!--<p class="w-100">Search By Perfume Name</p>-->
-            <input [formControlName]="'name'"
-                   [placeholder]="'Search by name'"
-                   type="text"
-                   id="name"
-                   class="form-control rounded-start-3"
-                   autocomplete="off"/>
-            <button type="submit" class="btn btn-secondary">Search</button>
-            <button type="reset" class="btn btn-secondary" (click)="clear()">Clear</button>
-          </div>
-        </div>
-      </form>
-    </ng-container>
-  </ng-container>
-  <!-- Card -->
-  <div class="row row-cols-1 row-cols-sm-3 g-3 " style="margin: 0 auto;width: 1245px">
-    <ng-container  *ngFor="let product of productsByPageNumber">
-      <div  class="col p-3 " >
-        <div class="card text-bg-secondary mb-3 shadow-sm "  >
-          <div class="product-box">
-            <img class="img-fluid p-3" [src]="product.imageUrl" style="width: 455px;height: 375px" alt="">
-          </div>
-          <div class="card-body">
-            <h1>{{ product.sku }}</h1>
-            <p class="card-text">{{ product.name }}</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <div class="btn-group">
-                <button type="button" (click)="seeDetail(product.pid)" class="btn btn-sm btn btn-light btn-custom">Detail</button>
-                <button type="button" (click)="addItem(product)" class="btn btn-sm btn btn-light btn-custom">Add to cart</button>
-              </div>
-              <small class="price">{{ product.price | currency : 'THB' }}</small>
-              <small class="badge bg-white text-secondary position-relative">Stock {{ product.unitInStock }} Pcs.
-                <span class="position-absolute top-0 start-100 translate-middle p-2 bg-success border border-light rounded-circle">
-                  <span class="visually-hidden">New alerts</span>
-                </span>
-              </small>
-            </div>
-          </div>
+    <div *ngIf="loading" class="product-grid skeleton-grid" aria-hidden="true">
+      <div *ngFor="let card of skeletonCards" class="product-card skeleton-card">
+        <div class="product-image skeleton-block"></div>
+        <div class="product-info">
+          <div class="skeleton-line skeleton-code skeleton-block"></div>
+          <div class="skeleton-line skeleton-title skeleton-block"></div>
+          <div class="skeleton-line skeleton-price skeleton-block"></div>
+          <div class="skeleton-line skeleton-stock skeleton-block"></div>
+          <div class="skeleton-actions skeleton-block"></div>
         </div>
       </div>
-    </ng-container>
-  </div>
-  <!-- Pagination -->
-  <div class="">
-    <ng-container *ngIf="productsByPageNumber">
-      <div class="mt-4 container ">
-        <nav aria-label="...">
-          <ul class="pagination justify-content-end mx-5 ">
-            <li class="page-item {{pageSelected === 1 ? 'disabled' : 'cursor-pointer'}}">
-              <button class="page-link btn-custom {{pageSelected !== 1 ? 'bg-secondary' : 'bg-secondary-subtle'}}"
-                      (click)="onUpdatePagePagination('P')"
-                      style="color: white">
-                      Previous
-              </button>
-            </li>
-            <ng-container *ngFor="let page of getTotalPageNumberAsArray();">
-              <li class="page-item {{page === pageSelected ? 'active' : ''}}" style="cursor: pointer">
-                <button class="page-link bg-secondary btn-custom" (click)="setPageNumberSelect(page)" style="color: white">{{page}}</button>
-              </li>
-            </ng-container>
-            <li class="page-item {{pageSelected == getTotalPageNumberAsArray().length ? 'disabled' : 'cursor-pointer'}}">
-              <button class="page-link btn-custom {{pageSelected !== getTotalPageNumberAsArray().length ? 'bg-secondary' : 'bg-secondary-subtle'}}"
-                      (click)="onUpdatePagePagination('N')"
-                      style="color: white;">
-                      Next
-              </button>
-            </li>
-          </ul>
-        </nav>
+    </div>
+    <div *ngIf="!loading && errorMessage" class="catalog-state" role="alert">
+      <h2>We couldn't load the collection</h2>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="search-button" (click)="clear()">Try again</button>
+    </div>
+    <div *ngIf="!loading && !errorMessage && productsByPageNumber?.length === 0" class="catalog-state">
+      <h2>No perfumes found</h2>
+      <p>Try another name or explore the collection again.</p>
+      <button type="button" class="search-button" (click)="clear()">Show collection</button>
+    </div>
+
+    <section *ngIf="!loading && !errorMessage && productsByPageNumber?.length" class="product-grid catalog-loaded"
+             aria-label="Perfumes">
+      <article *ngFor="let product of productsByPageNumber; let index = index" class="product-card" [style.--card-index]="index">
+        <a class="product-image" [routerLink]="['/product-detail', product.documentId || product.pid]"
+           [attr.aria-label]="'View ' + product.name">
+          <img [src]="product.imageUrl" [alt]="product.name" loading="lazy"/>
+        </a>
+        <div class="product-info">
+          <p class="product-sku">{{ product.sku }}</p>
+          <h2><a [routerLink]="['/product-detail', product.documentId || product.pid]">{{ product.name }}</a></h2>
+          <p class="product-price">{{ product.price | currency:'THB':'symbol-narrow' }}</p>
+          <p class="product-stock" [class.unavailable]="product.unitInStock <= 0">
+            <span
+              aria-hidden="true"></span>{{ product.unitInStock > 0 ? product.unitInStock + ' in stock' : 'Currently unavailable' }}
+          </p>
+          <div class="product-actions">
+            <a class="detail-button" [routerLink]="['/product-detail', product.documentId || product.pid]"
+               [attr.aria-label]="'View details for ' + product.name">Details</a>
+            <button type="button" class="add-button" (click)="addItem(product)" [disabled]="product.unitInStock <= 0"
+                    [attr.aria-label]="'Add ' + product.name + ' to cart'">Add to cart <span aria-hidden="true">+</span>
+            </button>
+          </div>
+        </div>
+      </article>
+    </section>
+    <p class="cart-feedback" role="status" aria-live="polite">{{ cartMessage }}</p>
+
+    <nav *ngIf="!loading && !errorMessage && getTotalPageNumberAsArray().length > 1" class="catalog-pagination"
+         aria-label="Product pages">
+      <button type="button" (click)="onUpdatePagePagination('P')" [disabled]="pageSelected === 1"
+              aria-label="Previous page">← <span>Previous</span></button>
+      <div class="page-numbers">
+        <button *ngFor="let page of getTotalPageNumberAsArray()" type="button" (click)="setPageNumberSelect(page)"
+                [class.selected]="page === pageSelected" [attr.aria-current]="page === pageSelected ? 'page' : null"
+                [attr.aria-label]="'Page ' + page">{{ page }}
+        </button>
       </div>
-    </ng-container>
+      <button type="button" (click)="onUpdatePagePagination('N')"
+              [disabled]="pageSelected === getTotalPageNumberAsArray().length" aria-label="Next page"><span>Next</span>
+        →
+      </button>
+    </nav>
   </div>
-
-</ng-template>
-
+</main>

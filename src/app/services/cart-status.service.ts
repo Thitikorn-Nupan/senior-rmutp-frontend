@@ -51,7 +51,9 @@ export class CartStatusService {
       // find item base on id
       for (const itemEachCart of this.cartItems) {
 
-        if (itemEachCart.pid === cartItem.pid) {
+        if (itemEachCart.variantDocumentId && cartItem.variantDocumentId
+          ? itemEachCart.variantDocumentId === cartItem.variantDocumentId
+          : itemEachCart.pid === cartItem.pid) {
           existingCartItem = itemEachCart
           break;
         }
@@ -62,6 +64,8 @@ export class CartStatusService {
     }
 
     if (alreadyExistInCart) {
+      existingCartItem!.variantDocumentId ??= cartItem.variantDocumentId;
+      existingCartItem!.documentId ??= cartItem.documentId;
       // increment quantity
       existingCartItem!.quantity ++
     } else  {
@@ -85,7 +89,7 @@ export class CartStatusService {
     // first match id (get index of item)
     const itemIndex = this.cartItems.findIndex(currentCartItem => currentCartItem.pid === cartItem.pid)
     // if found
-    if (itemIndex >= -1) {
+    if (itemIndex >= 0) {
       this.cartItems.splice(itemIndex, 1);
       // we have to delete one cart items from all cart items then *** compute all way
       this.computeCart()

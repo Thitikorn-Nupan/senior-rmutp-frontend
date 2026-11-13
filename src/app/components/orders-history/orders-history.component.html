@@ -1,113 +1,52 @@
-<ng-container *ngIf="(orderHistories === undefined) else orderHistoryExist">
-  <div class="d-flex justify-content-center">
-    <div class="spinner-border mt-3" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
-</ng-container>
-
-<ng-template #orderHistoryExist>
-  <div class="container mt-1">
-    <div class="section-content section-content-p30">
-      <div class="container-fluid" style="margin: 0 auto;width: max-content">
-        <h3 class="mb-4">The Orders History</h3>
-
-        <table class="table table-bordered overflow-auto" style="height: 600px;max-height: 600px;margin: 0 auto;max-width: fit-content;width: 800px; display: block">
-          <tbody class="text-center">
-
-          <tr class="table table-secondary">
-            <th >Order Tracking Number</th>
-            <th>Total Price</th>
-            <th>Total Quantity</th>
-            <th>Date Created</th>
-            <th>Action</th>
-          </tr>
-          <!-- Loop for display cart items-->
-          <tr *ngFor="let order of orderHistories">
-            <td>
-              {{ order.orderTrackingNumber }}
-            </td>
-            <td>
-              {{ order.totalPrice | currency : 'THB' }}
-            </td>
-            <td>
-              {{ order.totalQuantity }}
-            </td>
-            <td>
-              <!-- common date pipe -->
-              {{ order.dateCreated | date : 'shortDate' }}
-            </td>
-            <td>
-              <button class="btn btn-secondary edit" title="see detail" (click)="seeDetail(order.orderTrackingNumber)">
-                <i class="fa-solid fa-clipboard-list"></i>
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-
-
-        <ng-container *ngIf="orderHistoriesDetails">
-          <div class="modal d-block bg-opacity-50 bg-secondary" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-            <div class="modal-dialog modal-fullscreen">
-              <div class="modal-content" style="width: 810px;height: fit-content;margin: 400px auto 0;">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalToggleLabel">Bill Id {{ trackingNumber }}</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="onCloseOrderHistory()"></button>
-                </div>
-                <div class="modal-body">
-                  <div class="container w-100 mt-1">
-                    <div class="section-content section-content-p30">
-                      <div class="container-fluid" style="margin: 0 auto;width: 780px;">
-                        <!--<h3 class="mb-4">Bill Of {{ trackingNumber.substring(0, 60) }}...</h3>-->
-                        <table class="table table-bordered overflow-auto" style="max-height: 60vh;width: 730px;display: inline-table">
-                          <tbody class="text-center">
-                          <tr class="table table-secondary">
-                            <th>Sku</th>
-                            <th>Name</th>
-                            <th>Image Perfume</th>
-                            <th>Quantity</th>
-                            <th>Price / Psc</th>
-                          </tr>
-                          <tr *ngFor="let order of orderHistoriesDetails;">
-                            <td>
-                              {{ order.sku }}
-                            </td>
-                            <td>
-                              {{ order.name }}
-                            </td>
-                            <td>
-                              <img [src]="order.imageUrl" style="width: 60px; height: 60px;" class="">
-                            </td>
-                            <td>
-                              {{ order.quantity }}
-                            </td>
-                            <td>
-                              {{ order.price | currency : "THB" }}
-                            </td>
-                          </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+﻿<main class="history">
+  <header class="history-heading">
+    <div><p class="eyebrow">บัญชีของฉัน</p><h1>ประวัติคำสั่งซื้อ</h1><p>ติดตามสถานะ ดูรายละเอียด และตรวจสอบการชำระเงินของคุณ</p></div>
+    <a routerLink="/products" class="button secondary">เลือกซื้อสินค้า</a>
+  </header>
+  <form class="filters" (ngSubmit)="load()">
+    <div><label for="order-search">ค้นหาเลขคำสั่งซื้อ</label><input id="order-search" name="search" [(ngModel)]="search" maxlength="64" placeholder="เช่น PS-…" [disabled]="uploading"></div>
+    <div><label for="order-status">สถานะ</label><select id="order-status" name="status" [(ngModel)]="status" [disabled]="uploading">
+      <option value="">ทั้งหมด</option><option value="pending_payment">รอชำระเงิน</option><option value="pending_review">รอตรวจสอบสลิป</option>
+      <option value="confirmed">ยืนยันคำสั่งซื้อ</option><option value="processing">กำลังเตรียมสินค้า</option><option value="shipped">จัดส่งแล้ว</option>
+      <option value="completed">สำเร็จ</option><option value="cancelled">ยกเลิก</option><option value="expired">หมดเวลาชำระเงิน</option><option value="legacy_review">รอตรวจสอบข้อมูล</option>
+    </select></div>
+    <button class="button" type="submit" [disabled]="loading || uploading">ค้นหา</button>
+    <button class="button secondary" type="button" (click)="reset()" [disabled]="loading || uploading">ล้างตัวกรอง</button>
+  </form>
+  <section [attr.aria-busy]="loading" aria-label="รายการคำสั่งซื้อ">
+    <div *ngIf="loading" class="empty" role="status"><span class="spinner-border spinner-border-sm" aria-hidden="true"></span> กำลังโหลดประวัติคำสั่งซื้อ…</div>
+    <div *ngIf="error" class="empty" role="alert"><p>{{ error }}</p><button class="button" (click)="load(page)">ลองอีกครั้ง</button> <a routerLink="/login" class="button secondary">เข้าสู่ระบบ</a></div>
+    <ng-container *ngIf="!loading && !error">
+      <p class="result-count" aria-live="polite">พบ {{ total | number }} คำสั่งซื้อ · เรียงจากล่าสุด</p>
+      <div *ngIf="!orders.length" class="empty"><h2>{{ search || status ? 'ไม่พบคำสั่งซื้อที่ตรงกับตัวกรอง' : 'ยังไม่มีคำสั่งซื้อ' }}</h2><p>{{ search || status ? 'ลองค้นหาด้วยเลขคำสั่งซื้ออื่น หรือแสดงสถานะทั้งหมด' : 'เมื่อสั่งซื้อสินค้าแล้ว คุณสามารถติดตามสถานะได้ที่นี่' }}</p><button *ngIf="search || status" class="button secondary" (click)="reset()">แสดงทั้งหมด</button><a *ngIf="!search && !status" routerLink="/products" class="button">เลือกซื้อสินค้า</a></div>
+      <article class="order-card" *ngFor="let order of orders; trackBy: trackOrder">
+        <header class="order-header"><div><p class="muted">เลขคำสั่งซื้อ</p><h2>{{ order.orderNumber }}</h2><time>{{ order.placedAt | date:'dd/MM/yyyy HH:mm':'+0700' }} น.</time></div>
+          <div class="badges"><span class="badge-status" [class.ended]="order.orderStatus === 'expired' || order.orderStatus === 'cancelled'">{{ orderLabel(order.orderStatus, order.paymentStatus) }}</span><span class="badge-status payment" [class.paid]="order.paymentStatus === 'paid'">{{ paymentLabel(order.paymentStatus) }}</span></div>
+        </header>
+        <div class="order-summary"><img [src]="image(firstItem(order)?.image)" alt="" (error)="imageError($event)"><div class="product-preview"><strong>{{ firstItem(order)?.name || 'คำสั่งซื้อสินค้า' }}</strong><p>{{ order.totalQuantity | number }} ชิ้น <span *ngIf="order.items.length > 1">· {{ order.items.length }} รายการ</span></p></div><div class="order-total"><span>ยอดรวม</span><strong>{{ order.grandTotal | currency:order.currency:'symbol-narrow' }}</strong></div></div>
+        <div class="order-actions"><button class="button secondary" [disabled]="uploading" (click)="openDetail(order)" [attr.aria-expanded]="selectedId === order.documentId" [attr.aria-controls]="'detail-' + order.documentId">{{ selectedId === order.documentId ? 'ปิดรายละเอียด' : 'ดูรายละเอียด' }}</button></div>
+        <section *ngIf="selectedId === order.documentId" class="order-detail" [id]="'detail-' + order.documentId" [attr.aria-busy]="detailLoading" aria-label="รายละเอียดคำสั่งซื้อ">
+          <p *ngIf="detailLoading" role="status">กำลังโหลดรายละเอียด…</p>
+          <div *ngIf="detailError" role="alert"><p>{{ detailError }}</p><button class="button secondary" (click)="fetchDetail()">ลองอีกครั้ง</button></div>
+          <ng-container *ngIf="detail && !detailLoading && !detailError">
+            <h3>สินค้าที่สั่งซื้อ</h3>
+            <div class="item" *ngFor="let item of detail.items"><img [src]="image(item.image)" alt="" (error)="imageError($event)"><div><strong>{{ item.name }}</strong><p class="muted">SKU: {{ item.sku }}</p><p>{{ item.quantity }} × {{ item.unitPrice | currency:detail.currency:'symbol-narrow' }}</p></div><strong>{{ item.lineTotal | currency:detail.currency:'symbol-narrow' }}</strong></div>
+            <div class="detail-grid"><section><h3>ที่อยู่จัดส่ง</h3><ng-container *ngIf="detail.shippingAddress as address"><p>{{ address.recipientName }} · {{ address.phone }}</p><p>{{ address.addressLine1 }} {{ address.subdistrict }} {{ address.district }} {{ address.province }} {{ address.postalCode }}</p></ng-container><p *ngIf="!detail.shippingAddress">ไม่มีข้อมูลที่อยู่จัดส่ง</p><p *ngIf="detail.shippingTrackingNumber"><strong>เลขพัสดุ:</strong> {{ detail.shippingTrackingNumber }}<br>{{ detail.carrier }}</p><p *ngIf="detail.shippedAt">จัดส่งเมื่อ {{ detail.shippedAt | date:'dd/MM/yyyy HH:mm':'+0700' }} น.</p></section>
+              <dl class="totals"><div><dt>ยอดสินค้า</dt><dd>{{ detail.subtotal | currency:detail.currency:'symbol-narrow' }}</dd></div><div><dt>ค่าจัดส่ง</dt><dd>{{ detail.shippingTotal | currency:detail.currency:'symbol-narrow' }}</dd></div><div *ngIf="+(detail.discountTotal || 0) > 0"><dt>ส่วนลด</dt><dd>−{{ detail.discountTotal | currency:detail.currency:'symbol-narrow' }}</dd></div><div *ngIf="+(detail.taxTotal || 0) > 0"><dt>ภาษี</dt><dd>{{ detail.taxTotal | currency:detail.currency:'symbol-narrow' }}</dd></div><div class="grand-total"><dt>ยอดสุทธิ</dt><dd>{{ detail.grandTotal | currency:detail.currency:'symbol-narrow' }}</dd></div></dl>
             </div>
-          </div>
-        </ng-container>
-      </div>
-    </div>
-  </div>
-</ng-template>
+            <section class="payment-info"><h3>การชำระเงิน</h3><p>{{ paymentLabel(detail.paymentStatus) }}<span *ngIf="detail.payment?.method === 'bank_transfer'"> · โอนเงินผ่านธนาคาร</span></p><p *ngIf="detail.payment?.reference" class="muted">เลขอ้างอิงการชำระเงิน: {{ detail.payment.reference }}</p>
+              <p *ngIf="detail.paymentStatus === 'pending_review'">ได้รับหลักฐานแล้ว เจ้าหน้าที่กำลังตรวจสอบการชำระเงิน</p>
+              <p *ngIf="detail.payment?.submittedAt">ส่งหลักฐานเมื่อ {{ detail.payment.submittedAt | date:'dd/MM/yyyy HH:mm':'+0700' }} น.</p>
+              <p *ngIf="detail.orderStatus === 'expired'">คำสั่งซื้อนี้หมดเวลาชำระเงินแล้ว กรุณาสั่งซื้อใหม่</p>
+              <form *ngIf="canPay(detail)" (ngSubmit)="submitReceipt()" class="receipt-form"><p>หากโอนเงินแล้ว สามารถแนบสลิปได้ที่นี่ ภายใน {{ detail.expiresAt | date:'dd/MM/yyyy HH:mm':'+0700' }} น.</p><label [for]="'receipt-' + order.documentId">หลักฐานการโอนเงิน</label><input type="file" [id]="'receipt-' + order.documentId" accept="image/jpeg,image/png,image/webp" (change)="chooseReceipt($event)" [disabled]="uploading" [attr.aria-describedby]="'receipt-help-' + order.documentId"><small [id]="'receipt-help-' + order.documentId">JPG, PNG หรือ WebP ขนาดไม่เกิน 5 MB</small><button type="submit" class="button" [disabled]="!receipt || uploading">{{ uploading ? 'กำลังส่งหลักฐาน…' : 'ส่งหลักฐานการโอนเงิน' }}</button></form>
+              <p *ngIf="receiptError" class="error-text" role="alert">{{ receiptError }}</p><p *ngIf="receiptSuccess" class="success-text" role="status">{{ receiptSuccess }}</p>
+            </section>
+          </ng-container>
+        </section>
+      </article>
+      <nav *ngIf="pageCount > 1" class="pagination-bar" aria-label="หน้าประวัติคำสั่งซื้อ"><button class="button secondary" (click)="load(page - 1)" [disabled]="page <= 1 || uploading">ก่อนหน้า</button><span>หน้า {{ page }} จาก {{ pageCount }}</span><button class="button secondary" (click)="load(page + 1)" [disabled]="page >= pageCount || uploading">ถัดไป</button></nav>
+    </ng-container>
+  </section>
+</main>
 
 
-
-<pop-up
-  [visible]="visible"
-  [headerTitle]="headerTitle"
-  [iconMode]="iconMode"
-  [body]="body"
-  (closeEvent)="setCloseEvent()"
-  (okEvent)="setOkEvent()">
-</pop-up>

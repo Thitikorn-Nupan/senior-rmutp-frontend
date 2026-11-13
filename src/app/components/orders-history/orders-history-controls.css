@@ -1,0 +1,8 @@
+﻿.button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 16px;border:1px solid #206650;border-radius:8px;background:#206650;color:white;text-decoration:none;font-size:14px;cursor:pointer;white-space:nowrap}
+.secondary{background:white;color:#29443c;border-color:#cbd6d2}.button:hover{filter:brightness(.94)}.button:disabled{opacity:.5;cursor:default}
+input:focus-visible,select:focus-visible,.button:focus-visible{outline:3px solid #69a895;outline-offset:3px}
+.filters{display:flex;align-items:end;gap:12px;padding:20px;background:white;border:1px solid #e1e7ed;border-radius:12px;margin-bottom:24px}.filters>div:first-child{flex:1}.filters label{display:block;font-size:13px;margin-bottom:8px}
+input,select{width:100%;min-height:42px;padding:9px 12px;background:white;border:1px solid #cbd4de;border-radius:8px;color:#213347}
+.result-count{margin-bottom:16px}.empty{padding:48px 20px;text-align:center;background:white;border-radius:12px}.empty h2{font-size:20px}.empty p{margin:12px 0 20px}
+.pagination-bar{justify-content:center;margin-top:28px;font-size:14px}
+:host{font-family:Arial,sans-serif}:host *{font-family:inherit;box-sizing:border-box}

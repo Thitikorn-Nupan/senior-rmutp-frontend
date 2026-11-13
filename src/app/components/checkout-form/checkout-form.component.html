@@ -1,308 +1,220 @@
-<ng-container
-  *ngIf="form">
-  <div class="container mt-4" style="margin-top: 150px; display: inline">
-    <div class="container-fluid " style="  margin-top: 50px;">
-      <form [formGroup]="form"
-            (ngSubmit)="checkout()"
-            style=";max-width: 750px;margin: 0 auto;"
-            enctype="multipart/form-data">
+<main class="checkout-page">
+  <div class="checkout-container">
+    <a class="back-link" routerLink="/cart-detail"><span aria-hidden="true">←</span> Back to your cart</a>
+    <header class="checkout-heading">
+      <p class="eyebrow">THE FINAL DETAILS</p>
+      <h1>Make it yours</h1>
+      <p>Tell us where to send your fragrances and choose how you'd like to pay.</p>
+    </header>
 
-        <!-- Customer Form -->
-        <ng-container *ngIf="form?.get('customer')">
-          <div [formGroupName]="'customer'"
-               class="form-area ">
-            <h3>Customer</h3>
-            <div class="row">
-              <!-- ** Firstname -->
-              <div class="row">
-                <div class="col-md-2">
-                  <label>
-                    <label *ngIf="form.get('customer')?.get('firstname')?.hasError('required') && form.get('customer')?.get('firstname')?.touched" class="text-danger">
-                      *
-                    </label>
-                    Firstname
-                  </label>
-                </div>
-                <div class="col-md-9">
-                  <div class="input-space">
-                    <input [formControlName]="'firstname'"
-                           class="form-control rounded-5"
-                           type="text"
-                            placeholder="firstname...">
-                  </div>
-                </div>
-              </div>
-              <!-- ** Lastname -->
-              <div class="row">
-                <div class="col-md-2">
-                  <label>
-                    <label *ngIf="form.get('customer')?.get('lastname')?.hasError('required') && form.get('customer')?.get('lastname')?.touched" class="text-danger">
-                      *
-                    </label>
-                    Lastname
-                  </label>
-                </div>
-                <div class="col-md-9">
-                  <div class="input-space">
-                    <input [formControlName]="'lastname'"
-                           class="form-control rounded-5"
-                           type="text"
-                           placeholder="lastname...">
-                  </div>
-                </div>
-              </div>
-              <!-- ** Email -->
-              <div class="row">
-                <div class="col-md-2">
-                  <label>
-                    <label *ngIf="form.get('customer')?.get('email')?.hasError('required') && form.get('customer')?.get('email')?.touched" class="text-danger">
-                      *
-                    </label>
-                    Email
-                  </label>
-                </div>
-                <div class="col-md-9">
-                  <div class="input-space">
-                    <input [formControlName]="'email'"
-                           placeholder="email..."
-                           class="form-control rounded-5"
-                           style="border-width: 1px;border-style: solid;border-color: #c6c6c6;"
-                           type="email">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-
-
-        <!-- Shipping Address Form -->
-        <ng-container *ngIf="form?.get('shippingAddress')">
-          <div [formGroupName]="'shippingAddress'"
-               class="form-area">
-            <h3>Shipping Address</h3>
-            <!-- Street -->
-            <div class="row">
-              <div class="col-md-2">
-                <label>
-                  <label *ngIf="form.get('shippingAddress')?.get('street')?.hasError('required') && form.get('shippingAddress')?.get('street')?.touched" class="text-danger">
-                    *
-                  </label>
-                  Street
-                </label>
-              </div>
-              <div class="col-md-9">
-                <div class="input-space">
-                  <input [formControlName]="'street'" type="text"  placeholder="street...">
-                </div>
-              </div>
-            </div>
-            <!-- Province -->
-            <div class="row">
-              <div class="col-md-2">
-                <label>Province</label>
-              </div>
-              <div class="col-md-9">
-                <div class="input-space">
-                  <!-- For change event -->
-                  <select [formControlName]="'province'" type="text" (change)="selectProvinceOnShippingAddress($event)" style="cursor: pointer">
-                    <option *ngFor="let province of provinces;let i = index" [value]="province.name">
-                      {{ province.name }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <!-- District -->
-            <div class="row">
-              <div class="col-md-2">
-                <label>District</label>
-              </div>
-              <div class="col-md-9">
-                <div class="input-space">
-                  <select [formControlName]="'district'" type="text" style="cursor: pointer">
-                    <option *ngFor="let district of shippingAddressDistrict" [value]="district.name" >
-                      {{ district.name }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <!-- Zipcode -->
-            <div class="row">
-              <div class="col-md-2">
-                <label>
-                  <label *ngIf="form.get('shippingAddress')?.get('zipcode')?.hasError('required') && form.get('shippingAddress')?.get('zipcode')?.touched" class="text-danger">
-                    *
-                  </label>
-                  Zipcode
-                </label>
-              </div>
-              <div class="col-md-9">
-                <div class="input-space">
-                  <input [formControlName]="'zipcode'"  placeholder="zipcode..." style="
-                      width: 25%;
-                      height: 40px;
-                      border-radius: 30px;
-                      outline: 0;
-                      padding: 10px;
-                      border: 1px solid #ccc;" type="text" maxlength="5" oninput="this.value=this.value.replace(/[^0-9]/g,'');"> <!-- maxlength did not work on type number  -->
-                </div>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-
-
-        <!-- check box for copy shipping to billing -->
-        <div class="input-space">
-          <label class="au-checkbox">
-            <input type="checkbox" (change)="copyShippingAddressToBillingAddress($event)" [checked]="isCopy">
-            <span class="au-checkmark"></span>
-            Billing Address same Shipping Address
-          </label>
+    <div *ngIf="errorMessage" class="checkout-error" role="alert"><p>{{ errorMessage }}</p><button *ngIf="!order" type="button" (click)="refreshQuote()" [disabled]="busy || restoring || quoteLoading">Refresh total</button><button *ngIf="canRecoverOrder" type="button" (click)="refreshOrder()" [disabled]="busy || restoring">Check existing order</button><a routerLink="/login" [queryParams]="{returnUrl: '/checkout'}">Login again</a></div>
+ <section *ngIf="!restoring && !order && !totalQuantity && !quoteLoading" class="form-section transfer-state"><h2>Your cart is empty</h2><a routerLink="/products">Explore the collection &rarr;</a></section><form *ngIf="form && (restoring || order || totalQuantity)" [formGroup]="form" (ngSubmit)="form.markAllAsTouched(); checkout()" class="checkout-layout"
+          enctype="multipart/form-data">
+      <div class="checkout-sections" [hidden]="!!order || restoring">
+        <p class="required-note">Fields marked <span aria-hidden="true">*</span> are required.</p>
+        <p *ngIf="addressLoading.provinces" class="required-note" role="status">Loading provinces…</p>
+        <div *ngIf="addressErrors.provinces" class="address-notice" role="alert">
+          {{ addressErrors.provinces }}
+          <button type="button" (click)="retryAddressOptions()">Retry</button>
         </div>
-
-
-        <!-- Billing Address Form -->
-        <ng-container *ngIf="form?.get('billingAddress')">
-          <div [formGroupName]="'billingAddress'"
-               class="form-area">
-            <h3>Billing Address</h3>
-            <!-- Street -->
-            <div class="row">
-              <div class="col-md-2">
-                <label>
-                  <label *ngIf="form.get('billingAddress')?.get('street')?.hasError('required') && form.get('billingAddress')?.get('street')?.touched" class="text-danger">
-                    *
-                  </label>
-                  Street
-                </label>
-              </div>
-              <div class="col-md-9">
-                <div class="input-space">
-                  <input [formControlName]="'street'" type="text"  placeholder="street...">
-                </div>
-              </div>
+        <section class="form-section" formGroupName="customer" aria-labelledby="customer-heading">
+          <header class="section-heading"><span class="section-number" aria-hidden="true">01</span>
+            <div><h2 id="customer-heading">Your details</h2>
+              <p>Who will be receiving this order?</p></div>
+          </header>
+          <div class="field-grid">
+            <div class="field">
+              <label for="customer-firstname">First name <span aria-hidden="true">*</span></label>
+              <input id="customer-firstname" formControlName="firstname" type="text" autocomplete="given-name"
+                     placeholder="First name" required
+                     [attr.aria-invalid]="form.get('customer.firstname')?.invalid && form.get('customer.firstname')?.touched ? 'true' : null"
+                     [attr.aria-describedby]="form.get('customer.firstname')?.invalid && form.get('customer.firstname')?.touched ? 'customer-firstname-error' : null"/>
+              <p *ngIf="form.get('customer.firstname')?.invalid && form.get('customer.firstname')?.touched"
+                 id="customer-firstname-error" class="field-error">Please enter your first name.</p>
             </div>
-            <!-- Province -->
-            <div class="row">
-              <div class="col-md-2">
-                <label>Province</label>
-              </div>
-              <div class="col-md-9">
-                <div class="input-space">
-                  <!-- For change event -->
-                  <select [formControlName]="'province'" type="text"  (change)="selectProvinceOnBillingAddress($event)" style="cursor: pointer">
-                    <option *ngFor="let province of provinces;let i = index" [value]="province.name">
-                      {{ province.name }}
-                    </option>
-                  </select>
-                </div>
-              </div>
+            <div class="field">
+              <label for="customer-lastname">Last name <span aria-hidden="true">*</span></label>
+              <input id="customer-lastname" formControlName="lastname" type="text" autocomplete="family-name"
+                     placeholder="Last name" required
+                     [attr.aria-invalid]="form.get('customer.lastname')?.invalid && form.get('customer.lastname')?.touched ? 'true' : null"
+                     [attr.aria-describedby]="form.get('customer.lastname')?.invalid && form.get('customer.lastname')?.touched ? 'customer-lastname-error' : null"/>
+              <p *ngIf="form.get('customer.lastname')?.invalid && form.get('customer.lastname')?.touched"
+                 id="customer-lastname-error" class="field-error">Please enter your last name.</p>
             </div>
-            <!-- District -->
-            <div class="row">
-              <div class="col-md-2">
-                <label>District</label>
-              </div>
-              <div class="col-md-9">
-                <div class="input-space">
-                  <select [formControlName]="'district'" type="text" style="cursor: pointer">
-                    <option *ngFor="let district of billingAddressDistrict" [value]="district.name">
-                      {{ district.name }}
-                    </option>
-                  </select>
-                </div>
-              </div>
+            <div class="field full-width">
+              <label for="customer-email">Email address <span aria-hidden="true">*</span></label>
+              <input id="customer-email" formControlName="email" type="email" autocomplete="email" autocapitalize="none"
+                     spellcheck="false" placeholder="you@example.com" required
+                     [attr.aria-invalid]="form.get('customer.email')?.invalid && form.get('customer.email')?.touched ? 'true' : null"
+                     [attr.aria-describedby]="form.get('customer.email')?.invalid && form.get('customer.email')?.touched ? 'customer-email-error' : null"/>
+              <p *ngIf="form.get('customer.email')?.invalid && form.get('customer.email')?.touched"
+                 id="customer-email-error" class="field-error">Please enter your email address.</p>
             </div>
-            <!-- Zipcode -->
-            <div class="row">
-              <div class="col-md-2">
-                <label>
-                  <label *ngIf="form.get('billingAddress')?.get('zipcode')?.hasError('required') && form.get('billingAddress')?.get('zipcode')?.touched" class="text-danger">
-                    *
-                  </label>
-                  Zipcode
-                </label>
-              </div>
-              <div class="col-md-9">
-                <div class="input-space">
-                  <input [formControlName]="'zipcode'"  placeholder="zipcode..."
-                         style="
-                                width: 25%;
-                                height: 40px;
-                                border-radius: 30px;
-                                outline: 0;
-                                padding: 10px;
-                                border: 1px solid #ccc;" type="text" maxlength="5" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
-                </div>
-              </div>
+          <div class="field"><label for="customer-phone">Phone number <span aria-hidden="true">*</span></label>
+ <input id="customer-phone" formControlName="phone" type="tel" autocomplete="tel" placeholder="e.g. 0812345678" required maxlength="30"
+ [attr.aria-invalid]="form.get('customer.phone')?.invalid && form.get('customer.phone')?.touched ? 'true' : null" [attr.aria-describedby]="form.get('customer.phone')?.invalid && form.get('customer.phone')?.touched ? 'customer-phone-error' : null" />
+ <p *ngIf="form.get('customer.phone')?.invalid && form.get('customer.phone')?.touched" id="customer-phone-error" class="field-error">Please enter a valid phone number.</p></div></div>
+        </section>
+
+        <section class="form-section" formGroupName="shippingAddress" aria-labelledby="shipping-heading">
+          <header class="section-heading"><span class="section-number" aria-hidden="true">02</span>
+            <div><h2 id="shipping-heading">Shipping address</h2>
+              <p>Where should your order be delivered?</p></div>
+          </header>
+
+          <div class="field-grid">
+            <div class="field full-width">
+              <label for="shipping-street">Street address <span aria-hidden="true">*</span></label>
+              <input id="shipping-street" formControlName="street" type="text" autocomplete="shipping street-address"
+                     placeholder="House number, building and street" required
+                     [attr.aria-invalid]="form.get('shippingAddress.street')?.invalid && form.get('shippingAddress.street')?.touched ? 'true' : null"
+                     [attr.aria-describedby]="form.get('shippingAddress.street')?.invalid && form.get('shippingAddress.street')?.touched ? 'shipping-street-error' : null"/>
+              <p *ngIf="form.get('shippingAddress.street')?.invalid && form.get('shippingAddress.street')?.touched"
+                 id="shipping-street-error" class="field-error">Please enter the street address.</p>
             </div>
-          </div>
-        </ng-container>
-
-
-        <div class="input-space">
-          <label class="au-checkbox">
-            <input type="checkbox" (change)="enablePromptPayQRCode()">
-            <span class="au-checkmark"></span>
-            Prompt Pay QRCode
-          </label>
-        </div>
-
-
-        <!-- Stripe Api Form -->
-        <ng-container *ngIf="!checkPromptPayQRCode">
-          <div class="form-area">
-            <h3 class="mb-3">Credit or Debit Cart</h3>
-            <div id="card-element" style="font-size: 30px">
-              <!-- stripe element will be inserted here -->
+            <div class="field">
+              <label for="shipping-province">Province <span aria-hidden="true">*</span></label>
+              <ecm-checkout-select inputId="shipping-province" formControlName="province"
+                      [options]="provinces" placeholder="Select province"
+                      [unavailable]="addressLoading.provinces || !provinces.length" [invalid]="!!(form.get('shippingAddress.province')?.invalid && form.get('shippingAddress.province')?.touched)"
+                      [describedBy]="form.get('shippingAddress.province')?.invalid && form.get('shippingAddress.province')?.touched ? 'shipping-province-error' : null" (selectionChange)="selectProvinceOnShippingAddress($event)"></ecm-checkout-select>
+              <p *ngIf="form.get('shippingAddress.province')?.invalid && form.get('shippingAddress.province')?.touched"
+                 id="shipping-province-error" class="field-error">Please select a province.</p>
             </div>
-            <div id="card-errors" class="text-danger mt-4"></div>
-          </div>
-        </ng-container>
-
-
-        <ng-container *ngIf="checkPromptPayQRCode">
-          <div class="form-area">
-            <h3 class="mb-3">Scan and upload your receipt</h3>
-            <div style="font-size: 30px;margin: 0 auto;max-width: max-content;">
-              <img [src]="'assets/images/ppqr.jpg'" width="450px">
-              <!-- stripe element will be inserted here -->
-              <div class="mb-3 mt-3">
-                <input class="form-control" type="file" name="file" (change)="uploadFileToAttr($event)" #fileInput>
+            <div class="field">
+              <label for="shipping-district">District <span aria-hidden="true">*</span></label>
+              <p *ngIf="addressLoading.shippingAddress" class="required-note" role="status">Loading districts…</p>
+              <div *ngIf="addressErrors.shippingAddress" class="address-notice"
+                   role="alert">{{ addressErrors.shippingAddress }}
+                <button type="button" (click)="loadDistrictOptions('shippingAddress')">Retry</button>
               </div>
+              <ecm-checkout-select inputId="shipping-district" formControlName="district"
+                      [options]="shippingAddressDistrict" placeholder="Select district"
+                      [unavailable]="addressLoading.shippingAddress || !shippingAddressDistrict.length" [invalid]="!!(form.get('shippingAddress.district')?.invalid && form.get('shippingAddress.district')?.touched)"
+                      [describedBy]="form.get('shippingAddress.district')?.invalid && form.get('shippingAddress.district')?.touched ? 'shipping-district-error' : null" ></ecm-checkout-select>
+              <p *ngIf="form.get('shippingAddress.district')?.invalid && form.get('shippingAddress.district')?.touched"
+                 id="shipping-district-error" class="field-error">Please select a district.</p>
+            </div>
+            <div class="field"><label for="shipping-subdistrict">Subdistrict / Khwaeng <span aria-hidden="true">*</span></label>
+ <input id="shipping-subdistrict" formControlName="subdistrict" type="text" autocomplete="shipping address-level3" placeholder="Enter subdistrict or khwaeng" required maxlength="100"
+ [attr.aria-invalid]="form.get('shippingAddress.subdistrict')?.invalid && form.get('shippingAddress.subdistrict')?.touched ? 'true' : null" [attr.aria-describedby]="form.get('shippingAddress.subdistrict')?.invalid && form.get('shippingAddress.subdistrict')?.touched ? 'shipping-subdistrict-error' : null" />
+ <p *ngIf="form.get('shippingAddress.subdistrict')?.invalid && form.get('shippingAddress.subdistrict')?.touched" id="shipping-subdistrict-error" class="field-error">Please enter a valid subdistrict / khwaeng.</p></div><div class="field">
+              <label for="shipping-zipcode">Postal code <span aria-hidden="true">*</span></label>
+              <input id="shipping-zipcode" formControlName="zipcode" type="text" inputmode="numeric" maxlength="5"
+                     autocomplete="shipping postal-code" placeholder="e.g. 10200"
+                     oninput="this.value=this.value.replace(/[^0-9]/g,'');" required
+                     [attr.aria-invalid]="form.get('shippingAddress.zipcode')?.invalid && form.get('shippingAddress.zipcode')?.touched ? 'true' : null"
+                     [attr.aria-describedby]="form.get('shippingAddress.zipcode')?.invalid && form.get('shippingAddress.zipcode')?.touched ? 'shipping-zipcode-error' : null"/>
+              <p *ngIf="form.get('shippingAddress.zipcode')?.invalid && form.get('shippingAddress.zipcode')?.touched"
+                 id="shipping-zipcode-error" class="field-error">Please enter the postal code.</p>
             </div>
           </div>
-        </ng-container>
-
-
-        <ng-container *ngIf="totalQuantity > 0">
-          <div class="form-area mt-5">
-            <h3>Review Your Order</h3>
-            <p>Total quantity : {{ totalQuantity }} Psc.</p>
-            <p>Shipping : Free</p>
-            <p>Total Price :  {{ totalPrice | currency : 'THB' }}</p>
+        </section>
+        <section class="form-section" formGroupName="billingAddress" aria-labelledby="billing-heading">
+          <header class="section-heading"><span class="section-number" aria-hidden="true">03</span>
+            <div><h2 id="billing-heading">Billing address</h2>
+              <p>Review the address for your payment details.</p></div>
+          </header>
+          <label class="copy-address"><input type="checkbox" (change)="copyShippingAddressToBillingAddress($event)"
+                                             [checked]="isCopy"
+                                             [disabled]="addressLoading.provinces || addressLoading.shippingAddress || !shippingAddressDistrict.length"/><span>Copy current shipping address<small>You can review or edit the copied details below.</small></span></label>
+          <div class="field-grid">
+            <div class="field full-width">
+              <label for="billing-street">Street address <span aria-hidden="true">*</span></label>
+              <input id="billing-street" formControlName="street" type="text" autocomplete="billing street-address"
+                     placeholder="House number, building, street and subdistrict" required
+                     [attr.aria-invalid]="form.get('billingAddress.street')?.invalid && form.get('billingAddress.street')?.touched ? 'true' : null"
+                     [attr.aria-describedby]="form.get('billingAddress.street')?.invalid && form.get('billingAddress.street')?.touched ? 'billing-street-error' : null"/>
+              <p *ngIf="form.get('billingAddress.street')?.invalid && form.get('billingAddress.street')?.touched"
+                 id="billing-street-error" class="field-error">Please enter the street address.</p>
+            </div>
+            <div class="field">
+              <label for="billing-province">Province <span aria-hidden="true">*</span></label>
+              <ecm-checkout-select inputId="billing-province" formControlName="province"
+                      [options]="provinces" placeholder="Select province"
+                      [unavailable]="addressLoading.provinces || !provinces.length" [invalid]="!!(form.get('billingAddress.province')?.invalid && form.get('billingAddress.province')?.touched)"
+                      [describedBy]="form.get('billingAddress.province')?.invalid && form.get('billingAddress.province')?.touched ? 'billing-province-error' : null" (selectionChange)="selectProvinceOnBillingAddress($event)"></ecm-checkout-select>
+              <p *ngIf="form.get('billingAddress.province')?.invalid && form.get('billingAddress.province')?.touched"
+                 id="billing-province-error" class="field-error">Please select a province.</p>
+            </div>
+            <div class="field">
+              <label for="billing-district">District <span aria-hidden="true">*</span></label>
+              <p *ngIf="addressLoading.billingAddress" class="required-note" role="status">Loading districts…</p>
+              <div *ngIf="addressErrors.billingAddress" class="address-notice"
+                   role="alert">{{ addressErrors.billingAddress }}
+                <button type="button" (click)="loadDistrictOptions('billingAddress')">Retry</button>
+              </div>
+              <ecm-checkout-select inputId="billing-district" formControlName="district"
+                      [options]="billingAddressDistrict" placeholder="Select district"
+                      [unavailable]="addressLoading.billingAddress || !billingAddressDistrict.length" [invalid]="!!(form.get('billingAddress.district')?.invalid && form.get('billingAddress.district')?.touched)"
+                      [describedBy]="form.get('billingAddress.district')?.invalid && form.get('billingAddress.district')?.touched ? 'billing-district-error' : null" ></ecm-checkout-select>
+              <p *ngIf="form.get('billingAddress.district')?.invalid && form.get('billingAddress.district')?.touched"
+                 id="billing-district-error" class="field-error">Please select a district.</p>
+            </div>
+            <div class="field"><label for="billing-subdistrict">Subdistrict / Khwaeng <span aria-hidden="true">*</span></label>
+ <input id="billing-subdistrict" formControlName="subdistrict" type="text" autocomplete="billing address-level3" placeholder="Enter subdistrict or khwaeng" required maxlength="100"
+ [attr.aria-invalid]="form.get('billingAddress.subdistrict')?.invalid && form.get('billingAddress.subdistrict')?.touched ? 'true' : null" [attr.aria-describedby]="form.get('billingAddress.subdistrict')?.invalid && form.get('billingAddress.subdistrict')?.touched ? 'billing-subdistrict-error' : null" />
+ <p *ngIf="form.get('billingAddress.subdistrict')?.invalid && form.get('billingAddress.subdistrict')?.touched" id="billing-subdistrict-error" class="field-error">Please enter a valid subdistrict / khwaeng.</p></div><div class="field">
+              <label for="billing-zipcode">Postal code <span aria-hidden="true">*</span></label>
+              <input id="billing-zipcode" formControlName="zipcode" type="text" inputmode="numeric" maxlength="5"
+                     autocomplete="billing postal-code" placeholder="e.g. 10200"
+                     oninput="this.value=this.value.replace(/[^0-9]/g,'');" required
+                     [attr.aria-invalid]="form.get('billingAddress.zipcode')?.invalid && form.get('billingAddress.zipcode')?.touched ? 'true' : null"
+                     [attr.aria-describedby]="form.get('billingAddress.zipcode')?.invalid && form.get('billingAddress.zipcode')?.touched ? 'billing-zipcode-error' : null"/>
+              <p *ngIf="form.get('billingAddress.zipcode')?.invalid && form.get('billingAddress.zipcode')?.touched"
+                 id="billing-zipcode-error" class="field-error">Please enter the postal code.</p>
+            </div>
           </div>
-        </ng-container>
+        </section>
 
-        <div class="text-center">
-          <button type="submit" class="btn btn-secondary mt-4" [disabled]="disablePurchase">Purchase</button>
-        </div>
-      </form>
+        <section class="form-section payment-section" aria-labelledby="payment-heading">
+ <header class="section-heading"><span class="section-number" aria-hidden="true">04</span><div><h2 id="payment-heading">PromptPay transfer</h2><p>Create your order first, then scan the QR code and attach your receipt.</p></div></header>
+ <p class="payment-help">The shop will review your payment receipt before confirming payment. Your final total and payment deadline will appear in the next step.</p>
+ </section>
+      </div>
 
-    </div>
+      <div *ngIf="restoring && !order" class="form-section transfer-state" role="status"><div class="spinner-border" aria-hidden="true"></div><p>Checking your existing order...</p></div>
+ <div *ngIf="order" class="transfer-stage">
+ <section *ngIf="receiptSubmitted" class="form-section transfer-success" role="status">
+ <p class="eyebrow">RECEIPT RECEIVED</p><h2>Thank you. Your payment is awaiting review.</h2>
+ <p>Your order has been saved. The shop will verify your receipt before confirming payment.</p>
+ <a routerLink="/products">Continue shopping &rarr;</a>
+ <button *ngIf="cartStatusService.cartItems.length" type="button" (click)="startAgain()">Checkout another order</button>
+ </section>
+ <section class="form-section" aria-labelledby="saved-order-heading">
+ <p class="eyebrow">ORDER {{ order.orderNumber }}</p><h2 id="saved-order-heading">Your saved details</h2>
+ <p class="saved-contact">{{ order.customerName }}<br />{{ order.customerEmail }}<br />{{ order.customerPhone }}</p>
+ <h3 class="payment-label">Ship to</h3><p class="saved-address">{{ order.shippingAddress.addressLine1 }}<br />{{ order.shippingAddress.subdistrict }}, {{ order.shippingAddress.district }}<br />{{ order.shippingAddress.province }} {{ order.shippingAddress.postalCode }}</p>
+ <details><summary>View billing address</summary><p class="saved-address">{{ order.billingAddress.addressLine1 }}<br />{{ order.billingAddress.subdistrict }}, {{ order.billingAddress.district }}<br />{{ order.billingAddress.province }} {{ order.billingAddress.postalCode }}</p></details>
+ </section>
+ <section *ngIf="!receiptSubmitted && expired" class="form-section expired-order" role="alert"><h2>This payment window has expired</h2><p>If you have already transferred money, contact the shop before placing another order.</p><button type="button" (click)="refreshOrder()" [disabled]="busy || restoring">Refresh status</button><button type="button" (click)="startAgain()" [disabled]="busy">Return to checkout</button></section>
+ <section *ngIf="!receiptSubmitted && !expired" class="form-section payment-section" aria-labelledby="transfer-heading">
+ <header class="section-heading"><span class="section-number" aria-hidden="true">QR</span><div><h2 id="transfer-heading">Scan and attach your receipt</h2><p>Your items are reserved while you complete payment.</p></div></header>
+ <p class="payment-deadline">Submit your receipt by <strong>{{ order.expiresAt | date:'dd MMM yyyy, HH:mm' }}</strong></p>
+ <p class="qr-amount">Amount to transfer <strong>{{ order.grandTotal | currency:'THB':'symbol-narrow' }}</strong></p>
+ <div class="qr-image"><img src="assets/images/ppqr.jpg" alt="Shop PromptPay payment QR code" /></div>
+ <p class="payment-help">Scan with your banking app and enter the exact total shown above. Then attach the receipt for review.</p>
+ <label for="payment-receipt" class="payment-label">Payment receipt</label>
+ <input id="payment-receipt" class="receipt-input" type="file" accept="image/jpeg,image/png,image/webp" [disabled]="busy" (change)="uploadFileToAttr($event)" aria-describedby="receipt-help receipt-error" />
+ <p id="receipt-help" class="payment-help">JPG, PNG or WebP &middot; Up to 5 MB</p>
+ <p id="receipt-error" class="field-error" role="alert">{{ fileError }}</p>
+ <div *ngIf="receipt && receiptPreview" class="receipt-preview"><img [src]="receiptPreview" alt="Preview of the selected payment receipt" /><p>{{ receipt.name }}</p></div>
+ </section>
+ </div><aside class="checkout-summary" aria-labelledby="review-heading">
+ <p class="eyebrow">{{ order ? 'ORDER SUMMARY' : 'ONE LAST LOOK' }}</p><h2 id="review-heading">Your order</h2>
+ <a *ngIf="!order" class="edit-cart" routerLink="/cart-detail">Edit cart &nearr;</a>
+ <p *ngIf="quoteLoading" class="summary-note" role="status">Checking prices and availability...</p>
+ <ul *ngIf="order" class="summary-items"><li *ngFor="let item of order.items"><span>{{ item.name }} &times; {{ item.quantity }}</span><strong>{{ item.lineTotal | currency:'THB':'symbol-narrow' }}</strong></li></ul>
+ <dl class="summary-lines"><div><dt>Items</dt><dd>{{ totalQuantity }}</dd></div><div><dt>Subtotal</dt><dd>{{ subtotal | currency:'THB':'symbol-narrow' }}</dd></div><div><dt>Shipping</dt><dd>{{ shippingTotal ? (shippingTotal | currency:'THB':'symbol-narrow') : 'Free' }}</dd></div></dl>
+ <div class="order-total"><span>Total <small>THB</small></span><strong>{{ totalPrice | currency:'THB':'symbol-narrow' }}</strong></div>
+ <p class="selected-method"><span>Payment method</span><strong>PromptPay transfer</strong></p>
+ <p *ngIf="order" class="order-reference">{{ order.orderNumber }}</p>
+ <button *ngIf="!receiptSubmitted && !expired" type="submit" class="purchase-button" [disabled]="busy || restoring || (order ? !receipt : !quote || quoteLoading || !totalQuantity)">{{ busy ? 'Please wait...' : order ? 'Submit receipt for review' : 'Create order & show QR' }} <span aria-hidden="true">&rarr;</span></button>
+ <p class="summary-note">{{ receiptSubmitted ? 'Payment pending review. Keep your order number for reference.' : order ? 'Your payment will be marked pending until the shop verifies your receipt.' : 'The amount is calculated from current product prices by the shop.' }}</p>
+ </aside>
+    </form>
   </div>
-</ng-container>
+</main>
 
-
-
-<pop-up
-  [visible]="visible"
-  [headerTitle]="headerTitle"
-  [iconMode]="iconMode"
-  [body]="body"
-  (closeEvent)="setCloseEvent()"
-  (okEvent)="setOkEvent()">
-</pop-up>
+<pop-up [visible]="visible" [headerTitle]="headerTitle" [iconMode]="iconMode" [body]="body"
+        (closeEvent)="setCloseEvent()" (okEvent)="setOkEvent()"></pop-up>

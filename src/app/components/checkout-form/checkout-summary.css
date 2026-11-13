@@ -1,0 +1,137 @@
+﻿.checkout-summary {
+  position: sticky;
+  top: 24px;
+  padding: 28px 24px;
+  background: white;
+  border: 1px solid #e2e7df;
+  border-radius: 14px;
+}
+
+.checkout-summary h2 {
+  font-size: 22px;
+}
+
+.edit-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-bottom: 12px;
+  color: #68756e;
+  font-size: 12px;
+  text-underline-offset: 4px;
+}
+
+.summary-lines {
+  margin: 0;
+}
+
+.summary-lines div, .order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.summary-lines div {
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.summary-lines dt {
+  color: #68756e;
+  font-weight: 400;
+}
+
+.summary-lines dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.free-shipping {
+  color: #456b50;
+}
+
+.order-total {
+  padding-top: 20px;
+  margin: 24px 0;
+  border-top: 1px solid #e2e7df;
+  font-size: 14px;
+}
+
+.order-total small {
+  color: #68756e;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.order-total strong {
+  font-size: 24px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.selected-method {
+  padding: 12px;
+  border-radius: 8px;
+  background: #f8f9f5;
+  margin-bottom: 20px;
+}
+
+.selected-method span {
+  display: block;
+  color: #68756e;
+  font-size: 10px;
+  margin-bottom: 6px;
+}
+
+.selected-method strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.purchase-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 48px;
+  width: 100%;
+  padding: 12px 16px;
+  background: #243d35;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.purchase-button:hover {
+  background: #38594b;
+}
+
+.purchase-button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.summary-note {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #68756e;
+  text-align: center;
+  margin: 12px 0 0;
+}
+
+@media (max-width: 950px) {
+  .checkout-summary {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .checkout-summary {
+    padding: 24px 20px;
+  }
+}

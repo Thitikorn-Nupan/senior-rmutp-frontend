@@ -9,16 +9,17 @@ import {Router} from "@angular/router";
 @Component({
   selector: 'app-register-form',
   templateUrl: './register-form.component.html',
-  styleUrl: './register-form.component.css'
+  styleUrls: ['../auth-form.css', './register-form.component.css']
 })
 export class RegisterFormComponent implements OnInit {
+  protected showPassword = false;
 
   protected declare form: FormGroup;
   protected declare loginRequest : Login
   // ** Popup
   protected iconMode : 'WARN' | 'ERROR' | 'SUCCESS' = 'WARN';
   public visible : boolean = false;
-  protected headerTitle : string = 'Sign In Failed';
+  protected headerTitle : string = 'Registration failed';
   protected declare body : string;
 
 
@@ -46,14 +47,14 @@ export class RegisterFormComponent implements OnInit {
           if (res) {
             this.visible = true
             this.iconMode = 'SUCCESS'
-            this.headerTitle = 'Sign In Successful'
-            this.body = 'Sign In Successful!'
+            this.headerTitle = 'Account created'
+            this.body = 'Your account is ready. Select OK to continue.'
           }
         },
         (errorResponse): void => {
           this.visible = true
           this.iconMode = 'ERROR'
-          this.headerTitle = 'Error Sign In'
+          this.headerTitle = 'Registration failed'
           this.body = errorResponse['error']['message']
       })
     } else {

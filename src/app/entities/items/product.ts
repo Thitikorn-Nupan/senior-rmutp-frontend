@@ -1,4 +1,6 @@
 export class Product {
+  public documentId?: string;
+  public variantDocumentId?: string;
   public pid: number
   public sku: string
   public name: string

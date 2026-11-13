@@ -9,16 +9,24 @@ import {ProductCategoriesService} from "../../../services/product-categories.ser
 })
 export class ProductCategoriesComponent implements OnInit {
 
-  protected declare productCategories : ProductCategory[] ;
+  protected declare productCategories: ProductCategory[];
 
-  constructor(private readonly productCategoriesService : ProductCategoriesService) {}
+  constructor(private readonly productCategoriesService: ProductCategoriesService) {
+  }
 
   ngOnInit(): void {
     this.loadProductsCategories()
   }
 
-  private loadProductsCategories() : void {
-    this.productCategoriesService.getProductCategories().subscribe(productCategories => (this.productCategories = productCategories))
+  private loadProductsCategories(): void {
+    this.productCategoriesService.getProductCategories().subscribe({
+      next: productCategories => {
+        this.productCategories = productCategories;
+      },
+      error: () => {
+        this.productCategories = [];
+      }
+    });
   }
 
 

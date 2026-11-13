@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {forkJoin, map, Subscription, timer} from 'rxjs';
 import {Product} from "../../entities/items/product";
 import {ProductsService} from "../../services/products.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -9,9 +10,16 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
-  styleUrl: './products.component.css'
+  styleUrls: ['./products.component.css', './products-loading.css']
 })
-export class ProductsComponent implements OnInit{
+export class ProductsComponent implements OnInit, OnDestroy{
+  protected loading = true;
+  protected errorMessage = '';
+  protected cartMessage = '';
+  protected readonly skeletonCards = [0, 1, 2, 3, 4, 5];
+  private readonly minimumLoadingMs = 1000;
+  private request?: Subscription;
+  private routeSubscription?: Subscription;
 
   protected declare productsByPageNumber: Product[]
   protected declare totalPageNumber: number
@@ -20,7 +28,7 @@ export class ProductsComponent implements OnInit{
   protected declare form: FormGroup;
   protected enableForm: boolean = false;
   protected preventCategoryId: number = 1;
-  protected currentCategoryId: number = 1;
+  protected currentCategoryId: number = 0;
 
 
   constructor(private readonly productsService: ProductsService,
@@ -35,15 +43,17 @@ export class ProductsComponent implements OnInit{
     // this.loadProducts()
     // My new
     this.form = new FormGroup({name: new FormControl(null,Validators.required)})
-    await this.delay(800).then(() => (this.loadProducts()))
+    this.loadProducts();
   }
 
 
   private loadProducts() : void {
-    this.activatedRoute.params.subscribe(() : void  => {
+    this.routeSubscription = this.activatedRoute.params.subscribe(() : void  => {
       const checkParamIsExist : boolean = this.activatedRoute.snapshot.paramMap.has('id')
       if (checkParamIsExist) {
         this.currentCategoryId = Number(this.activatedRoute.snapshot.paramMap.get('id'))
+      } else {
+        this.currentCategoryId = 0;
       }
       this.preventCategoryId = this.currentCategoryId
       this.loadProductsByCategory()
@@ -61,60 +71,69 @@ export class ProductsComponent implements OnInit{
   }
 
   protected clear() : void {
+    this.form.reset();
     this.loadProductsByCategory()
   }
 
   private searchProductsByName(name:string): void {
-    this.productsService.getProductByLikeName(name).subscribe((products: Product[]) => {
-      this.products = products
-      this.totalPageNumber = this.products.length
-      this.pageSelected = 1
-      this.manageProductsByPage(this.pageSelected)
-    })
+    this.loadRequest(this.productsService.getProductByLikeName(name));
 
   }
 
   protected addItem(product: Product) : void  {
+    if (product.unitInStock <= 0) return;
     const cartItem : CartItem = new CartItem(product)
     this.cartStatusService.addItemToCart(cartItem) // ****
+    this.cartMessage = `${product.name} added to your cart.`;
   }
 
   protected onSwitchMode(): void  {
     this.enableForm = !this.enableForm
   }
 
-  protected seeDetail(pid: number) : void {
+  protected seeDetail(pid: number | string) : void {
     this.router.navigate(['product-detail',pid])
   }
 
   private loadProductsByCategory(): void  {
-    this.productsService.getProductsByCategoryByObservable(this.currentCategoryId)?.subscribe((products:Product[]) => {
-      this.products = products
-      this.totalPageNumber = this.products.length
-      this.pageSelected = 1
-      this.manageProductsByPage(this.pageSelected)
-    })
+    this.loadRequest(this.productsService.getProductsByCategoryByObservable(this.currentCategoryId));
   }
 
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  private loadRequest(source: import('rxjs').Observable<Product[]>): void {
+    this.request?.unsubscribe();
+    this.loading = true;
+    this.errorMessage = '';
+    this.cartMessage = '';
+    // Start the request and minimum display timer together. Unsubscribing cancels
+    // both, so a previous category can never replace the latest selection.
+    this.request = forkJoin([source, timer(this.minimumLoadingMs)]).pipe(
+      map(([products]) => products)
+    ).subscribe({
+      next: products => {
+        this.products = products;
+        this.totalPageNumber = products.length;
+        this.pageSelected = 1;
+        this.manageProductsByPage(1);
+        this.loading = false;
+      },
+      error: () => {
+        this.products = [];
+        this.productsByPageNumber = [];
+        this.totalPageNumber = 0;
+        this.loading = false;
+        this.errorMessage = 'Unable to load products. Please try again.';
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.request?.unsubscribe();
+    this.routeSubscription?.unsubscribe();
   }
 
   // Auto Way With Algorithm
   private manageProductsByPage(page: number): void {
-    setTimeout(() => {
-      const pageSize: number = 6
-      let start: number = (page - 1) * pageSize
-      let end: number = start + pageSize - 1
-      let productsHolds: Product[] = this.products;
-      this.productsByPageNumber = []
-      for (let i: number = start; i <= end; i++) {
-        if (page == this.getTotalPageNumberAsArray().length) { //
-          end = this.products.length - 1
-        }
-        this.productsByPageNumber.push(productsHolds[i])
-      }
-    },500)
+    this.productsByPageNumber = this.products.slice((page - 1) * 6, page * 6);
   }
 
   protected setPageNumberSelect(page: number): void {
@@ -133,6 +152,8 @@ export class ProductsComponent implements OnInit{
   }
 
   protected onUpdatePagePagination(condition: 'P' | 'N'): void {
+    const target = this.pageSelected + (condition === 'P' ? -1 : 1);
+    if (target < 1 || target > Math.ceil(this.totalPageNumber / 6)) return;
     if (condition == 'P') {
       this.pageSelected -= 1
     } else {

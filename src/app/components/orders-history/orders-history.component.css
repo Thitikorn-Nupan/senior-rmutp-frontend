@@ -1,29 +1,10 @@
-@media only screen and (max-width: 400px) {
-
-  .container  {
-    margin: 0;
-  }
-  table {
-    font-size: 12px;
-  }
-}
-
-@media only screen and (max-width: 415px) {
-
-  table {
-    font-size: 12px;
-  }
-  .container  {
-    margin: 0;
-  }
-}
-
-@media only screen and (max-width: 430px) {
-
-  table {
-    font-size: 12px;
-  }
-  .container  {
-    margin: 0;
-  }
-}
+﻿:host{display:block;background:#f6f8fb;color:#213347;min-height:65vh}
+.history{max-width:1100px;margin:auto;padding:40px 24px 64px}
+.history-heading,.order-header,.order-summary,.order-actions,.pagination-bar{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.history-heading{margin-bottom:28px}.history-heading h1{font-size:28px;margin:4px 0 10px}
+.history-heading p,.muted,.result-count,time{color:#637185;font-size:14px}.eyebrow{color:#176451!important;font-size:13px!important}
+.order-card{background:white;border:1px solid #e1e7ed;border-radius:12px;margin-bottom:18px;overflow:hidden}
+.order-header{padding:20px 24px;border-bottom:1px solid #eef1f5;align-items:start}.order-header h2{font-size:15px;overflow-wrap:anywhere;margin:5px 0 8px}.order-header p{margin:0}
+.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:end}.badge-status{border-radius:6px;background:#edf2f8;color:#344b6b;padding:6px 10px;font-size:12px}.badge-status.payment{background:#fff3d8;color:#805608}.badge-status.paid{background:#e6f4ec;color:#226340}.badge-status.ended{background:#f3ecec;color:#8a4646}
+.order-summary{padding:20px 24px}.order-summary img{width:64px;height:72px;object-fit:contain;border-radius:6px;background:#f6f8fa}.product-preview{flex:1;min-width:0}.product-preview strong{font-size:15px}.product-preview p{font-size:13px;color:#637185;margin:8px 0 0}.order-total{text-align:right}.order-total span{display:block;color:#637185;font-size:12px}.order-total strong{display:block;margin-top:4px;font-size:20px}.order-actions{padding:0 24px 20px;justify-content:end}
+@media(max-width:700px){.history{padding:24px 14px 40px}.history-heading{align-items:start;flex-direction:column}.filters{flex-wrap:wrap;padding:16px}.filters>div{width:100%}.filters>div:first-child{flex-basis:100%}.order-header{flex-direction:column;padding:16px}.badges{justify-content:start}.order-summary{padding:16px;flex-wrap:wrap;gap:12px}.order-total{width:100%;text-align:right}.order-actions{padding:0 16px 16px}.history-heading h1{font-size:24px}}

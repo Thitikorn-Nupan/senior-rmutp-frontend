@@ -1,68 +1,64 @@
-<ng-container *ngIf="form">
-  <div class="container mt-4" style="margin: 0 auto;">
-    <div class="container-fluid" >
-      <form [formGroup]="form"
-            (ngSubmit)="login()"
-            class="form-area w-50" style="margin: 250px auto;">
-        <h3>Login</h3>
-        <div class="row m-lg-4">
-          <div class="col-md-3">
-            <label>
-              <label *ngIf="form.get('username')?.hasError('required') && form.get('username')?.touched" class="text-danger">
-                *
-              </label>
-              Email
-            </label>
-          </div>
-          <div class="col-md-8">
-            <div class="input-space">
-              <input [formControlName]="'username'"
-                     class="form-control rounded-5"
-                     style="border-width: 1px;border-style: solid;border-color: #c6c6c6;"
-                     type="email"
-                     id="email"
-                     placeholder="email..."
-                     />
-            </div>
-          </div>
+﻿<main class="auth-page">
+  <div class="auth-container">
+    <a class="back-link" routerLink="/products"><span aria-hidden="true">←</span> Back to the collection</a>
+    <div class="auth-card">
+      <aside class="auth-story" aria-label="Perfumes Shop">
+        <div class="story-brand">Perfumes Shop<span aria-hidden="true">.</span></div>
+        <div>
+          <p class="eyebrow">YOUR EVERYDAY LUXURY</p>
+          <h2>A scent for every<br/>version of you.</h2>
+          <p>From familiar favourites to new discoveries, find a little luxury for every day.</p>
         </div>
+        <div class="story-caption">THE FRAGRANCE COLLECTION</div>
+      </aside>
 
-        <div class="row m-lg-4">
-          <div class="col-md-3">
-            <label>
-              <label *ngIf="form.get('password')?.hasError('required') && form.get('password')?.touched" class="text-danger">
-                *
-              </label>
-              Password
-            </label>
-          </div>
-          <div class="col-md-8">
-            <div class="input-space">
-              <input [formControlName]="'password'"
-                     class="form-control rounded-5"
-                     style="border-width: 1px;border-style: solid;border-color: #c6c6c6;"
-                     type="password"
-                     placeholder="password..."
-                     id="password">
-            </div>
-          </div>
-        </div>
+      <section class="auth-content" aria-labelledby="auth-heading">
+        <p class="eyebrow">GOOD TO SEE YOU AGAIN</p>
+        <h1 id="auth-heading">Welcome back</h1>
+        <p class="form-intro">Login to continue your fragrance journey.</p>
 
-        <div class="row m-lg-4">
-          <div class="col-md-12">
-          <button type="submit" class="btn btn-secondary w-100">Login</button>
+        <form *ngIf="form" [formGroup]="form" (ngSubmit)="form.markAllAsTouched(); login()">
+          <div class="field">
+            <label for="login-username">Email or username</label>
+            <input id="login-username" formControlName="username" type="text"
+                   autocomplete="username" autocapitalize="none" spellcheck="false"
+                   placeholder="Enter your email or username" required
+                   [attr.aria-invalid]="form.get('username')?.invalid && form.get('username')?.touched ? 'true' : null"
+                   [attr.aria-describedby]="form.get('username')?.invalid && form.get('username')?.touched ? 'username-error' : null"/>
+            <p *ngIf="form.get('username')?.invalid && form.get('username')?.touched" id="username-error"
+               class="field-error" aria-live="polite">Please enter your email or username.</p>
           </div>
-        </div>
-      </form>
+
+          <div class="field">
+            <label for="login-password">Password</label>
+            <div class="password-field">
+              <input id="login-password" formControlName="password" [type]="showPassword ? 'text' : 'password'"
+                     autocomplete="current-password" placeholder="Enter your password" required
+                     [attr.aria-invalid]="form.get('password')?.invalid && form.get('password')?.touched ? 'true' : null"
+                     [attr.aria-describedby]="form.get('password')?.invalid && form.get('password')?.touched ? 'password-error' : null"/>
+              <button type="button" class="password-toggle" (click)="showPassword = !showPassword"
+                      [attr.aria-pressed]="showPassword" aria-label="Show password"
+                      aria-controls="login-password">{{ showPassword ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+            <p *ngIf="form.get('password')?.invalid && form.get('password')?.touched" id="password-error"
+               class="field-error" aria-live="polite">Please enter your password.</p>
+          </div>
+
+          <button type="submit" class="submit-button">Login <span aria-hidden="true">→</span></button>
+        </form>
+
+        <p class="switch-form">New to Perfumes Shop? <a routerLink="/register">Create an account</a></p>
+      </section>
     </div>
   </div>
-</ng-container>
+</main>
 
 <pop-up
- [visible]="visible"
- [headerTitle]="headerTitle"
- [iconMode]="iconMode"
- [body]="body"
- (closeEvent)="setCloseEvent()"
- (okEvent)="setOkEvent()">
+  [visible]="visible"
+  [headerTitle]="headerTitle"
+  [iconMode]="iconMode"
+  [body]="body"
+  (closeEvent)="setCloseEvent()"
+  (okEvent)="setOkEvent()">
 </pop-up>

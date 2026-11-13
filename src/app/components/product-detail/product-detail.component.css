@@ -1,25 +1,51 @@
-.btn {
-  transition: 0.5s;
+﻿:host {
+  display: block;
+  color: #243d35;
+  font-family: Arial, sans-serif;
 }
-
-.btn:hover {opacity: 1}
-
-@media only screen and (max-width: 400px) {
-  .card {
-    max-width: fit-content;
-  }
+:host * { box-sizing: border-box; font-family: inherit; }
+.product-page { background: #f8f9f5; min-height: 65vh; }
+.detail-container { max-width: 1200px; margin: auto; padding: 24px 24px 56px; }
+.breadcrumb-nav { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; font-size: 12px; color: #68756e; }
+.breadcrumb-nav a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; flex-shrink: 0; color: #243d35; text-decoration: none; }
+.breadcrumb-nav [aria-current] { overflow-wrap: anywhere; }
+.product-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+.image-panel { display: grid; place-items: center; aspect-ratio: 1; background: #eff1eb; border: 1px solid #e2e7df; border-radius: 18px; overflow: hidden; }
+.image-panel img { width: 100%; height: 100%; min-height: 0; object-fit: contain; padding: 32px; }
+.product-summary { min-width: 0; padding: 20px 0; }
+.eyebrow { color: #8a6b41; font-size: 10px; font-weight: 700; letter-spacing: 2px; margin: 0 0 16px; }
+h1 { font-size: clamp(28px, 4vw, 42px); font-weight: 500; line-height: 1.15; letter-spacing: -1px; margin: 0 0 12px; overflow-wrap: anywhere; }
+.product-code { color: #68756e; font-size: 11px; letter-spacing: 1px; margin: 0 0 24px; overflow-wrap: anywhere; }
+.product-code span { margin-left: 8px; }
+.product-price { font-size: 30px; font-weight: 600; margin: 0 0 12px; overflow-wrap: anywhere; }
+.stock-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #456b50; margin: 0; }
+.stock-dot { width: 7px; height: 7px; flex-shrink: 0; border-radius: 50%; background: currentColor; }
+.out-of-stock { color: #766d61; }
+.product-description { border-top: 1px solid #dce3dc; margin-top: 28px; padding-top: 24px; }
+h2 { font-size: 15px; font-weight: 600; margin: 0 0 12px; }
+.product-description p { color: #68756e; font-size: 14px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; margin: 0; }
+.purchase-actions { display: flex; gap: 12px; margin-top: 28px; }
+.primary-action, .secondary-action { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 12px 20px; border: 1px solid #243d35; border-radius: 9px; font-size: 14px; font-weight: 600; text-decoration: none; }
+.primary-action { background: #243d35; color: white; }
+.purchase-actions .primary-action { flex: 1; }
+.secondary-action { color: #243d35; background: white; border-color: #dce3dc; }
+.primary-action:hover { background: #38594b; }
+.secondary-action:hover { background: #eff1eb; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+.continue-link { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin-top: 12px; color: #68756e; font-size: 12px; text-decoration: none; }
+a:focus-visible, button:focus-visible { outline: 3px solid #ad7f45; outline-offset: 4px; }
+.detail-state { text-align: center; padding: 64px 0; }
+.detail-state h1 { font-size: 28px; margin-top: 20px; }
+.detail-state p { color: #68756e; font-size: 14px; margin: 16px 0 24px; }
+.state-symbol { display: inline-grid; place-items: center; width: 44px; height: 44px; border: 1px solid #dce3dc; border-radius: 50%; font-size: 22px; }
+@media (max-width: 900px) { .product-layout { gap: 28px; } .product-summary { padding: 0; } }
+@media (max-width: 700px) {
+  .detail-container { padding: 12px 16px 32px; }
+  .breadcrumb-nav { margin-bottom: 16px; }
+  .product-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .image-panel { max-height: 440px; }
+  .image-panel img { padding: 24px; }
+  .product-price { font-size: 28px; }
+  .product-description { margin-top: 24px; padding-top: 20px; }
 }
-
-@media only screen and (max-width: 415px) {
-
-  .card {
-    max-width: fit-content;
-  }
-}
-
-@media only screen and (max-width: 430px) {
-
-  .card {
-    max-width: fit-content;
-  }
-}
+@media (max-width: 359px) { .purchase-actions { flex-direction: column; } }
