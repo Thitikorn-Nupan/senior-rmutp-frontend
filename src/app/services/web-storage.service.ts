@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {User} from "../entities/user";
 import * as jwt_decode from "jwt-decode";
+import {Subject} from 'rxjs';
 
 // if i mark this @Injectable annotation
 // i don't need to create instance on own just do on constructor as (private webStorageService : WebStorageService)
@@ -8,6 +9,10 @@ import * as jwt_decode from "jwt-decode";
   providedIn: 'root'
 })
 export class WebStorageService {
+  private readonly changes = new Subject<void>();
+  private readonly expired = new Subject<void>();
+  readonly sessionChanges$ = this.changes.asObservable();
+  readonly sessionExpired$ = this.expired.asObservable();
 
   public getTokenExpiry(): number | null {
     const jwtResponse = this.getSession("jwtResponse");
@@ -16,12 +21,13 @@ export class WebStorageService {
       try {
         payload = jwt_decode.jwtDecode(jwtResponse.token);
       } catch {
-        sessionStorage.removeItem('jwtResponse');
+        this.expireSession(jwtResponse.token);
         return null;
       }
-      if (payload.exp) {
+      if (payload && typeof payload.exp === 'number' && Number.isFinite(payload.exp) && payload.exp > 0) {
         return payload.exp;
       }
+      this.expireSession(jwtResponse.token);
       return null;
     } else {
       return null;
@@ -33,12 +39,12 @@ export class WebStorageService {
     if (jwtResponse) {
       const expiry = this.getTokenExpiry();
       if (!expiry || expiry * 1000 <= Date.now()) {
-        sessionStorage.removeItem('jwtResponse');
+        this.expireSession(jwtResponse.token);
         return null;
       }
       if (jwtResponse.user) return jwtResponse.user;
       // Old sessions cannot authenticate with Strapi. Require a fresh login.
-      sessionStorage.removeItem('jwtResponse');
+      this.expireSession(jwtResponse.token);
       return null;
     } else {
       return null;
@@ -77,10 +83,20 @@ export class WebStorageService {
 
   public setSession(key: string, value: any): void {
     sessionStorage.setItem(key, JSON.stringify(value));
+    if (key === 'jwtResponse') this.changes.next();
+  }
+
+  public expireSession(expectedToken?: string): boolean {
+    const session = this.getSession('jwtResponse');
+    if (!session || (expectedToken !== undefined && session.token !== expectedToken)) return false;
+    sessionStorage.removeItem('jwtResponse');
+    this.changes.next();
+    this.expired.next();
+    return true;
   }
 
   public clearSession() {
     sessionStorage.clear();
-    window.location.reload();
+    this.changes.next();
   }
 }

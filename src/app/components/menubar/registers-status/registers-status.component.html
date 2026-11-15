@@ -31,10 +31,24 @@
     <ul *ngIf="isToggle" id="management-menu" class="management-menu" (keydown.escape)="isToggle = false">
       <li><a routerLink="/orders-history-admin" (click)="toggle()">{{ menuLanguage.text().salesHistory }}</a></li>
       <li><a routerLink="/product-admin" (click)="toggle()">{{ menuLanguage.text().managePerfumes }}</a></li>
-      <li><a routerLink="/add-product" (click)="toggle()">{{ menuLanguage.text().addPerfume }}</a></li>
+      <!--<li><a routerLink="/add-product" (click)="toggle()">{{ menuLanguage.text().addPerfume }}</a></li>-->
     </ul>
   </div>
   <ng-container *ngIf="isUserLogin || isAdminLogin">
+    <div class="management" (keydown.escape)="settingsOpen = false; settingsToggle.focus(); $event.stopPropagation()">
+      <button #settingsToggle class="management-toggle" type="button" (click)="toggleSettings()"
+              [attr.aria-expanded]="settingsOpen" aria-controls="settings-menu">
+        <span>{{ menuLanguage.text().systemSettings }}</span>
+        <svg class="management-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" aria-hidden="true" focusable="false">
+          <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <ul *ngIf="settingsOpen" id="settings-menu" class="management-menu">
+        <li><a routerLink="/profile" (click)="settingsOpen = false"
+               routerLinkActive="current">{{ menuLanguage.text().personalInformation }}</a></li>
+      </ul>
+    </div>
     <a routerLink="/orders-history" routerLinkActive="current">{{ menuLanguage.text().ordersHistory }}</a>
     <button type="button"
             (click)="logout()">

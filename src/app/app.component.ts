@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {SessionExpiryService} from './services/session-expiry.service';
 
 @Component({
   selector: 'app-root',
@@ -6,4 +7,7 @@ import {Component} from '@angular/core';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
+  constructor(sessions: SessionExpiryService) {
+    sessions.start();
+  }
 }

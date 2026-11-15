@@ -195,14 +195,12 @@ h1 span {
   height: 30px;
 }
 
-.toolbar select {
+.toolbar .filter-select {
+  flex: 0 1 200px;
+  min-width: 140px;
   max-width: 220px;
-  border: 1px solid #dce2da;
-  border-radius: 8px;
-  background: white;
-  color: #54665b;
-  padding: 10px;
-  font-size: 12px;
+  --select-font-size: 13px;
+  --select-min-height: 46px;
 }
 
 .pagination-bar {
@@ -309,7 +307,7 @@ h1 span {
     flex-basis: 100%;
   }
 
-  .toolbar select {
+  .toolbar .filter-select {
     flex: 1;
     min-width: 0;
     max-width: none;

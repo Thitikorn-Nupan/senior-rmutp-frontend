@@ -14,6 +14,12 @@ The development configuration uses the browser's origin and `proxy.conf.json` to
 `/api/**` and `/uploads/**` to Strapi on the PC, so the phone does not need to access port `1337`.
 Restart the Angular dev server after changing its proxy configuration.
 
+Signed-in users can open **ตั้งค่าระบบ → จัดการข้อมูลส่วนตัว** (`/profile`) to
+update their name, display name, phone, contact address and avatar. The Strapi backend
+must include the owner-only `/api/profile/me` routes. Guest visits redirect to login
+and return to `/profile` after signing in. Profile photos save when selected; contact
+details save with the form button. Existing order addresses are unchanged.
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.

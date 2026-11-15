@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
   font-family: Arial, sans-serif;
   color: #243d35;
@@ -71,15 +71,110 @@
   background: #f8f9f5;
 }
 
-.session-user { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
-.user-icon { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border: 1px solid #dce3dc; border-radius: 50%; background: white; }
-.user-details { min-width: 0; }
-.session-label { display: block; color: #68756e; font-size: 10px; margin-bottom: 4px; }
-.session-name { display: block; font-size: 14px; line-height: 1.4; font-weight: 600; }
-.session-badge { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; padding: 6px 9px; border: 1px solid #dce6d9; border-radius: 20px; background: #edf3e9; color: #456b50; font-size: 10px; }
-.session-expiry { display: flex; align-items: center; gap: 10px; padding-left: 20px; border-left: 1px solid #dce3dc; }
-.session-expiry svg { color: #68756e; flex-shrink: 0; }
-.expiry-value { font-size: 12px; font-weight: 500; }
+.session-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.user-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border: 1px solid #dce3dc;
+  border-radius: 50%;
+  background: white;
+  overflow: hidden;
+}
+
+.user-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-details {
+  min-width: 0;
+}
+
+.session-label {
+  display: block;
+  color: #68756e;
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+
+.session-name {
+  display: block;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.session-contact {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #68756e;
+}
+
+.session-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.session-role {
+  padding: 6px 9px;
+  border: 1px solid #dce3dc;
+  border-radius: 20px;
+  color: #52645a;
+  background: #fff;
+  font-size: 10px;
+}
+
+.session-role.is-admin {
+  color: #826133;
+  border-color: #e7d9c2;
+  background: #faf5eb;
+}
+
+.session-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 6px 9px;
+  border: 1px solid #dce6d9;
+  border-radius: 20px;
+  background: #edf3e9;
+  color: #456b50;
+  font-size: 10px;
+}
+
+.session-expiry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 20px;
+  border-left: 1px solid #dce3dc;
+}
+
+.session-expiry svg {
+  color: #68756e;
+  flex-shrink: 0;
+}
+
+.expiry-value {
+  font-size: 12px;
+  font-weight: 500;
+}
 
 .session-dot {
   width: 7px;

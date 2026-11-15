@@ -25,6 +25,7 @@ export class CheckoutSelectComponent implements ControlValueAccessor, OnChanges,
   @Input({required: true}) inputId = '';
   @Input() options: readonly { name: string; value?: string }[] = [];
   @Input() placeholder = 'Select an option';
+  @Input() ariaLabel: string | null = null;
   @Input() unavailable = false;
   @Input() invalid = false;
   @Input() describedBy: string | null = null;

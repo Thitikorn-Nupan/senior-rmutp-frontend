@@ -1,12 +1,22 @@
-import {AfterViewChecked, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  computed,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {JwtResponse} from "../../entities/register/jwt-response";
 import {User} from "../../entities/user";
 import {WebStorageService} from "../../services/web-storage.service";
 import {UsefulFunctionService} from "../../services/useful-function.service";
 import {MenuLanguageService} from "../../services/menu-language.service";
 import {NavigationEnd, Router} from '@angular/router';
-import {filter} from 'rxjs';
+import {catchError, filter, merge, of, Subject, switchMap} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {ProfileService} from '../../services/profile.service';
 
 @Component({
   selector: 'ecm-menubar',
@@ -19,6 +29,13 @@ export class MenubarComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('menuToggle') private menuToggle?: ElementRef<HTMLButtonElement>;
   private previousOverflow?: string;
   private focusMenu = false;
+  private readonly profileRefresh = new Subject<void>();
+  protected failedAvatarUrl = '';
+  protected readonly profileAvatar = computed(() => this.profiles.avatarUrl(this.profiles.profile()?.avatar ?? null));
+  protected readonly profileName = computed(() => {
+    const profile = this.profiles.profile();
+    return profile?.displayName.trim() || [profile?.firstName, profile?.lastName].filter(Boolean).join(' ').trim();
+  });
 
   protected declare user: User | null
   protected declare jwtResponse: JwtResponse
@@ -27,8 +44,14 @@ export class MenubarComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(private readonly webStorageService: WebStorageService,
               public readonly menuLanguage: MenuLanguageService,
+              protected readonly profiles: ProfileService,
               router: Router) {
-    router.events.pipe(filter(event => event instanceof NavigationEnd), takeUntilDestroyed())
+    this.profileRefresh.pipe(
+      switchMap(() => this.user ? this.profiles.get().pipe(catchError(() => of(null))) : of(null)),
+      takeUntilDestroyed(),
+    ).subscribe();
+    merge(router.events.pipe(filter(event => event instanceof NavigationEnd)), this.webStorageService.sessionChanges$)
+      .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.loadSession();
         this.closeMobileMenu();
@@ -108,7 +131,10 @@ export class MenubarComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private loadSession(): void {
+    const previousUser = this.user?.uid;
     this.user = this.webStorageService.getUserFormToken()
+    if (!this.user || this.user.uid !== previousUser) this.profiles.clear();
+    this.profileRefresh.next();
     this.jwtResponse = this.webStorageService.getSession("jwtResponse");
     this.tokenExpire = this.webStorageService.getTokenExpiry();
     if (this.jwtResponse === null) {

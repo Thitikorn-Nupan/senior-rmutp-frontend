@@ -16,14 +16,14 @@
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  min-height: 48px;
+  min-height: var(--select-min-height, 48px);
   padding: 10px 12px;
   border: 1px solid #c9d3ca;
   border-radius: 8px;
   background: white;
   color: #243d35;
   text-align: left;
-  font-size: 16px;
+  font-size: var(--select-font-size, 16px);
   cursor: pointer;
 }
 

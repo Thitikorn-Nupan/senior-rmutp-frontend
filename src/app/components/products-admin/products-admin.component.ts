@@ -6,6 +6,7 @@ import {
   HostListener,
   OnDestroy,
   OnInit,
+  signal,
   ViewChild
 } from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -29,7 +30,7 @@ import {productAdminMessages} from './products-admin.messages';
 })
 export class ProductsAdminComponent implements OnInit, OnDestroy, AfterViewChecked {
   products: ManagedProduct[] = [];
-  categories: ManagedCategory[] = [];
+  readonly categories = signal<ManagedCategory[]>([]);
   loading = false;
   loadFailed = false;
   saving = false;
@@ -86,6 +87,17 @@ export class ProductsAdminComponent implements OnInit, OnDestroy, AfterViewCheck
     }];
   });
 
+  readonly categoryOptions = computed(() => [
+    {name: this.t.allCategories, value: ''},
+    ...this.categories().map(item => ({name: item.name, value: item.documentId})),
+  ]);
+
+  readonly statusOptions = computed(() => [
+    {name: this.t.allStatuses, value: ''},
+    {name: this.t.active, value: 'true'},
+    {name: this.t.inactive, value: 'false'},
+  ]);
+
   get activeCount() {
     return this.products.filter(p => p.isActive).length;
   }
@@ -106,7 +118,7 @@ export class ProductsAdminComponent implements OnInit, OnDestroy, AfterViewCheck
     this.listRequest = this.api.list(this.page, this.search, this.category, this.active).subscribe({
       next: response => {
         this.products = response.data;
-        this.categories = response.categories;
+        this.categories.set(response.categories);
         this.total = response.meta.pagination.total;
         this.pageCount = response.meta.pagination.pageCount;
         this.loading = false;

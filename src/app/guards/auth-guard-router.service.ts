@@ -26,8 +26,8 @@ export class AuthGuardRouter implements CanActivate {
     const user: any = this.webStorageService.getUserFormToken()
     const jwtResponse: JwtResponse = this.webStorageService.getSession("jwtResponse");
     const path: string = route.url[0].path
-    if (path === 'checkout' && !user) {
-      return this.router.createUrlTree(['/login'], {queryParams: {returnUrl: '/checkout'}});
+    if (['checkout', 'profile'].includes(path) && !user) {
+      return this.router.createUrlTree(['/login'], {queryParams: {returnUrl: '/' + path}});
     }
     if (jwtResponse !== null && path === 'login') { // case user still logged in
       this.router.navigate([''])

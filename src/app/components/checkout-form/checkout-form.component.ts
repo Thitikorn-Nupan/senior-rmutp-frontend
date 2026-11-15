@@ -5,11 +5,23 @@ import {AddressesService} from '../../services/addresses.service';
 import {CartStatusService} from '../../services/cart-status.service';
 import {ProductsService} from '../../services/products.service';
 import {WebStorageService} from '../../services/web-storage.service';
-import {CheckoutAddress, CheckoutQuote, CheckoutService, TransferCheckout, TransferItem, TransferOrder} from '../../services/checkout.service';
+import {
+  CheckoutAddress,
+  CheckoutQuote,
+  CheckoutService,
+  TransferCheckout,
+  TransferItem,
+  TransferOrder
+} from '../../services/checkout.service';
 import {Province} from '../../entities/addresses/province';
 import {District} from '../../entities/addresses/district';
 
-interface PendingCheckout { key: string; orderId?: string; cartSignature: string; cartCleared?: boolean; }
+interface PendingCheckout {
+  key: string;
+  orderId?: string;
+  cartSignature: string;
+  cartCleared?: boolean;
+}
 
 @Component({
   selector: 'app-checkout-form',
@@ -48,11 +60,12 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
   private clock?: ReturnType<typeof setInterval>;
 
   constructor(private readonly addressesService: AddressesService,
-    protected readonly cartStatusService: CartStatusService,
-    private readonly checkoutService: CheckoutService,
-    private readonly formBuilder: FormBuilder,
-    private readonly storage: WebStorageService,
-    private readonly productsService: ProductsService) {}
+              protected readonly cartStatusService: CartStatusService,
+              private readonly checkoutService: CheckoutService,
+              private readonly formBuilder: FormBuilder,
+              private readonly storage: WebStorageService,
+              private readonly productsService: ProductsService) {
+  }
 
   ngOnInit(): void {
     const user = this.storage.getUserFormToken();
@@ -73,9 +86,14 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
       }), shippingAddress: address(), billingAddress: address()
     });
     this.initialAndSetDefaultAddresses();
-    this.clock = setInterval(() => { this.now = Date.now(); }, 1000);
-    try { this.pending = JSON.parse(sessionStorage.getItem(this.storageKey) || 'null') || undefined; }
-    catch { sessionStorage.removeItem(this.storageKey); }
+    this.clock = setInterval(() => {
+      this.now = Date.now();
+    }, 1000);
+    try {
+      this.pending = JSON.parse(sessionStorage.getItem(this.storageKey) || 'null') || undefined;
+    } catch {
+      sessionStorage.removeItem(this.storageKey);
+    }
     if (this.pending?.cartCleared && this.cartStatusService.cartItems.length) {
       this.pending = undefined;
       sessionStorage.removeItem(this.storageKey);
@@ -87,21 +105,37 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
   protected get receiptSubmitted(): boolean {
     return this.order?.paymentStatus === 'pending_review' || Boolean(this.order?.payment.receiptSubmitted);
   }
+
   protected get expired(): boolean {
     return !!this.order && (this.order.orderStatus === 'expired' ||
       (!this.receiptSubmitted && Date.parse(this.order.expiresAt) <= this.now));
   }
-  protected get shippingTotal(): number { return Number(this.order?.shippingTotal ?? this.quote?.shippingTotal ?? 0); }
-  protected get canRecoverOrder(): boolean { return Boolean(this.pending?.key); }
-  protected get subtotal(): number { return Number(this.order?.subtotal ?? this.quote?.subtotal ?? 0); }
+
+  protected get shippingTotal(): number {
+    return Number(this.order?.shippingTotal ?? this.quote?.shippingTotal ?? 0);
+  }
+
+  protected get canRecoverOrder(): boolean {
+    return Boolean(this.pending?.key);
+  }
+
+  protected get subtotal(): number {
+    return Number(this.order?.subtotal ?? this.quote?.subtotal ?? 0);
+  }
+
   private cartSignature(): string {
     return JSON.stringify(this.cartStatusService.cartItems.map(item => [item.variantDocumentId, item.quantity]).sort());
   }
+
   private savePending(): void {
     if (this.pending) sessionStorage.setItem(this.storageKey, JSON.stringify(this.pending));
   }
+
   private cartItems(): TransferItem[] {
-    return this.cartStatusService.cartItems.map(item => ({variantDocumentId: item.variantDocumentId!, quantity: item.quantity}));
+    return this.cartStatusService.cartItems.map(item => ({
+      variantDocumentId: item.variantDocumentId!,
+      quantity: item.quantity
+    }));
   }
 
   protected variantDescription(id: string): string {
@@ -114,7 +148,10 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     this.quote = undefined;
     this.totalQuantity = this.cartStatusService.cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    if (!this.totalQuantity) { this.totalPrice = 0; return; }
+    if (!this.totalQuantity) {
+      this.totalPrice = 0;
+      return;
+    }
     this.quoteLoading = true;
     // Upgrade carts saved before variant IDs were included, using current catalog data.
     const upgrades = this.cartStatusService.cartItems.map(item => item.variantDocumentId ? of(item)
@@ -131,14 +168,18 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
         this.cartStatusService.computeCart();
         return this.checkoutService.quote(this.cartItems());
       }),
-      finalize(() => { this.quoteLoading = false; })
+      finalize(() => {
+        this.quoteLoading = false;
+      })
     ).subscribe({
       next: response => {
         this.quote = response.data;
         this.totalPrice = Number(response.data.grandTotal);
         this.totalQuantity = response.data.totalQuantity;
       },
-      error: error => { this.errorMessage = this.errorText(error); }
+      error: error => {
+        this.errorMessage = this.errorText(error);
+      }
     }));
   }
 
@@ -147,7 +188,9 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     this.restoring = true;
     this.errorMessage = '';
     this.cartSubscriptions.add(this.checkoutService.findRequest(this.pending.key).pipe(
-      finalize(() => { this.restoring = false; })
+      finalize(() => {
+        this.restoring = false;
+      })
     ).subscribe({
       next: response => this.acceptOrder(response.data),
       error: error => {
@@ -187,7 +230,10 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Please check the required fields and refresh the order total before continuing.';
       return;
     }
-    if (this.order && !this.receipt) { this.fileError = 'Please attach your payment receipt.'; return; }
+    if (this.order && !this.receipt) {
+      this.fileError = 'Please attach your payment receipt.';
+      return;
+    }
     this.errorMessage = '';
     this.iconMode = 'CONFIRM';
     this.headerTitle = this.order ? 'Submit payment receipt?' : 'Create your order?';
@@ -196,7 +242,10 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     this.visible = true;
   }
 
-  protected setCloseEvent(): void { this.visible = false; }
+  protected setCloseEvent(): void {
+    this.visible = false;
+  }
+
   protected setOkEvent(): void {
     this.visible = false;
     if (this.busy || this.expired || this.receiptSubmitted) return;
@@ -210,12 +259,18 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     const name = (customer.firstname.trim() + ' ' + customer.lastname.trim()).trim();
     const snapshot = (group: string): CheckoutAddress => {
       const address = this.form.get(group)!.value;
-      return {recipientName: name, phone: customer.phone.trim(), addressLine1: address.street.trim(),
+      return {
+        recipientName: name, phone: customer.phone.trim(), addressLine1: address.street.trim(),
         subdistrict: address.subdistrict.trim(), district: address.district, province: address.province,
-        postalCode: address.zipcode, countryCode: 'TH'};
+        postalCode: address.zipcode, countryCode: 'TH'
+      };
     };
     const payload: TransferCheckout = {
-      customer: {firstName: customer.firstname.trim(), lastName: customer.lastname.trim(), email: customer.email.trim()},
+      customer: {
+        firstName: customer.firstname.trim(),
+        lastName: customer.lastname.trim(),
+        email: customer.email.trim()
+      },
       shippingAddress: snapshot('shippingAddress'), billingAddress: snapshot('billingAddress'),
       items: this.cartItems(), expectedTotal: this.quote.grandTotal
     };
@@ -223,7 +278,9 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     this.savePending();
     this.busy = true;
     this.cartSubscriptions.add(this.checkoutService.createTransfer(payload, this.pending.key).pipe(
-      finalize(() => { this.busy = false; })
+      finalize(() => {
+        this.busy = false;
+      })
     ).subscribe({
       next: response => this.acceptOrder(response.data),
       error: error => {
@@ -254,10 +311,14 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     this.busy = true;
     this.errorMessage = '';
     this.cartSubscriptions.add(this.checkoutService.submitReceipt(this.order.documentId, this.receipt).pipe(
-      finalize(() => { this.busy = false; })
+      finalize(() => {
+        this.busy = false;
+      })
     ).subscribe({
       next: response => this.acceptOrder(response.data),
-      error: error => { this.errorMessage = this.errorText(error); }
+      error: error => {
+        this.errorMessage = this.errorText(error);
+      }
     }));
   }
 
@@ -278,6 +339,7 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     if (this.receiptPreview) URL.revokeObjectURL(this.receiptPreview);
     this.receiptPreview = '';
   }
+
   private errorText(error: any): string {
     if (error.status === 401 || error.status === 403) return 'Your session has expired. Please log in again to continue.';
     return error.error?.error?.message || error.message || 'Unable to complete the request. Please try again.';
@@ -338,7 +400,7 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
       next: districts => {
         if (group === 'shippingAddress') this.shippingAddressDistrict = districts;
         else this.billingAddressDistrict = districts;
-        control?.get('district')?.setValue(districts[0]?.name ?? null);
+        control?.get('district')?.setValue(districts[0]?.value ?? districts[0]?.name ?? null);
         this.addressLoading[group] = false;
         if (!districts.length) this.addressErrors[group] = 'No districts are available for this province.';
       },

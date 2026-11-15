@@ -60,7 +60,7 @@ export class LoginFormComponent implements OnInit {
             status: 'success',
           });
           const returnUrl = this.activatedRoute.snapshot.queryParamMap.get('returnUrl');
-          void this.router.navigateByUrl(returnUrl === '/checkout' ? '/checkout' : '/products');
+          void this.router.navigateByUrl(returnUrl && ['/checkout', '/profile'].includes(returnUrl) ? returnUrl : '/products');
         } else {
           this.showLoginError();
         }

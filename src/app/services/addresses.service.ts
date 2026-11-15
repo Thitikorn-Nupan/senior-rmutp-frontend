@@ -34,7 +34,21 @@ export class AddressesService {
   public getDistrictsByProvinceId(pid: number): Observable<District[]> {
     return this.http.get<{ data: LocationRecord[] }>(this.baseUrl + '/districts', {
       params: new HttpParams().set('province', pid)
-    }).pipe(map(response => response.data.map(row => new District(row.id, row.nameEn || row.nameTh))));
+    }).pipe(map(response => {
+      const counts = new Map<string, number>();
+      for (const row of response.data) {
+        const name = row.nameEn || row.nameTh;
+        counts.set(name, (counts.get(name) ?? 0) + 1);
+      }
+      return response.data.map(row => {
+        const name = row.nameEn || row.nameTh;
+        // Different Thai names can share one English transliteration. Use the Thai
+        // value (accepted by checkout) so the saved address identifies the district.
+        return counts.get(name)! > 1 && row.nameEn && row.nameTh
+          ? new District(row.id, `${name} (${row.nameTh})`, row.nameTh)
+          : new District(row.id, name);
+      });
+    }));
   }
 
   public getDistrictsByProvinceName(name: string): Observable<District[]> {

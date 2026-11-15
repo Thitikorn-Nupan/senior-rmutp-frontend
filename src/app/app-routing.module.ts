@@ -11,8 +11,10 @@ import {OrderHistoryAdminComponent} from "./components/order-history-admin/order
 import {AuthGuardRouter} from "./guards/auth-guard-router.service";
 import {OrderHistoryOnlyPerfumesAdminComponent} from "./components/order-history-only-perfumes-admin/order-history-only-perfumes-admin.component";
 import {ProductsAdminComponent} from "./components/products-admin/products-admin.component";
+import {ProfileComponent} from './components/profile/profile.component';
 
 const routes: Routes = [
+  {path: 'profile', component: ProfileComponent, canActivate: [AuthGuardRouter]},
   {path: 'login', component: LoginFormComponent, canActivate: [AuthGuardRouter]},
   {path: 'register', component: RegisterFormComponent},
   {path: 'add-product', component: ProductsAdminComponent, data: {create: true}, canActivate: [AuthGuardRouter]},

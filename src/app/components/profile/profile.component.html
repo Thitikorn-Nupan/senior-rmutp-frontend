@@ -1,0 +1,90 @@
+<main class="profile-page" [attr.lang]="language.language()">
+  <div class="profile-container">
+    <a class="back-link" routerLink="/products">← {{ text().back }}</a>
+    <header class="page-heading"><p class="eyebrow">{{ text().account }}</p>
+      <h1>{{ text().title }}</h1>
+      <p>{{ text().intro }}</p></header>
+    <p *ngIf="loading" class="notice" role="status">{{ text().loading }}</p>
+    <p *ngIf="error" class="notice error" role="alert">{{ error }}</p>
+    <button *ngIf="loadError && !loading" type="button" class="secondary" (click)="load()">{{ text().retry }}</button>
+    <form *ngIf="profile && !loadError" [formGroup]="form" (ngSubmit)="save()" [attr.aria-busy]="saving || uploading">
+      <fieldset [disabled]="loading || saving || uploading">
+        <section class="profile-card photo-section" aria-labelledby="photo-heading">
+          <div class="avatar">
+            <img *ngIf="avatarUrl; else defaultAvatar" [src]="avatarUrl" [alt]="text().photo" width="88" height="88"/>
+            <ng-template #defaultAvatar>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+                   aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 22v-2a8 8 0 0 1 16 0v2"/>
+              </svg>
+            </ng-template>
+          </div>
+          <div><h2 id="photo-heading">{{ text().photo }}</h2>
+            <p>{{ text().photoHint }}</p>
+            <div class="photo-actions">
+              <input #photoInput type="file" class="photo-input" accept="image/jpeg,image/png,image/webp"
+                     (change)="choosePhoto($event)" [attr.aria-label]="text().choosePhoto"/>
+              <button type="button" class="secondary" (click)="photoInput.click()">{{ text().choosePhoto }}</button>
+              <button *ngIf="avatarUrl" type="button" class="text-button"
+                      (click)="removePhoto()">{{ text().removePhoto }}
+              </button>
+            </div>
+          </div>
+        </section>
+        <section class="profile-card" aria-labelledby="personal-heading">
+          <h2 id="personal-heading">{{ text().personal }}</h2>
+          <p>{{ text().contactHint }}</p>
+          <div class="fields">
+            <div class="field full"><label for="profile-email">{{ text().email }}</label><input id="profile-email"
+                                                                                                type="email"
+                                                                                                [value]="profile.email"
+                                                                                                readonly
+                                                                                                autocomplete="email"/>
+            </div>
+            <div *ngFor="let field of personalFields" class="field">
+              <label [for]="'profile-' + field.key">{{ text()[field.key] }} <span *ngIf="field.required"
+                                                                                  class="required"
+                                                                                  [attr.title]="text().required">*</span></label>
+              <input [id]="'profile-' + field.key" [type]="field.key === 'phone' ? 'tel' : 'text'"
+                     [formControlName]="field.key" [autocomplete]="field.autocomplete" [maxlength]="field.max"
+                     [required]="field.required"
+                     [attr.aria-invalid]="invalid(field.key)"
+                     [attr.aria-describedby]="invalid(field.key) ? field.key + '-error' : null"/>
+              <small *ngIf="invalid(field.key)" [id]="field.key + '-error'"
+                     class="field-error">{{ text().fieldError }}</small>
+            </div>
+          </div>
+        </section>
+        <section class="profile-card" formGroupName="shippingAddress" aria-labelledby="address-heading">
+          <h2 id="address-heading">{{ text().address }}</h2>
+          <p>{{ text().addressHint }}</p>
+          <div class="fields">
+            <div *ngFor="let field of addressFields" class="field"
+                 [class.full]="field.key === 'addressLine1' || field.key === 'addressLine2'">
+              <label [for]="'profile-' + field.key">{{ text()[field.key] }}</label>
+              <input [id]="'profile-' + field.key" type="text" [formControlName]="field.key"
+                     [autocomplete]="field.autocomplete" [maxlength]="field.max"
+                     [attr.inputmode]="field.key === 'postalCode' ? 'numeric' : null"
+                     [attr.aria-invalid]="invalid('shippingAddress.' + field.key)"
+                     [attr.aria-describedby]="invalid('shippingAddress.' + field.key) ? field.key + '-error' : null"/>
+              <small *ngIf="invalid('shippingAddress.' + field.key)" [id]="field.key + '-error'"
+                     class="field-error">{{ text().fieldError }}</small>
+            </div>
+            <div class="field"><label for="profile-country">{{ text().country }}</label><select id="profile-country"
+                                                                                                formControlName="countryCode"
+                                                                                                autocomplete="country">
+              <option value="TH">{{ text().thailand }}</option>
+            </select></div>
+          </div>
+        </section>
+      </fieldset>
+      <div class="form-actions"><span
+        role="status">{{ uploading ? text().uploading : saving ? text().saving : '' }}</span>
+        <button class="primary" type="submit"
+                [disabled]="loading || saving || uploading">{{ saving ? text().saving : text().save }}
+        </button>
+      </div>
+    </form>
+  </div>
+</main>

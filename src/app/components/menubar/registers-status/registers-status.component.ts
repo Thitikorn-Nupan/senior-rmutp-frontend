@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from "@angular/router";
-import {filter} from 'rxjs';
+import {filter, merge} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {User} from "../../../entities/user";
 import {JwtResponse} from "../../../entities/register/jwt-response";
@@ -15,15 +15,22 @@ import {MenuLanguageService} from "../../../services/menu-language.service";
 export class RegistersStatusComponent implements OnInit {
   protected declare user: User | null
   protected declare jwtResponse: JwtResponse
-  protected isUserLogin : boolean = false
-  protected isAdminLogin : boolean = false
-  protected isToggle : boolean = false
+  protected isUserLogin: boolean = false
+  protected isAdminLogin: boolean = false
+  protected isToggle: boolean = false
+  protected settingsOpen = false;
 
   constructor(private readonly router: Router,
               private readonly webStorageService: WebStorageService,
-              public readonly menuLanguage: MenuLanguageService) {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd), takeUntilDestroyed())
-      .subscribe(() => this.loadSession());
+              public readonly menuLanguage: MenuLanguageService,
+              private readonly element: ElementRef<HTMLElement>) {
+    merge(this.router.events.pipe(filter(event => event instanceof NavigationEnd)), this.webStorageService.sessionChanges$)
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.settingsOpen = false;
+        this.isToggle = false;
+        this.loadSession();
+      });
   }
 
   ngOnInit(): void {
@@ -46,10 +53,25 @@ export class RegistersStatusComponent implements OnInit {
   }
 
   protected logout(): void {
-    this.router.navigate(['']).then(() => (this.webStorageService.clearSession()))
+    this.webStorageService.clearSession();
+    void this.router.navigate(['/products']);
   }
 
   protected toggle(): void {
+    this.settingsOpen = false;
     this.isToggle = !this.isToggle
+  }
+
+  protected toggleSettings(): void {
+    this.isToggle = false;
+    this.settingsOpen = !this.settingsOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  closeOutside(event: MouseEvent): void {
+    if (!this.element.nativeElement.contains(event.target as Node)) {
+      this.settingsOpen = false;
+      this.isToggle = false;
+    }
   }
 }
