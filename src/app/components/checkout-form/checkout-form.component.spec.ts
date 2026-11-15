@@ -62,6 +62,23 @@ describe('PromptPay checkout workflow', () => {
     request.flush({data: quote});
     fixture.detectChanges();
   };
+
+  it('quotes separate SKU ids for two sizes of the same product', () => {
+    cart.cartItems = [
+      {pid: 1, name: 'Amber', variantDocumentId: 'variantone', sku: 'AMBER-30', variantLabel: '30 ml', quantity: 1, price: 120.25},
+      {pid: 1, name: 'Amber', variantDocumentId: 'varianttwo', sku: 'AMBER-50', variantLabel: '50 ml', quantity: 2, price: 200},
+    ];
+    start();
+    const request = http.expectOne(base + '/quote');
+    expect(request.request.body.items).toEqual([{variantDocumentId: 'variantone', quantity: 1}, {variantDocumentId: 'varianttwo', quantity: 2}]);
+    request.flush({data: {...quote, items: [
+      {variantDocumentId: 'variantone', name: 'Amber', quantity: 1, unitPrice: '120.25', lineTotal: '120.25'},
+      {variantDocumentId: 'varianttwo', name: 'Amber', quantity: 2, unitPrice: '200.00', lineTotal: '400.00'},
+    ]}});
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('AMBER-30');
+    expect(fixture.nativeElement.textContent).toContain('AMBER-50');
+  });
   const fillDetails = () => {
     for (const [id, value] of Object.entries({'customer-firstname': 'Test', 'customer-lastname': 'Customer', 'customer-phone': '0812345678',
       'shipping-street': '1 Test Street', 'shipping-subdistrict': 'Test', 'shipping-zipcode': '10300',

@@ -5,6 +5,9 @@ import {Product} from "../items/product";
 export class CartItem {
   public documentId?: string;
   public variantDocumentId?: string;
+  public sku?: string;
+  public variantLabel?: string;
+  public availableStock?: number;
 
   public pid: number
   public name: string
@@ -16,6 +19,9 @@ export class CartItem {
     this.pid = product.pid;
     this.documentId = product.documentId;
     this.variantDocumentId = product.variantDocumentId;
+    this.sku = product.sku;
+    this.variantLabel = product.variantLabel;
+    this.availableStock = product.unitInStock;
     this.name = product.name;
     this.imageUrl = product.imageUrl;
     this.price = product.price;

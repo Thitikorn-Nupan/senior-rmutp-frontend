@@ -7,9 +7,9 @@ export class JwtResponse {
   public user?: import('../user').User;
   public token: string
   public username: string
-  public roles: object[]
+  public roles: string[]
 
-  constructor(token: string, username: string, roles: object[]) {
+  constructor(token: string, username: string, roles: string[]) {
     this.token = token;
     this.username = username;
     this.roles = roles;

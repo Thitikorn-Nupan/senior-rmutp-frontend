@@ -15,7 +15,7 @@
 }
 
 .auth-container {
-  max-width: 1040px;
+  max-width: 480px;
   margin: auto;
 }
 
@@ -31,63 +31,31 @@
 }
 
 .auth-card {
-  display: grid;
-  grid-template-columns: .9fr 1fr;
   background: white;
   border: 1px solid #e2e7df;
   border-radius: 18px;
   overflow: hidden;
-}
-
-.auth-story {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 56px;
-  background: #243d35;
-  color: #f6f7f2;
-  padding: 40px;
-}
-
-.story-brand {
-  font-size: 19px;
-  font-weight: 600;
-  letter-spacing: -.5px;
-}
-
-.story-brand span {
-  color: #e7cba1;
-}
-
-.auth-story h2 {
-  font-size: 36px;
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: -1px;
-  margin: 16px 0;
-}
-
-.auth-story p {
-  color: #bdccc2;
-  font-size: 14px;
-  line-height: 1.8;
-  margin: 0;
-}
-
-.auth-story .eyebrow {
-  color: #e7cba1;
-}
-
-.story-caption {
-  border-top: 1px solid #ffffff26;
-  padding-top: 20px;
-  font-size: 11px;
-  color: #bdccc2;
+  box-shadow: 0 12px 36px #243d3508;
 }
 
 .auth-content {
   min-width: 0;
   padding: 44px;
+}
+
+.auth-heading {
+  text-align: center;
+}
+
+.auth-brand {
+  display: inline-flex;
+  margin-bottom: 24px;
+  border-radius: 12px;
+}
+
+.auth-brand img {
+  display: block;
+  object-fit: contain;
 }
 
 .eyebrow {
@@ -159,6 +127,7 @@ input[aria-invalid="true"] {
 }
 
 .password-toggle {
+  cursor: pointer;
   position: absolute;
   top: 2px;
   right: 3px;
@@ -182,6 +151,7 @@ input[aria-invalid="true"] {
 }
 
 .submit-button {
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -202,6 +172,7 @@ input[aria-invalid="true"] {
 }
 
 .switch-form {
+  text-align: center;
   padding-top: 24px;
   margin: 24px 0 0;
   border-top: 1px solid #e2e7df;
@@ -226,14 +197,6 @@ a:focus-visible, button:focus-visible {
 }
 
 @media (max-width: 800px) {
-  .auth-story {
-    padding: 28px;
-  }
-
-  .auth-story h2 {
-    font-size: 30px;
-  }
-
   .auth-content {
     padding: 32px 28px;
   }
@@ -249,12 +212,7 @@ a:focus-visible, button:focus-visible {
   }
 
   .auth-card {
-    grid-template-columns: minmax(0, 1fr);
     border-radius: 14px;
-  }
-
-  .auth-story {
-    display: none;
   }
 
   .auth-content {

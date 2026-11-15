@@ -1,8 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
+import {NavigationEnd, Router} from "@angular/router";
+import {filter} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {User} from "../../../entities/user";
 import {JwtResponse} from "../../../entities/register/jwt-response";
 import {WebStorageService} from "../../../services/web-storage.service";
+import {MenuLanguageService} from "../../../services/menu-language.service";
 
 @Component({
   selector: 'ecm-registers-status',
@@ -10,7 +13,6 @@ import {WebStorageService} from "../../../services/web-storage.service";
   styleUrl: './registers-status.component.css'
 })
 export class RegistersStatusComponent implements OnInit {
-
   protected declare user: User | null
   protected declare jwtResponse: JwtResponse
   protected isUserLogin : boolean = false
@@ -18,9 +20,19 @@ export class RegistersStatusComponent implements OnInit {
   protected isToggle : boolean = false
 
   constructor(private readonly router: Router,
-              private readonly webStorageService: WebStorageService) {}
+              private readonly webStorageService: WebStorageService,
+              public readonly menuLanguage: MenuLanguageService) {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd), takeUntilDestroyed())
+      .subscribe(() => this.loadSession());
+  }
 
   ngOnInit(): void {
+    this.loadSession();
+  }
+
+  private loadSession(): void {
+    this.isUserLogin = false;
+    this.isAdminLogin = false;
     this.user = this.webStorageService.getUserFormToken()
     this.jwtResponse = this.webStorageService.getSession("jwtResponse");
     if (this.jwtResponse === null) {
@@ -28,13 +40,8 @@ export class RegistersStatusComponent implements OnInit {
       this.jwtResponse.token = ''
     }
     if (this.user && this.jwtResponse.token !== '') {
-      if (this.user.roles === 'ROLE_USER') {
-        this.isUserLogin = true
-        this.isAdminLogin = false
-      } else {
-        this.isAdminLogin = true
-        this.isUserLogin = true
-      }
+      this.isUserLogin = true;
+      this.isAdminLogin = this.user.roles === 'ROLE_ADMIN';
     }
   }
 
@@ -45,5 +52,4 @@ export class RegistersStatusComponent implements OnInit {
   protected toggle(): void {
     this.isToggle = !this.isToggle
   }
-
 }

@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ProductCategory} from "../../../entities/items/product-category";
 import {ProductCategoriesService} from "../../../services/product-categories.service";
 
+import {MenuLanguageService} from "../../../services/menu-language.service";
+
 @Component({
   selector: 'ecm-product-categories',
   templateUrl: './product-categories.component.html',
@@ -11,7 +13,8 @@ export class ProductCategoriesComponent implements OnInit {
 
   protected declare productCategories: ProductCategory[];
 
-  constructor(private readonly productCategoriesService: ProductCategoriesService) {
+  constructor(private readonly productCategoriesService: ProductCategoriesService,
+              public readonly menuLanguage: MenuLanguageService) {
   }
 
   ngOnInit(): void {

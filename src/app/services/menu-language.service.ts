@@ -1,0 +1,122 @@
+import {Injectable, computed, signal} from '@angular/core';
+import {registerLocaleData} from '@angular/common';
+import thaiLocale from '@angular/common/locales/th';
+
+type MenuLanguage = 'th' | 'en';
+
+const translations = {
+  th: {
+    menu: 'เมนู', openMenu: 'เปิดเมนู', closeMenu: 'ปิดเมนู',
+    shopName: 'ร้านน้ำหอม',
+    shopHome: 'หน้าหลักร้านน้ำหอม',
+    tagline: 'ค้นหากลิ่นหอมที่เป็นคุณ',
+    account: 'บัญชีของคุณ',
+    login: 'เข้าสู่ระบบ',
+    createAccount: 'สร้างบัญชี',
+    loginSuccess: 'เข้าสู่ระบบสำเร็จ',
+    loginSuccessDetail: 'ยินดีต้อนรับกลับสู่ร้านน้ำหอม',
+    registrationSuccess: 'สร้างบัญชีสำเร็จ',
+    registrationSuccessDetail: 'บัญชีของคุณพร้อมใช้งานแล้ว',
+    loginFailed: 'เข้าสู่ระบบไม่สำเร็จ',
+    loginFailedDetail: 'กรุณาตรวจสอบอีเมลและรหัสผ่าน แล้วลองอีกครั้ง',
+    registrationFailed: 'สร้างบัญชีไม่สำเร็จ',
+    registrationFailedDetail: 'ไม่สามารถสร้างบัญชีได้ กรุณาลองอีกครั้ง',
+    connectionError: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองอีกครั้ง',
+    invalidAuthInput: 'กรุณาตรวจสอบข้อมูล',
+    invalidAuthInputDetail: 'กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน',
+    autoLoginFailed: 'กรุณาเข้าสู่ระบบ',
+    autoLoginFailedDetail: 'สร้างบัญชีสำเร็จแล้ว แต่เข้าสู่ระบบอัตโนมัติไม่สำเร็จ กรุณาเข้าสู่ระบบด้วยตนเอง',
+    manageProducts: 'จัดการสินค้า',
+    salesHistory: 'ประวัติการขาย',
+    managePerfumes: 'จัดการน้ำหอม',
+    addPerfume: 'เพิ่มน้ำหอม',
+    ordersHistory: 'ประวัติการสั่งซื้อ',
+    logout: 'ออกจากระบบ',
+    categories: 'หมวดหมู่สินค้า',
+    allProducts: 'สินค้าทั้งหมด',
+    session: 'สถานะการเข้าสู่ระบบของคุณ',
+    welcomeBack: 'ยินดีต้อนรับกลับ',
+    signedIn: 'เข้าสู่ระบบแล้ว',
+    sessionExpires: 'หมดเวลาเข้าสู่ระบบ',
+    viewCart: 'ดูตะกร้าสินค้า',
+    items: 'รายการ',
+    switchLanguage: 'เปลี่ยนเป็นภาษาอังกฤษ',
+    footerTagline: 'ค้นหากลิ่นหอมที่เป็นคุณ',
+    footerDescription: 'เติมความหรูหราเล็ก ๆ ให้ทุกวัน',
+    exploreCollection: 'เลือกชมคอลเลกชัน',
+    explore: 'เลือกชมสินค้า',
+    allPerfumes: 'น้ำหอมทั้งหมด',
+    yourCart: 'ตะกร้าของคุณ',
+    footerShopLinks: 'ลิงก์ร้านค้าในส่วนท้าย',
+    footerAccountLinks: 'ลิงก์บัญชีในส่วนท้าย',
+    connect: 'ติดตามเรา',
+    connectDeveloper: 'ติดต่อผู้พัฒนา',
+    opensNewTab: '(เปิดในแท็บใหม่)',
+    footerClosing: 'ค้นหาน้ำหอมที่สะท้อนความเป็นคุณ',
+  },
+  en: {
+    menu: 'Menu', openMenu: 'Open menu', closeMenu: 'Close menu',
+    shopName: 'Perfumes Shop',
+    shopHome: 'Perfumes Shop home',
+    tagline: 'Find your signature scent',
+    account: 'Your account',
+    login: 'Login',
+    createAccount: 'Create account',
+    loginSuccess: 'Login successful',
+    loginSuccessDetail: 'Welcome back to Perfumes Shop.',
+    registrationSuccess: 'Account created',
+    registrationSuccessDetail: 'Your account is ready to use.',
+    loginFailed: 'Login failed',
+    loginFailedDetail: 'Please check your email and password and try again.',
+    registrationFailed: 'Registration failed',
+    registrationFailedDetail: 'Unable to create your account. Please try again.',
+    connectionError: 'Cannot connect to the server. Please try again.',
+    invalidAuthInput: 'Check your information',
+    invalidAuthInputDetail: 'Please enter both your email and password.',
+    autoLoginFailed: 'Please log in',
+    autoLoginFailedDetail: 'Your account was created, but automatic login failed. Please log in manually.',
+    manageProducts: 'Manage products',
+    salesHistory: 'Sales history',
+    managePerfumes: 'Manage perfumes',
+    addPerfume: 'Add perfume',
+    ordersHistory: 'Orders history',
+    logout: 'Logout',
+    categories: 'Product categories',
+    allProducts: 'All products',
+    session: 'Your login session',
+    welcomeBack: 'Welcome back',
+    signedIn: 'Signed in',
+    sessionExpires: 'Session expires',
+    viewCart: 'View cart',
+    items: 'items',
+    switchLanguage: 'Switch to Thai',
+    footerTagline: 'Find your signature scent.',
+    footerDescription: 'A little luxury, for every day.',
+    exploreCollection: 'Explore the collection',
+    explore: 'Explore',
+    allPerfumes: 'All perfumes',
+    yourCart: 'Your cart',
+    footerShopLinks: 'Footer shop links',
+    footerAccountLinks: 'Footer account links',
+    connect: 'Connect',
+    connectDeveloper: 'Connect with the developer',
+    opensNewTab: '(opens in a new tab)',
+    footerClosing: 'Find a fragrance that feels like you.',
+  },
+} satisfies Record<MenuLanguage, Record<string, string>>;
+
+@Injectable({providedIn: 'root'})
+export class MenuLanguageService {
+  private readonly selectedLanguage = signal<MenuLanguage>('th');
+  readonly language = this.selectedLanguage.asReadonly();
+  readonly text = computed(() => translations[this.language()]);
+  readonly locale = computed(() => this.language() === 'th' ? 'th-TH' : 'en-US');
+
+  constructor() {
+    registerLocaleData(thaiLocale);
+  }
+
+  toggleLanguage(): void {
+    this.selectedLanguage.update(language => language === 'th' ? 'en' : 'th');
+  }
+}

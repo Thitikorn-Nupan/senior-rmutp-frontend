@@ -6,13 +6,15 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {CartStatusService} from "../../services/cart-status.service";
 import {CartItem} from "../../entities/purchase/cart-item";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {MenuLanguageService} from '../../services/menu-language.service';
+import {customerProductMessages} from '../product-detail/customer-product.messages';
 
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css', './products-loading.css']
 })
-export class ProductsComponent implements OnInit, OnDestroy{
+export class ProductsComponent implements OnInit, OnDestroy {
   protected loading = true;
   protected errorMessage = '';
   protected cartMessage = '';
@@ -33,8 +35,13 @@ export class ProductsComponent implements OnInit, OnDestroy{
 
   constructor(private readonly productsService: ProductsService,
               private readonly activatedRoute: ActivatedRoute,
-              private readonly cartStatusService : CartStatusService,
-              private readonly router:Router) {
+              private readonly cartStatusService: CartStatusService,
+              private readonly router: Router,
+              public readonly language: MenuLanguageService) {
+  }
+
+  get t() {
+    return customerProductMessages[this.language.language()];
   }
 
   async ngOnInit(): Promise<void> {
@@ -42,14 +49,14 @@ export class ProductsComponent implements OnInit, OnDestroy{
     // await this.delay(800)
     // this.loadProducts()
     // My new
-    this.form = new FormGroup({name: new FormControl(null,Validators.required)})
+    this.form = new FormGroup({name: new FormControl(null, Validators.required)})
     this.loadProducts();
   }
 
 
-  private loadProducts() : void {
-    this.routeSubscription = this.activatedRoute.params.subscribe(() : void  => {
-      const checkParamIsExist : boolean = this.activatedRoute.snapshot.paramMap.has('id')
+  private loadProducts(): void {
+    this.routeSubscription = this.activatedRoute.params.subscribe((): void => {
+      const checkParamIsExist: boolean = this.activatedRoute.snapshot.paramMap.has('id')
       if (checkParamIsExist) {
         this.currentCategoryId = Number(this.activatedRoute.snapshot.paramMap.get('id'))
       } else {
@@ -60,42 +67,45 @@ export class ProductsComponent implements OnInit, OnDestroy{
     })
   }
 
-  protected search() : void {
+  protected search(): void {
     if (this.form.valid) {
       const name = this.form.get('name')?.value;
       this.searchProductsByName(name)
-    }
-    else {
+    } else {
       this.loadProductsByCategory()
     }
   }
 
-  protected clear() : void {
+  protected clear(): void {
     this.form.reset();
     this.loadProductsByCategory()
   }
 
-  private searchProductsByName(name:string): void {
+  private searchProductsByName(name: string): void {
     this.loadRequest(this.productsService.getProductByLikeName(name));
 
   }
 
-  protected addItem(product: Product) : void  {
+  protected addItem(product: Product): void {
+    if (product.variants.length > 1) {
+      this.seeDetail(product.documentId || product.pid);
+      return;
+    }
     if (product.unitInStock <= 0) return;
-    const cartItem : CartItem = new CartItem(product)
-    this.cartStatusService.addItemToCart(cartItem) // ****
-    this.cartMessage = `${product.name} added to your cart.`;
+    const cartItem: CartItem = new CartItem(product)
+    const added = this.cartStatusService.addItemToCart(cartItem);
+    this.cartMessage = added ? `${product.name} · ${this.t.added}` : this.t.limit;
   }
 
-  protected onSwitchMode(): void  {
+  protected onSwitchMode(): void {
     this.enableForm = !this.enableForm
   }
 
-  protected seeDetail(pid: number | string) : void {
-    this.router.navigate(['product-detail',pid])
+  protected seeDetail(pid: number | string): void {
+    this.router.navigate(['product-detail', pid])
   }
 
-  private loadProductsByCategory(): void  {
+  private loadProductsByCategory(): void {
     this.loadRequest(this.productsService.getProductsByCategoryByObservable(this.currentCategoryId));
   }
 

@@ -1,8 +1,8 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
+import {AlertComponent} from './components/alert/alert.component';
 import {MenubarComponent} from './components/menubar/menubar.component';
 import {RegistersStatusComponent} from './components/menubar/registers-status/registers-status.component';
 import {LoginFormComponent} from './components/login-form/login-form.component';
@@ -18,9 +18,7 @@ import {CheckoutFormComponent} from './components/checkout-form/checkout-form.co
 import {FooterComponent} from './components/footer/footer.component';
 import {OrdersHistoryComponent} from './components/orders-history/orders-history.component';
 import {OrderHistoryAdminComponent} from './components/order-history-admin/order-history-admin.component';
-import {
-  OrderHistoryOnlyPerfumesAdminComponent
-} from './components/order-history-only-perfumes-admin/order-history-only-perfumes-admin.component';
+import {OrderHistoryOnlyPerfumesAdminComponent} from './components/order-history-only-perfumes-admin/order-history-only-perfumes-admin.component';
 import {AddProductComponent} from './components/add-product/add-product.component';
 import {ProductsAdminComponent} from './components/products-admin/products-admin.component';
 import {PopUpComponent} from './components/pop-up/pop-up.component';
@@ -29,6 +27,7 @@ import {CheckoutSelectComponent} from './components/checkout-form/checkout-selec
 @NgModule({
   declarations: [
     AppComponent,
+    AlertComponent,
     MenubarComponent,
     RegistersStatusComponent,
     LoginFormComponent,

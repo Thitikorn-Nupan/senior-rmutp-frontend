@@ -1,0 +1,32 @@
+.image-field > div { min-width: 0; flex: 1; }
+.upload-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #cddbc7;
+  border-radius: 8px;
+  background: #fff;
+  color: #3f6047;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.upload-button:hover { border-color: #708b75; background: #edf3e9; }
+.upload-button:focus-within { outline: 2px solid #708b75; outline-offset: 3px; }
+.upload-button svg { flex-shrink: 0; }
+.image-field .upload-button input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.selected-file { display: block; margin-top: 10px; font-size: 11px; line-height: 1.6; color: #66795f; overflow-wrap: anywhere; }

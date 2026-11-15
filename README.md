@@ -6,6 +6,14 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
+### Testing on a phone over Wi-Fi
+
+Start the Strapi backend on the PC at port `1337`, then run `npm run start:host0000`.
+Open `http://<PC-LAN-IP>:4200` on a phone connected to the same network.
+The development configuration uses the browser's origin and `proxy.conf.json` to forward
+`/api/**` and `/uploads/**` to Strapi on the PC, so the phone does not need to access port `1337`.
+Restart the Angular dev server after changing its proxy configuration.
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.

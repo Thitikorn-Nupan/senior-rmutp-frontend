@@ -1,54 +1,77 @@
 ﻿<main class="product-page">
   <div class="detail-container">
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-      <a routerLink="/products"><span aria-hidden="true">←</span> All products</a>
+      <a routerLink="/products"><span aria-hidden="true">←</span> {{ t.all }}</a>
       <span aria-hidden="true">/</span>
-      <span aria-current="page">{{ product ? product.name : 'Product details' }}</span>
+      <span aria-current="page">{{ product ? product.name : t.details }}</span>
     </nav>
 
     <section *ngIf="errorMessage" class="detail-state" role="alert">
       <span class="state-symbol" aria-hidden="true">!</span>
-      <h1>We couldn't show this perfume</h1>
+      <h1>{{ t.loadFailed }}</h1>
       <p>{{ errorMessage }}</p>
-      <a class="primary-action" routerLink="/products">Explore the collection</a>
+      <a class="primary-action" routerLink="/products">{{ t.all }}</a>
     </section>
 
     <section *ngIf="!product && !errorMessage" class="detail-state" role="status" aria-live="polite">
       <div class="spinner-border" aria-hidden="true"></div>
-      <p>Loading your fragrance…</p>
+      <p>{{ t.loading }}</p>
     </section>
 
     <article *ngIf="product && !errorMessage" class="product-layout" aria-labelledby="product-name">
       <div class="image-panel">
-        <img [src]="product.imageUrl" [alt]="product.name" />
+        <img [src]="product.imageUrl" [alt]="product.name"/>
       </div>
 
       <div class="product-summary">
-        <p class="eyebrow">THE FRAGRANCE COLLECTION</p>
+        <p class="eyebrow">{{ t.collection }}</p>
         <h1 id="product-name">{{ product.name }}</h1>
         <p class="product-code">SKU <span>{{ product.sku }}</span></p>
-        <p class="product-price">{{ product.price | currency:'THB':'symbol-narrow' }}</p>
-        <p class="stock-status" [class.out-of-stock]="product.unitInStock <= 0">
-          <span class="stock-dot" aria-hidden="true"></span>
-          {{ product.unitInStock > 0 ? 'In stock · ' + product.unitInStock + ' available' : 'Currently out of stock' }}
-        </p>
+        <div aria-live="polite" aria-atomic="true">
+          <p class="product-price">{{ product.price | currency:'THB':'symbol-narrow':undefined:language.locale() }}</p>
+          <p class="stock-status" [class.out-of-stock]="product.unitInStock <= 0">
+            <span class="stock-dot" aria-hidden="true"></span>
+            {{ product.unitInStock > 0 ? t.inStock + ' · ' + product.unitInStock + ' ' + t.units : t.soldOut }}
+          </p>
+        </div>
+
+        <fieldset *ngIf="product.variants.length" class="variant-picker">
+          <legend>{{ t.choose }} <span>{{ product.variants.length }} {{ t.options }}</span></legend>
+          <p>{{ t.chooseHint }}</p>
+          <div class="variant-options">
+            <label *ngFor="let variant of product.variants" class="variant-choice"
+                   [class.chosen]="variant.documentId === product.variantDocumentId"
+                   [class.sold-out]="variant.availableStock <= 0">
+              <input type="radio" name="fragrance-variant" [value]="variant.documentId"
+                     [checked]="variant.documentId === product.variantDocumentId"
+                     (change)="chooseVariant(variant.documentId)"/>
+              <span class="variant-label">{{ variant.label }}<small>SKU {{ variant.sku }}</small></span>
+              <span
+                class="variant-price">{{ variant.price | currency:'THB':'symbol-narrow':undefined:language.locale() }}
+                <small>{{ variant.availableStock > 0 ? t.inStock : t.soldOut }}</small>
+              </span>
+            </label>
+          </div>
+        </fieldset>
 
         <section class="product-description" aria-labelledby="description-heading">
-          <h2 id="description-heading">About this fragrance</h2>
-          <p>{{ product.description || 'More details about this fragrance will be available soon.' }}</p>
+          <h2 id="description-heading">{{ t.about }}</h2>
+          <p>{{ product.description || t.noDescription }}</p>
         </section>
 
         <div class="purchase-actions">
-          <button type="button" class="primary-action" (click)="addItem(product)" [disabled]="product.unitInStock <= 0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
-              <path d="M3 3h2l2.4 12h11.2L21 7H6" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
+          <button type="button" class="primary-action" (click)="addItem(product)" [disabled]="!canAdd">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                 aria-hidden="true">
+              <path d="M3 3h2l2.4 12h11.2L21 7H6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="9" cy="20" r="1"/>
+              <circle cx="18" cy="20" r="1"/>
             </svg>
-            {{ product.unitInStock > 0 ? 'Add to cart' : 'Sold out' }}
+            {{ product.unitInStock <= 0 ? t.soldOut : canAdd ? t.add : t.limit }}
           </button>
-          <a class="secondary-action" routerLink="/cart-detail">View cart <span aria-hidden="true">↗</span></a>
+          <a class="secondary-action" routerLink="/cart-detail">{{ t.cart }} <span aria-hidden="true">↗</span></a>
         </div>
-        <a class="continue-link" routerLink="/products">Continue exploring <span aria-hidden="true">→</span></a>
+        <a class="continue-link" routerLink="/products">{{ t.continue }} <span aria-hidden="true">→</span></a>
       </div>
     </article>
   </div>

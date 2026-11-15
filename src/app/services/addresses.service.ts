@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+﻿import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {map, Observable, of, shareReplay, switchMap} from 'rxjs';
 import {District} from '../entities/addresses/district';
@@ -12,17 +12,18 @@ interface LocationRecord {
   nameTh: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class AddressesService {
   private readonly baseUrl = environment.strapiUrl + '/api/locations';
   private provinces$?: Observable<Province[]>;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {
+  }
 
   public getProvinces(refresh = false): Observable<Province[]> {
     if (refresh) this.provinces$ = undefined;
     if (!this.provinces$) {
-      this.provinces$ = this.http.get<{data: LocationRecord[]}>(this.baseUrl + '/provinces').pipe(
+      this.provinces$ = this.http.get<{ data: LocationRecord[] }>(this.baseUrl + '/provinces').pipe(
         map(response => response.data.map(row => new Province(row.id, row.nameEn || row.nameTh))),
         shareReplay({bufferSize: 1, refCount: true})
       );
@@ -31,7 +32,7 @@ export class AddressesService {
   }
 
   public getDistrictsByProvinceId(pid: number): Observable<District[]> {
-    return this.http.get<{data: LocationRecord[]}>(this.baseUrl + '/districts', {
+    return this.http.get<{ data: LocationRecord[] }>(this.baseUrl + '/districts', {
       params: new HttpParams().set('province', pid)
     }).pipe(map(response => response.data.map(row => new District(row.id, row.nameEn || row.nameTh))));
   }

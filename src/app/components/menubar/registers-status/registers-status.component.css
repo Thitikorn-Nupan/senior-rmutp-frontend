@@ -33,6 +33,20 @@ a:hover, button:hover, .current {
   border: 1px solid #dce3dc;
 }
 
+.guest-links {
+  flex-wrap: nowrap;
+}
+
+.guest-links a, .language-toggle {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.language-toggle {
+  border: 1px solid #dce3dc;
+  cursor: pointer;
+}
+
 a:focus-visible, button:focus-visible {
   outline: 3px solid #ad7f45;
   outline-offset: 2px;
@@ -40,6 +54,27 @@ a:focus-visible, button:focus-visible {
 
 .management {
   position: relative;
+}
+
+.management-toggle {
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.management-toggle[aria-expanded="true"] {
+  background: #edf3e9;
+  color: #243d35;
+}
+
+.management-chevron {
+  flex-shrink: 0;
+  transition: transform 180ms ease;
+}
+
+.management-toggle[aria-expanded="true"] .management-chevron {
+  transform: rotate(180deg);
 }
 
 .management-menu {
@@ -80,4 +115,16 @@ a:focus-visible, button:focus-visible {
     white-space: nowrap;
     flex-shrink: 0;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .management-toggle, .management-chevron { transition: none; }
+}
+
+@media (max-width: 768px) {
+  .account-links { flex-direction: column; align-items: stretch; gap: 4px; }
+  a, button { justify-content: flex-start; width: 100%; min-height: 46px; padding: 12px; font-size: 14px; white-space: normal; text-align: left; }
+  .guest-links a, .language-toggle { white-space: normal; }
+  .management-menu { position: static; min-width: 0; margin: 4px 0 8px 12px; padding: 4px; background: #f7f9f2; border: 0; border-left: 2px solid #d6e2cb; border-radius: 0 8px 8px 0; box-shadow: none; }
+  .language-toggle { margin-top: 8px; justify-content: center; background: #f5f7f0; }
 }

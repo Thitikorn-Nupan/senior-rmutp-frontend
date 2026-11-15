@@ -28,6 +28,8 @@
   font-size: 12px;
 }
 
+.cart-label { display: none; }
+
 .cart-link:hover {
   background: #e5ece3;
 }
@@ -52,4 +54,10 @@
     height: 20px;
     font-size: 11px;
   }
+}
+
+@media (max-width: 768px) {
+  .cart-link { gap: 6px; padding: 8px; font-size: 13px; }
+  .cart-label, .cart-price { display: none; }
+  .cart-count { min-width: 24px; height: 24px; }
 }

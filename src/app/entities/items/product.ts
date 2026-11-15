@@ -1,4 +1,20 @@
+export interface ProductVariant {
+  documentId: string;
+  sku: string;
+  label: string;
+  price: number;
+  availableStock: number;
+  imageUrl: string;
+}
+
 export class Product {
+  public variants: ProductVariant[] = [];
+  public variantLabel = '';
+
+  public get availableStock(): number {
+    return this.variants.length ? this.variants.reduce((sum, variant) => sum + variant.availableStock, 0) : this.unitInStock;
+  }
+
   public documentId?: string;
   public variantDocumentId?: string;
   public pid: number

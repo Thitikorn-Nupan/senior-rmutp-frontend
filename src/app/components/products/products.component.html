@@ -1,14 +1,8 @@
 ﻿<main class="catalog">
   <div class="catalog-inner">
     <header class="collection-heading">
-      <div>
-        <p class="eyebrow">THE FRAGRANCE COLLECTION</p>
-        <h1>Discover your next scent</h1>
-        <p class="collection-description">A little luxury, for every day.</p>
-      </div>
       <span *ngIf="!errorMessage" class="results-count">{{ loading ? 'Updating collection…' : totalPageNumber + (totalPageNumber === 1 ? ' perfume' : ' perfumes') }}</span>
     </header>
-
     <form *ngIf="form" class="search-form" [formGroup]="form" (ngSubmit)="search()" role="search">
       <label class="visually-hidden" for="perfume-search">Search perfumes by name</label>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
@@ -59,18 +53,18 @@
           <img [src]="product.imageUrl" [alt]="product.name" loading="lazy"/>
         </a>
         <div class="product-info">
-          <p class="product-sku">{{ product.sku }}</p>
+          <p class="product-sku">{{ product.variants.length > 1 ? product.variants.length + ' ' + t.options : product.sku }}</p>
           <h2><a [routerLink]="['/product-detail', product.documentId || product.pid]">{{ product.name }}</a></h2>
-          <p class="product-price">{{ product.price | currency:'THB':'symbol-narrow' }}</p>
-          <p class="product-stock" [class.unavailable]="product.unitInStock <= 0">
+          <p class="product-price">{{ product.variants.length > 1 ? t.from + ' ' : '' }}{{ product.price | currency:'THB':'symbol-narrow':undefined:language.locale() }}</p>
+          <p class="product-stock" [class.unavailable]="product.availableStock <= 0">
             <span
-              aria-hidden="true"></span>{{ product.unitInStock > 0 ? product.unitInStock + ' in stock' : 'Currently unavailable' }}
+              aria-hidden="true"></span>{{ product.availableStock > 0 ? t.inStock + ' · ' + product.availableStock + ' ' + t.units : t.unavailable }}
           </p>
           <div class="product-actions">
             <a class="detail-button" [routerLink]="['/product-detail', product.documentId || product.pid]"
                [attr.aria-label]="'View details for ' + product.name">Details</a>
-            <button type="button" class="add-button" (click)="addItem(product)" [disabled]="product.unitInStock <= 0"
-                    [attr.aria-label]="'Add ' + product.name + ' to cart'">Add to cart <span aria-hidden="true">+</span>
+            <button type="button" class="add-button" (click)="addItem(product)" [disabled]="product.availableStock <= 0"
+                    [attr.aria-label]="(product.variants.length > 1 ? t.choose : t.add) + ' · ' + product.name">{{ product.variants.length > 1 ? t.choose : t.add }} <span aria-hidden="true">{{ product.variants.length > 1 ? '→' : '+' }}</span>
             </button>
           </div>
         </div>

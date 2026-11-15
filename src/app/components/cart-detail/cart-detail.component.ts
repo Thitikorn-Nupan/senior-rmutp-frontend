@@ -13,13 +13,14 @@ export class CartDetailComponent implements OnInit {
   protected totalQuantity: number = 0
   protected declare cartItems: CartItem[]
 
-  constructor(private readonly cartStatusService: CartStatusService,) {}
+  constructor(private readonly cartStatusService: CartStatusService,) {
+  }
 
   ngOnInit(): void {
     this.loadCartDetail()
   }
 
-  private loadCartDetail() : void {
+  private loadCartDetail(): void {
     // get a handle to the cart item
     this.cartItems = this.cartStatusService.cartItems
     // subscribe all total details
@@ -30,7 +31,7 @@ export class CartDetailComponent implements OnInit {
     this.cartStatusService.computeCart()
   }
 
-  protected incrementQuantity(cartItem: CartItem) : void {
+  protected incrementQuantity(cartItem: CartItem): void {
     this.cartStatusService.addItemToCart(cartItem)
   }
 

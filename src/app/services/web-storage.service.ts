@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {User} from "../entities/user";
 import * as jwt_decode from "jwt-decode";
-import {JwtResponse} from "../entities/register/jwt-response";
 
 // if i mark this @Injectable annotation
 // i don't need to create instance on own just do on constructor as (private webStorageService : WebStorageService)
@@ -14,19 +13,22 @@ export class WebStorageService {
     const jwtResponse = this.getSession("jwtResponse");
     if (jwtResponse) {
       let payload;
-      try { payload = jwt_decode.jwtDecode(jwtResponse.token); }
-      catch { sessionStorage.removeItem('jwtResponse'); return null; }
+      try {
+        payload = jwt_decode.jwtDecode(jwtResponse.token);
+      } catch {
+        sessionStorage.removeItem('jwtResponse');
+        return null;
+      }
       if (payload.exp) {
         return payload.exp;
       }
       return null;
-    }
-    else {
+    } else {
       return null;
     }
   }
 
-  public getUserFormToken() : User | null{
+  public getUserFormToken(): User | null {
     const jwtResponse = this.getSession("jwtResponse");
     if (jwtResponse) {
       const expiry = this.getTokenExpiry();
@@ -38,8 +40,7 @@ export class WebStorageService {
       // Old sessions cannot authenticate with Strapi. Require a fresh login.
       sessionStorage.removeItem('jwtResponse');
       return null;
-    }
-    else {
+    } else {
       return null;
     }
   }

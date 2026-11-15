@@ -5,6 +5,9 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {WebStorageService} from "../../services/web-storage.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {JwtResponse} from "../../entities/security/jwt-response";
+import {AlertService} from '../../services/alert.service';
+import {MenuLanguageService} from '../../services/menu-language.service';
+import {authErrorMessage} from '../../services/auth-error-message';
 
 @Component({
   selector: 'app-login-form',
@@ -17,7 +20,7 @@ export class LoginFormComponent implements OnInit {
   protected declare form: FormGroup;
   protected declare loginRequest: Login
 
-  // ** Popup
+  // Legacy popup bindings retained while its template is commented out.
   protected iconMode: 'WARN' | 'ERROR' = 'WARN';
   public visible: boolean = false;
   protected headerTitle: string = 'Login Failed';
@@ -27,7 +30,9 @@ export class LoginFormComponent implements OnInit {
   constructor(private readonly userRegisterService: UserRegisterService,
               private readonly webStorageService: WebStorageService,
               private readonly router: Router,
-              private readonly activatedRoute: ActivatedRoute) {
+              private readonly activatedRoute: ActivatedRoute,
+              private readonly alerts: AlertService,
+              private readonly language: MenuLanguageService) {
   }
 
   ngOnInit(): void {
@@ -48,30 +53,35 @@ export class LoginFormComponent implements OnInit {
       this.userRegisterService.login(this.loginRequest).subscribe((jwtResponse: JwtResponse) => {
         if (jwtResponse !== null) {
           this.webStorageService.setSession("jwtResponse", jwtResponse);
+          // this.visible = false;
+          this.alerts.show({
+            header: this.language.text().loginSuccess,
+            detail: this.language.text().loginSuccessDetail,
+            status: 'success',
+          });
           const returnUrl = this.activatedRoute.snapshot.queryParamMap.get('returnUrl');
-          this.router.navigateByUrl(returnUrl === '/checkout' ? '/checkout' : '/products').then(() => window.location.reload());
+          void this.router.navigateByUrl(returnUrl === '/checkout' ? '/checkout' : '/products');
+        } else {
+          this.showLoginError();
         }
-      }, (errorResponse): void => { // Way to Catch Errors in Component
-        this.visible = true
-        this.iconMode = 'ERROR'
-        this.headerTitle = 'Error Login'
-        this.body = errorResponse.error?.error?.message
-          ?? (errorResponse.status === 0 ? 'Cannot connect to the server. Please try again.' : 'Unable to log in. Please check your credentials.')
-      })
+      }, errorResponse => this.showLoginError(errorResponse));
     } else {
-      this.visible = true
-      this.iconMode = 'WARN'
-      this.headerTitle = 'Warning Input'
-      this.body = 'Invalid input!'
+      this.form.markAllAsTouched();
+      this.alerts.show({
+        header: this.language.text().invalidAuthInput,
+        detail: this.language.text().invalidAuthInputDetail,
+        status: 'warning',
+      });
     }
   }
 
-  protected setCloseEvent(): void {
-    this.visible = false;
-  }
-
-  protected setOkEvent(): void {
-    this.visible = false;
+  private showLoginError(response?: { status?: number; error?: any }): void {
+    const text = this.language.text();
+    this.alerts.show({
+      header: text.loginFailed,
+      detail: authErrorMessage(response, text.loginFailedDetail, text.connectionError),
+      status: 'error',
+    });
   }
 
 }

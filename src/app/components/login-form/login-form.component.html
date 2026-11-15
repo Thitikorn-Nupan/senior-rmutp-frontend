@@ -1,59 +1,62 @@
-﻿<main class="auth-page">
+<main class="auth-page">
   <div class="auth-container">
     <a class="back-link" routerLink="/products"><span aria-hidden="true">←</span> Back to the collection</a>
     <div class="auth-card">
-      <aside class="auth-story" aria-label="Perfumes Shop">
-        <div class="story-brand">Perfumes Shop<span aria-hidden="true">.</span></div>
-        <div>
-          <p class="eyebrow">YOUR EVERYDAY LUXURY</p>
-          <h2>A scent for every<br/>version of you.</h2>
-          <p>From familiar favourites to new discoveries, find a little luxury for every day.</p>
-        </div>
-        <div class="story-caption">THE FRAGRANCE COLLECTION</div>
-      </aside>
-
       <section class="auth-content" aria-labelledby="auth-heading">
-        <p class="eyebrow">GOOD TO SEE YOU AGAIN</p>
-        <h1 id="auth-heading">Welcome back</h1>
-        <p class="form-intro">Login to continue your fragrance journey.</p>
-
+        <header class="auth-heading">
+          <a class="auth-brand" routerLink="/products" aria-label="Perfumes Shop home">
+            <img src="logo.png" width="72" height="72" alt="Perfumes Shop" />
+          </a>
+          <p class="eyebrow">GOOD TO SEE YOU AGAIN</p>
+          <h1 id="auth-heading">Welcome back</h1>
+          <p class="form-intro">Login to continue your fragrance journey.</p>
+        </header>
         <form *ngIf="form" [formGroup]="form" (ngSubmit)="form.markAllAsTouched(); login()">
           <div class="field">
             <label for="login-username">Email or username</label>
-            <input id="login-username" formControlName="username" type="text"
-                   autocomplete="username" autocapitalize="none" spellcheck="false"
-                   placeholder="Enter your email or username" required
+            <input id="login-username"
+                   formControlName="username"
+                   type="text"
+                   autocomplete="username"
+                   autocapitalize="none"
+                   spellcheck="false"
+                   placeholder="Enter your email or username"
+                   required
                    [attr.aria-invalid]="form.get('username')?.invalid && form.get('username')?.touched ? 'true' : null"
                    [attr.aria-describedby]="form.get('username')?.invalid && form.get('username')?.touched ? 'username-error' : null"/>
-            <p *ngIf="form.get('username')?.invalid && form.get('username')?.touched" id="username-error"
-               class="field-error" aria-live="polite">Please enter your email or username.</p>
+            <p *ngIf="form.get('username')?.invalid && form.get('username')?.touched" id="username-error" class="field-error" aria-live="polite">Please enter your email or username.</p>
           </div>
 
           <div class="field">
             <label for="login-password">Password</label>
             <div class="password-field">
-              <input id="login-password" formControlName="password" [type]="showPassword ? 'text' : 'password'"
-                     autocomplete="current-password" placeholder="Enter your password" required
+              <input id="login-password"
+                     formControlName="password" [type]="showPassword ? 'text' : 'password'"
+                     autocomplete="current-password"
+                     placeholder="Enter your password" required
                      [attr.aria-invalid]="form.get('password')?.invalid && form.get('password')?.touched ? 'true' : null"
                      [attr.aria-describedby]="form.get('password')?.invalid && form.get('password')?.touched ? 'password-error' : null"/>
-              <button type="button" class="password-toggle" (click)="showPassword = !showPassword"
-                      [attr.aria-pressed]="showPassword" aria-label="Show password"
-                      aria-controls="login-password">{{ showPassword ? 'Hide' : 'Show' }}
+              <button type="button"
+                      class="password-toggle"
+                      (click)="showPassword = !showPassword"
+                      [attr.aria-pressed]="showPassword"
+                      aria-label="Show password"
+                      aria-controls="login-password">
+                {{ showPassword ? 'Hide' : 'Show' }}
               </button>
             </div>
             <p *ngIf="form.get('password')?.invalid && form.get('password')?.touched" id="password-error"
                class="field-error" aria-live="polite">Please enter your password.</p>
           </div>
-
           <button type="submit" class="submit-button">Login <span aria-hidden="true">→</span></button>
         </form>
-
         <p class="switch-form">New to Perfumes Shop? <a routerLink="/register">Create an account</a></p>
       </section>
     </div>
   </div>
 </main>
 
+<!-- Legacy popup retained; notifications now use the global Alert component.
 <pop-up
   [visible]="visible"
   [headerTitle]="headerTitle"
@@ -62,3 +65,4 @@
   (closeEvent)="setCloseEvent()"
   (okEvent)="setOkEvent()">
 </pop-up>
+-->

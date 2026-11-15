@@ -1,5 +1,6 @@
 export const environment = {
-  strapiUrl: 'http://localhost:1337',
+  // Use the dev server proxy for API requests and uploaded images, including on LAN devices.
+  strapiUrl: window.location.origin,
   // baseUrl: "http://localhost:6060/api",
   // baseUrl: "http://www.thitikorn-nupan.com:6060/api",
   baseUrl: "http://www.thitikorn-nupan.com/service/ecomerce/api",

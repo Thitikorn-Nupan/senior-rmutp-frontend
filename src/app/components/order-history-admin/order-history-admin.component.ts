@@ -62,10 +62,10 @@ export class OrderHistoryAdminComponent implements OnInit {
       this.jwtResponse = new JwtResponse()
       this.jwtResponse.token = ''
     }
-    await this.delay(800).then(() => ( this.loadOrderHistoriesAdmin()))
+    await this.delay(800).then(() => (this.loadOrderHistoriesAdmin()))
   }
 
-  private loadOrderHistoriesAdmin() : void {
+  private loadOrderHistoriesAdmin(): void {
     this.ordersHistoryService.getOrdersHistoryForAdmin().subscribe(
       (response: OrderHistoryAdmin[]) => {
         this.orderHistoriesAdmin = response
@@ -122,7 +122,7 @@ export class OrderHistoryAdminComponent implements OnInit {
   }
 
 
-  protected updateStatusPayment(orderTracking: string) : void {
+  protected updateStatusPayment(orderTracking: string): void {
     this.visible = true
     this.iconMode = 'CONFIRM'
     this.headerTitle = 'Confirm Update Payment'
@@ -130,16 +130,16 @@ export class OrderHistoryAdminComponent implements OnInit {
     this.orderTrackingNumber = orderTracking
   }
 
-  protected seePerfumesSaleOut() : void {
+  protected seePerfumesSaleOut(): void {
     this.router.navigate(['orders-history-only-perfumes-admin'])
   }
 
 
-  protected setCloseEvent() : void {
+  protected setCloseEvent(): void {
     this.visible = false;
   }
 
-  protected setOkEvent() : void {
+  protected setOkEvent(): void {
     this.visible = false;
     if (this.iconMode === 'CONFIRM') {
       this.orderHistoriesAdmin.filter(order => {
@@ -167,7 +167,7 @@ export class OrderHistoryAdminComponent implements OnInit {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  protected onOpenSlip(qrPurchaseUrl: string) : void {
+  protected onOpenSlip(qrPurchaseUrl: string): void {
     window.open(qrPurchaseUrl, '_blank')
   }
 }

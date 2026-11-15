@@ -18,11 +18,9 @@ import {WebStorageService} from "../services/web-storage.service";
   providedIn: 'root'
 })
 export class AuthGuardRouter implements CanActivate {
-
   constructor(private readonly router: Router,
               private readonly webStorageService: WebStorageService) {
   }
-
   // if return false won go to any path you set
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
     const user: any = this.webStorageService.getUserFormToken()

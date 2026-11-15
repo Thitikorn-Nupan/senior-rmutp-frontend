@@ -12,12 +12,12 @@ import {JwtResponse} from "../entities/register/jwt-response";
 })
 export class OrderHistoryService {
 
-  private readonly baseUrlOrderHistory = environment.baseUrl+'/orderForHistory';
-  private readonly baseUrlOrder = environment.baseUrl+'/order';
-  private jwtResponse : JwtResponse;
+  private readonly baseUrlOrderHistory = environment.baseUrl + '/orderForHistory';
+  private readonly baseUrlOrder = environment.baseUrl + '/order';
+  private jwtResponse: JwtResponse;
 
   constructor(private readonly http: HttpClient,
-              private readonly webStorageService:WebStorageService) {
+              private readonly webStorageService: WebStorageService) {
     this.jwtResponse = this.webStorageService.getSession("jwtResponse");
   }
 
@@ -27,12 +27,12 @@ export class OrderHistoryService {
     return this.http.get<OrderHistoryAdmin[]>(`${this.baseUrlOrderHistory}/selectAllPerfumesSell`, {headers});
   }
 
-  public getOrderHistoryByEmail(username: string) : Observable<OrderHistory[]> {
+  public getOrderHistoryByEmail(username: string): Observable<OrderHistory[]> {
     const headers = new HttpHeaders({Authorization: `Bearer ${this.jwtResponse.token}`});
     return this.http.get<OrderHistory[]>(`${this.baseUrlOrderHistory}/selectAllByEmail?email=${username}`, {headers});
   }
 
-  public getOrderHistoryByTrackingNumber(trackingNumber: string) : Observable<OrderHistoryAdmin[]> {
+  public getOrderHistoryByTrackingNumber(trackingNumber: string): Observable<OrderHistoryAdmin[]> {
     const headers = new HttpHeaders({Authorization: `Bearer ${this.jwtResponse.token}`});
     return this.http.get<OrderHistoryAdmin[]>(`${this.baseUrlOrderHistory}/selectAllByTrackingNumber?tracking=${trackingNumber}`, {headers});
   }
@@ -43,31 +43,30 @@ export class OrderHistoryService {
   }
 
   // Order
-  public updateStatusPurchaseForAdmin(orderTrackingNumber:string) : Observable<boolean> {
+  public updateStatusPurchaseForAdmin(orderTrackingNumber: string): Observable<boolean> {
     const headers = new HttpHeaders({Authorization: `Bearer ${this.jwtResponse.token}`});
-    return this.http.put<boolean>(`${this.baseUrlOrder}/updateStatusPurchase`,{'trackingNumber':orderTrackingNumber} ,{headers});
+    return this.http.put<boolean>(`${this.baseUrlOrder}/updateStatusPurchase`, {'trackingNumber': orderTrackingNumber}, {headers});
   }
 
-  public downloadDocFile(type:'PDF'|'XLSX') : Observable<any> {
-    const fileType : {fileExtension:string} = {
+  public downloadDocFile(type: 'PDF' | 'XLSX'): Observable<any> {
+    const fileType: { fileExtension: string } = {
       fileExtension: type,
     }
-    return this.http.post(`${this.baseUrlOrderHistory}/selectAllPerfumesSellReport`,fileType ,{
+    return this.http.post(`${this.baseUrlOrderHistory}/selectAllPerfumesSellReport`, fileType, {
       observe: 'response', // Get the full HttpResponse
       responseType: 'blob' // Specify the response body type as a blob
     });
   }
 
-  public downloadDocFileV2(type:'PDF'|'XLSX') : Observable<any> {
-    const fileType : {fileExtension:string} = {
+  public downloadDocFileV2(type: 'PDF' | 'XLSX'): Observable<any> {
+    const fileType: { fileExtension: string } = {
       fileExtension: type,
     }
-    return this.http.post(`${this.baseUrlOrderHistory}/selectAllPerfumesSellReport.v2` ,fileType,{
+    return this.http.post(`${this.baseUrlOrderHistory}/selectAllPerfumesSellReport.v2`, fileType, {
       observe: 'response', // Get the full HttpResponse
       responseType: 'blob' // Specify the response body type as a blob
     });
   }
-
 
 
 }

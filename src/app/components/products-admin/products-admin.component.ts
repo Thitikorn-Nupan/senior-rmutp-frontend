@@ -1,243 +1,341 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {WebStorageService} from "../../services/web-storage.service";
-import {JwtResponse} from "../../entities/register/jwt-response";
-import {User} from "../../entities/user";
-import {ProductsService} from "../../services/products.service";
-import {Product} from "../../entities/items/product";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {ProductCategoriesService} from "../../services/product-categories.service";
-import {ProductCategory} from "../../entities/items/product-category";
-import {FileService} from "../../services/file.service";
+import {
+  AfterViewChecked,
+  Component,
+  computed,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
+import {firstValueFrom, Subscription} from 'rxjs';
+import {AlertService} from '../../services/alert.service';
+import {MenuLanguageService} from '../../services/menu-language.service';
+import {
+  ManagedCategory,
+  ManagedProduct,
+  ManagedVariant,
+  ProductManagementInput,
+  ProductManagementService
+} from '../../services/product-management.service';
+import {productAdminMessages} from './products-admin.messages';
 
 @Component({
   selector: 'app-products-admin',
   templateUrl: './products-admin.component.html',
-  styleUrl: './products-admin.component.css'
+  styleUrls: ['./products-admin-cards.css', './products-admin-dialog.css', './products-admin.component.css', './products-admin-editor.css', './products-admin-controls.css'],
 })
-export class ProductsAdminComponent implements OnInit {
+export class ProductsAdminComponent implements OnInit, OnDestroy, AfterViewChecked {
+  products: ManagedProduct[] = [];
+  categories: ManagedCategory[] = [];
+  loading = false;
+  loadFailed = false;
+  saving = false;
+  search = '';
+  category = '';
+  active = '';
+  page = 1;
+  total = 0;
+  pageCount = 0;
+  editorOpen = false;
+  editing?: ManagedProduct;
+  deleting?: ManagedProduct;
+  preview = '';
+  file?: File;
+  imageFileName = '';
+  images: number[] = [];
+  readonly form = new FormGroup({
+    name: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(255), Validators.pattern(/\S/)]
+    }),
+    description: new FormControl('', {nonNullable: true, validators: [Validators.maxLength(20000)]}),
+    gender: new FormControl('unisex', {nonNullable: true}),
+    isActive: new FormControl(true, {nonNullable: true}),
+    variants: new FormArray<FormGroup>([]),
+  });
+  @ViewChild('dialog') private dialog?: ElementRef<HTMLElement>;
+  private listRequest?: Subscription;
+  private objectUrl?: string;
+  private previousFocus?: HTMLElement;
+  private needsFocus = false;
+  private originalOverflow?: string;
+  private destroyed = false;
 
-  protected declare productCategories : ProductCategory[] ;
-  protected declare productCategory : ProductCategory ;
-  protected declare products: Product[]
-  protected declare product: Product
-  protected declare productForShowOnForm: Product
-  protected declare user: User | null
-  protected declare jwtResponse: JwtResponse
-
-  protected currentCategoryId: number = 1;
-  protected isToggle: boolean = false;
-
-  protected declare form: FormGroup;
-  @ViewChild('fileInput')
-  protected fileInput!: ElementRef; // for reset
-  protected declare file: File | undefined // for getting input type file
-  protected isEnableForm: boolean = false;
-
-  // ** Popup
-  protected iconMode : 'WARN' | 'ERROR' | 'SUCCESS' = 'WARN';
-  public visible : boolean = false;
-  protected headerTitle : string = '';
-  protected body! : string;
-
-
-  constructor(private readonly webStorageService: WebStorageService,
-              private readonly productService: ProductsService,
-              private readonly productCategoriesService: ProductCategoriesService,
-              private readonly fileService:FileService) {
+  constructor(public readonly api: ProductManagementService,
+              public readonly language: MenuLanguageService,
+              private readonly alerts: AlertService,
+              private readonly route: ActivatedRoute) {
   }
 
-  async ngOnInit(): Promise<void> {
-    this.user = this.webStorageService.getUserFormToken()
-    this.jwtResponse = this.webStorageService.getSession("jwtResponse");
-    this.form = new FormGroup({
-      sku : new FormControl(null, [Validators.required]),
-      name: new FormControl(null, [Validators.required]),
-      description: new FormControl(null, [Validators.required]),
-      price: new FormControl(null, [Validators.required]),
-      unitInStock : new FormControl(null, [Validators.required]),
-      productCategory : new FormControl(null, [Validators.required])
-    })
-    if (this.jwtResponse === null) {
-      this.jwtResponse = new JwtResponse()
-      this.jwtResponse.token = ''
+  get t() {
+    return productAdminMessages[this.language.language()];
+  }
+
+  get variants() {
+    return this.form.controls.variants;
+  }
+
+  readonly genderOptions = computed(() => {
+    const text = productAdminMessages[this.language.language()];
+    return [{name: text.unisex, value: 'unisex'}, {name: text.male, value: 'male'}, {
+      name: text.female,
+      value: 'female'
+    }];
+  });
+
+  get activeCount() {
+    return this.products.filter(p => p.isActive).length;
+  }
+
+  get lowCount() {
+    return this.products.filter(p => p.isActive && this.stock(p) < 5).length;
+  }
+
+  ngOnInit(): void {
+    this.load();
+    if (this.route.snapshot.data['create']) this.openEditor();
+  }
+
+  load(): void {
+    this.listRequest?.unsubscribe();
+    this.loading = true;
+    this.loadFailed = false;
+    this.listRequest = this.api.list(this.page, this.search, this.category, this.active).subscribe({
+      next: response => {
+        this.products = response.data;
+        this.categories = response.categories;
+        this.total = response.meta.pagination.total;
+        this.pageCount = response.meta.pagination.pageCount;
+        this.loading = false;
+        if (this.page > Math.max(1, this.pageCount)) {
+          this.page = Math.max(1, this.pageCount);
+          this.load();
+        }
+      },
+      error: error => {
+        this.loading = false;
+        this.loadFailed = true;
+        this.notifyError(this.t.loadFailed, error);
+      },
+    });
+  }
+
+  filter(): void {
+    this.page = 1;
+    this.load();
+  }
+
+  resetFilters(): void {
+    this.search = '';
+    this.category = '';
+    this.active = '';
+    this.filter();
+  }
+
+  changePage(page: number): void {
+    if (page > 0 && page <= this.pageCount) {
+      this.page = page;
+      this.load();
     }
-    // Old way
-    // await this.delay(1000).then( async () => { // wait 1s. then do
-    //   this.loadProductsCategories()
-    //   await this.delay(500).then( async () => { // wait 0.5s then do
-    //     this.loadProducts()
-    //   })
-    // })
-    // My New
-    await this.delay(1000) // wait 1 s.
-      .then( async () => ( this.loadProductsCategories() )) // do
-      .then( async () => await this.delay(500)  // wait 0.5 s
-      .then( async () => ( this.loadProducts()) )) // do
   }
 
-  private loadProductsCategories(): void {
-    this.productCategoriesService.getProductCategories().subscribe(productCategories => {
-      this.productCategories = productCategories
-      this.productCategory = this.productCategories[0]
-    })
+  stock(product: ManagedProduct): number {
+    return product.variants.filter(v => v.isActive).reduce((sum, v) => sum + Math.max(0, v.stockOnHand - v.stockReserved), 0);
   }
 
-  private loadProducts(): void {
-    this.currentCategoryId = this.productCategory.pcId
-    this.loadProductsByCategory()
+  price(product: ManagedProduct): number {
+    return Math.min(...product.variants.filter(v => v.isActive).map(v => Number(v.price)), ...(!product.variants.some(v => v.isActive) ? [0] : []));
   }
 
-  private loadProductsByCategory(): void {
-    this.productService.getProductsByCategoryByObservable(this.currentCategoryId)?.subscribe(products => (this.products = products))
+  trackProduct(_: number, product: ManagedProduct): string {
+    return product.documentId;
   }
 
-  protected switch(productCategory:ProductCategory): void { // for sorting mode
-    this.productCategory = productCategory
-    this.loadProducts()
-    this.toggle()
+  openEditor(product?: ManagedProduct): void {
+    if (this.saving) return;
+    this.editing = product;
+    this.form.reset({
+      name: product?.name ?? '', description: product?.description ?? '', gender: product?.gender ?? 'unisex',
+      isActive: product?.isActive ?? true,
+    });
+    this.variants.clear();
+    for (const variant of product?.variants.length ? product.variants : [undefined]) this.addVariant(variant);
+    this.images = product?.images.map(image => image.id) ?? [];
+    this.releasePreview();
+    this.file = undefined;
+    this.imageFileName = '';
+    this.preview = this.api.imageUrl(product?.images[0]);
+    this.editorOpen = true;
+    this.openDialog();
   }
 
-  protected toggle(): void {
-    this.isToggle = !this.isToggle
+  addVariant(variant?: ManagedVariant): void {
+    this.variants.push(new FormGroup({
+      documentId: new FormControl(variant?.documentId),
+      sku: new FormControl(variant?.sku ?? '', [Validators.required, Validators.maxLength(90), Validators.pattern(/\S/)]),
+      label: new FormControl(variant?.label ?? '', [Validators.maxLength(180)]),
+      price: new FormControl(variant?.price ?? 0, [Validators.required, Validators.min(0), Validators.max(999999999), Validators.pattern(/^\d+(\.\d{1,2})?$/)]),
+      stockOnHand: new FormControl(variant?.stockOnHand ?? 0, [Validators.required, Validators.min(variant?.stockReserved ?? 0), Validators.max(2147483647), Validators.pattern(/^\d+$/)]),
+      stockReserved: new FormControl(variant?.stockReserved ?? 0),
+      expectedStockOnHand: new FormControl(variant?.stockOnHand),
+      isActive: new FormControl(variant?.isActive ?? true),
+    }));
   }
 
-  protected uploadFileToAttr(event: any): void {
-    const file : File = event.target.files[0];
-    if (file) {
-      this.file = file
+  removeVariant(index: number): void {
+    if (!this.saving && this.variants.length > 1 && !this.variants.at(index).value.documentId) this.variants.removeAt(index);
+  }
+
+  selectFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+      input.value = '';
+      this.alerts.show({header: this.t.invalid, detail: this.t.fileInvalid, status: 'warning'});
+      return;
     }
+    this.releasePreview();
+    this.file = file;
+    this.imageFileName = file.name;
+    this.objectUrl = URL.createObjectURL(file);
+    this.preview = this.objectUrl;
   }
 
-  protected enableEditForm(product: Product): void {
-    this.product = product // for req
-    // have to new instead if you not it'll work as two ways
-    this.productForShowOnForm = new Product(this.product.pid,this.product.sku,this.product.name,this.product.description,this.product.price,this.product.imageUrl,this.product.unitInStock)
-    this.form.patchValue({
-      sku:this.product.sku,
-      name:this.product.name,
-      description:this.product.description,
-      price:this.product.price,
-      unitInStock:this.product.unitInStock,
-      productCategory:this.product.pcId,
-    })
-    this.isEnableForm = true
-  }
-
-  protected edit(): void {
-    if (this.form.valid) {
-      let isStillEdit : boolean
-      if (this.file) { // update with new image
-        this.fileService.uploadProduct(this.file,this.product.pcId).subscribe(
-          (resFile : {image: string , size:number ,fullName : string}) => {
-          this.product.imageUrl = resFile.image; // set new image path
-          isStillEdit = true
-        }, (errorResponse) => {
-          this.visible = true
-          this.iconMode = 'ERROR'
-          this.headerTitle = 'Upload New Image Perfume Failed'
-          let detail = ''
-          if (errorResponse['error']['message']) { // case invalid inputs as size
-            detail = errorResponse['error']['message']
-          } else { // case token expiry date
-            detail = errorResponse['error']['description']
-          }
-          this.body = detail
-          isStillEdit = false
-        })
+  async save(): Promise<void> {
+    if (this.saving) return;
+    this.form.markAllAsTouched();
+    const skus = this.variants.controls.map(v => String(v.value.sku).trim().toLowerCase());
+    if (this.form.invalid || new Set(skus).size !== skus.length || !this.variants.length) {
+      this.alerts.show({header: this.t.invalid, detail: this.t.invalidDetail, status: 'warning'});
+      return;
+    }
+    this.saving = true;
+    const isEdit = Boolean(this.editing);
+    try {
+      if (this.file) {
+        const uploaded = await firstValueFrom(this.api.upload(this.file));
+        if (!uploaded[0]?.id) throw new Error(this.t.error);
+        this.images = [uploaded[0].id, ...this.images.slice(1)];
+        // Keep the uploaded media for a retry if saving the product fails.
+        this.file = undefined;
       }
-      else if (this.file === undefined) { // case update with old file
-        isStillEdit = true
-      }
-      // have to delay if you have a new image
-      this.delay(1000).then(() => {
-        if (isStillEdit) {
-          const values = this.form.value
-          // const sku = values['sku']
-          // const name = values['name']
-          // const description = values['description']
-          // const price = values['price']
-          // const unitInStock = values['unitInStock']
-          // const pcId = values['productCategory']
-          this.product.sku = values['sku']
-          this.product.name = values['name']
-          this.product.description = values['description']
-          this.product.price = values['price']
-          this.product.unitInStock = values['unitInStock']
-          this.product.pcId = values['productCategory']
-
-          // now can update with old/new image
-          this.productService.editProduct(this.product).subscribe(
-            (resProduct : boolean) => {
-              if (resProduct) {
-                this.visible = true
-                this.iconMode = 'SUCCESS'
-                this.headerTitle = 'UpdatedSuccessfully'
-                this.body = 'UpdatedSuccessfully'
-              }
-            },
-            (errorResponse) => {
-              this.visible = true
-              this.iconMode = 'ERROR'
-              this.headerTitle = 'Update Perfume Failed'
-              let detail = ''
-              if (errorResponse['error']['message']) { // case invalid inputs
-                detail = errorResponse['error']['message']
-              } else { // case token expiry date
-                detail = errorResponse['error']['description']
-              }
-              this.body = detail
-            })
-        } // end if
-      }) // end delayed
-    }
-    else {
-      this.visible = true
-      this.iconMode = 'WARN'
-      this.headerTitle = 'Update Failed'
-      this.body = 'Inputs are invalid'
+      const value = this.form.getRawValue();
+      const data: ProductManagementInput = {
+        ...value, expectedUpdatedAt: this.editing?.updatedAt, images: this.images, variants: value.variants.map(v => ({
+          ...(v['documentId'] ? {documentId: v['documentId']} : {}),
+          sku: v['sku'].trim(),
+          label: v['label']?.trim() ?? '',
+          price: v['price'],
+          stockOnHand: Number(v['stockOnHand']),
+          isActive: v['isActive'],
+          ...(v['documentId'] ? {expectedStockOnHand: v['expectedStockOnHand']} : {}),
+        }))
+      };
+      await firstValueFrom(this.api.save(this.editing?.documentId, data));
+      if (this.destroyed) return;
+      this.saving = false;
+      this.closeDialog();
+      this.alerts.show({header: isEdit ? this.t.saved : this.t.created, detail: value.name, status: 'success'});
+      this.load();
+    } catch (error) {
+      if (!this.destroyed) this.notifyError(this.t.saveFailed, error);
+    } finally {
+      this.saving = false;
     }
   }
 
-  protected setCloseEvent(): void {
-    this.visible = false;
+  confirmDelete(product: ManagedProduct): void {
+    if (this.saving) return;
+    this.deleting = product;
+    this.openDialog();
   }
 
-  protected setOkEvent(): void {
-    this.visible = false;
-    if (this.body === 'The JWT token has expired') {
-      this.webStorageService.clearSession()
+  async deleteProduct(): Promise<void> {
+    if (!this.deleting || this.saving) return;
+    this.saving = true;
+    const product = this.deleting;
+    try {
+      await firstValueFrom(this.api.delete(product.documentId));
+      if (this.destroyed) return;
+      this.saving = false;
+      this.closeDialog();
+      this.alerts.show({header: this.t.removed, detail: product.name, status: 'success'});
+      this.load();
+    } catch (error) {
+      if (!this.destroyed) this.notifyError(this.t.deleteFailed, error);
+    } finally {
+      this.saving = false;
     }
-    if(this.iconMode === 'SUCCESS') {
-      this.clear()
-      this.loadProducts()
+  }
+
+  private notifyError(header: string, error: any): void {
+    const message = error?.error?.error?.message ?? error?.error?.message;
+    const detail = error?.status === 0 ? this.t.network : error?.status === 401 ? this.t.expired
+      : error?.status === 403 ? this.t.forbidden : typeof message === 'string' ? message : this.t.error;
+    this.alerts.show({header, detail, status: 'error'});
+  }
+
+  private openDialog(): void {
+    this.previousFocus = document.activeElement as HTMLElement;
+    this.originalOverflow ??= document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    this.needsFocus = true;
+  }
+
+  closeDialog(): void {
+    if (this.saving) return;
+    this.editorOpen = false;
+    this.deleting = undefined;
+    this.file = undefined;
+    this.releasePreview();
+    this.restoreScroll();
+    this.previousFocus?.focus();
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.needsFocus && this.dialog) {
+      this.dialog.nativeElement.querySelector<HTMLElement>('[data-initial-focus]')?.focus();
+      this.needsFocus = false;
     }
   }
 
-  protected clear() : void {
-    this.productForShowOnForm.pid = 0;
-    this.productForShowOnForm.imageUrl = ""
-    this.form.reset()
-    this.form.get('productCategory')?.setValue(this.productCategories[0].pcId)
-    this.fileInput.nativeElement.value = null
-    this.file = undefined
-    this.isEnableForm = false
+  @HostListener('document:keydown', ['$event'])
+  handleKey(event: KeyboardEvent): void {
+    if (!this.editorOpen && !this.deleting) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeDialog();
+    }
+    if (event.key !== 'Tab' || !this.dialog) return;
+    const controls = Array.from(this.dialog.nativeElement.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])'));
+    const first = controls[0], last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last?.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first?.focus();
+    }
   }
 
-  protected clearForm() : void {
-    this.form.patchValue({
-      sku:null,
-      name:null,
-      description:null,
-      price:null,
-      unitInStock:null,
-      productCategory:this.productCategories[0].pcId,
-    })
-    this.fileInput.nativeElement.value = null
-    this.file = undefined
+  private releasePreview(): void {
+    if (this.objectUrl) URL.revokeObjectURL(this.objectUrl);
+    this.objectUrl = undefined;
   }
 
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  private restoreScroll(): void {
+    if (this.originalOverflow !== undefined) document.body.style.overflow = this.originalOverflow;
+    this.originalOverflow = undefined;
   }
 
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    this.listRequest?.unsubscribe();
+    this.releasePreview();
+    this.restoreScroll();
+  }
 }

@@ -1,5 +1,9 @@
-﻿<nav class="category-links" aria-label="Product categories">
-  <a routerLink="/products" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }">All products</a>
-  <a *ngFor="let productCategory of productCategories" [routerLink]="['/category', productCategory.pcId]"
-     routerLinkActive="active" ariaCurrentWhenActive="page">{{ productCategory.categoryName }}</a>
+﻿<nav class="category-links" [attr.aria-label]="menuLanguage.text().categories">
+  <a routerLink="/products" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }">{{ menuLanguage.text().allProducts }}</a>
+  <a *ngFor="let productCategory of productCategories"
+     [routerLink]="['/category', productCategory.pcId]"
+     routerLinkActive="active"
+     ariaCurrentWhenActive="page">
+    {{ productCategory.categoryName }}
+  </a>
 </nav>

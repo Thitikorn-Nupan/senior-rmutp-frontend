@@ -204,7 +204,8 @@
  <p class="eyebrow">{{ order ? 'ORDER SUMMARY' : 'ONE LAST LOOK' }}</p><h2 id="review-heading">Your order</h2>
  <a *ngIf="!order" class="edit-cart" routerLink="/cart-detail">Edit cart &nearr;</a>
  <p *ngIf="quoteLoading" class="summary-note" role="status">Checking prices and availability...</p>
- <ul *ngIf="order" class="summary-items"><li *ngFor="let item of order.items"><span>{{ item.name }} &times; {{ item.quantity }}</span><strong>{{ item.lineTotal | currency:'THB':'symbol-narrow' }}</strong></li></ul>
+ <ul *ngIf="!order && quote" class="summary-items"><li *ngFor="let item of quote.items"><span>{{ item.name }} &times; {{ item.quantity }}<br /><small>{{ variantDescription(item.variantDocumentId) }}</small></span><strong>{{ item.lineTotal | currency:'THB':'symbol-narrow' }}</strong></li></ul>
+ <ul *ngIf="order" class="summary-items"><li *ngFor="let item of order.items"><span>{{ item.name }} &times; {{ item.quantity }}<br /><small>SKU {{ item.sku }}</small></span><strong>{{ item.lineTotal | currency:'THB':'symbol-narrow' }}</strong></li></ul>
  <dl class="summary-lines"><div><dt>Items</dt><dd>{{ totalQuantity }}</dd></div><div><dt>Subtotal</dt><dd>{{ subtotal | currency:'THB':'symbol-narrow' }}</dd></div><div><dt>Shipping</dt><dd>{{ shippingTotal ? (shippingTotal | currency:'THB':'symbol-narrow') : 'Free' }}</dd></div></dl>
  <div class="order-total"><span>Total <small>THB</small></span><strong>{{ totalPrice | currency:'THB':'symbol-narrow' }}</strong></div>
  <p class="selected-method"><span>Payment method</span><strong>PromptPay transfer</strong></p>

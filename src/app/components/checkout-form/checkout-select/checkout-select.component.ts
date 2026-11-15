@@ -1,5 +1,16 @@
 import {CommonModule} from '@angular/common';
-import {Component, ElementRef, EventEmitter, forwardRef, HostListener, Input, OnChanges, OnDestroy, Output, ViewChild} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  forwardRef,
+  HostListener,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 @Component({
@@ -12,7 +23,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 })
 export class CheckoutSelectComponent implements ControlValueAccessor, OnChanges, OnDestroy {
   @Input({required: true}) inputId = '';
-  @Input() options: readonly {name: string}[] = [];
+  @Input() options: readonly { name: string; value?: string }[] = [];
   @Input() placeholder = 'Select an option';
   @Input() unavailable = false;
   @Input() invalid = false;
@@ -28,31 +39,52 @@ export class CheckoutSelectComponent implements ControlValueAccessor, OnChanges,
   private typeahead = '';
   private typeaheadTimer?: ReturnType<typeof setTimeout>;
   private listbox?: ElementRef<HTMLElement>;
-  private onChange: (value: string | null) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: string | null) => void = () => {
+  };
+  private onTouched: () => void = () => {
+  };
 
   @ViewChild('listbox') set listboxRef(element: ElementRef<HTMLElement> | undefined) {
     this.listbox = element;
     this.scrollActiveIntoView();
   }
 
-  constructor(private readonly host: ElementRef<HTMLElement>) {}
+  constructor(private readonly host: ElementRef<HTMLElement>) {
+  }
 
-  protected get isDisabled(): boolean { return this.disabled || this.unavailable || !this.options.length; }
+  protected get isDisabled(): boolean {
+    return this.disabled || this.unavailable || !this.options.length;
+  }
+
+  protected optionValue(option: { name: string; value?: string }): string {
+    return option.value ?? option.name;
+  }
+
+  protected get selectedName(): string {
+    return this.options.find(option => this.optionValue(option) === this.value)?.name ?? this.value ?? '';
+  }
 
   writeValue(value: string | null): void {
     this.value = value;
     this.open = false;
   }
-  registerOnChange(fn: (value: string | null) => void): void { this.onChange = fn; }
-  registerOnTouched(fn: () => void): void { this.onTouched = fn; }
+
+  registerOnChange(fn: (value: string | null) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
   setDisabledState(disabled: boolean): void {
     this.disabled = disabled;
     if (disabled) this.close();
   }
+
   ngOnChanges(): void {
     if (this.isDisabled) this.close();
-    this.activeIndex = Math.max(0, this.options.findIndex(option => option.name === this.value));
+    this.activeIndex = Math.max(0, this.options.findIndex(option => this.optionValue(option) === this.value));
   }
 
   protected toggle(): void {
@@ -65,19 +97,20 @@ export class CheckoutSelectComponent implements ControlValueAccessor, OnChanges,
     const rect = this.host.nativeElement.getBoundingClientRect();
     const height = Math.min(this.options.length * 46 + 16, 248);
     this.above = window.innerHeight - rect.bottom < height && rect.top > height;
-    this.activeIndex = Math.max(0, this.options.findIndex(option => option.name === this.value));
+    this.activeIndex = Math.max(0, this.options.findIndex(option => this.optionValue(option) === this.value));
     this.open = true;
   }
 
   protected choose(index: number): void {
     const option = this.options[index];
     if (!option || this.isDisabled) return;
-    const changed = option.name !== this.value;
-    this.value = option.name;
-    if (changed) this.onChange(option.name);
+    const value = this.optionValue(option);
+    const changed = value !== this.value;
+    this.value = value;
+    if (changed) this.onChange(value);
     this.close();
     if (changed) {
-      this.selectionChange.emit(option.name);
+      this.selectionChange.emit(value);
     }
   }
 
@@ -88,7 +121,10 @@ export class CheckoutSelectComponent implements ControlValueAccessor, OnChanges,
     clearTimeout(this.typeaheadTimer);
   }
 
-  protected blur(): void { this.close(); this.onTouched(); }
+  protected blur(): void {
+    this.close();
+    this.onTouched();
+  }
 
   @HostListener('document:pointerdown', ['$event'])
   outsideClick(event: PointerEvent): void {
@@ -97,9 +133,16 @@ export class CheckoutSelectComponent implements ControlValueAccessor, OnChanges,
 
   protected keydown(event: KeyboardEvent): void {
     if (this.isDisabled || event.ctrlKey || event.metaKey || event.altKey) return;
-    if (event.key === 'Tab') { this.close(); return; }
+    if (event.key === 'Tab') {
+      this.close();
+      return;
+    }
     if (event.key === 'Escape') {
-      if (this.open) { event.preventDefault(); event.stopPropagation(); this.close(); }
+      if (this.open) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.close();
+      }
       return;
     }
     if (event.key === 'Enter' || event.key === ' ') {
@@ -130,7 +173,9 @@ export class CheckoutSelectComponent implements ControlValueAccessor, OnChanges,
       }
       if (index >= 0) this.activeIndex = index;
       this.scrollActiveIntoView();
-      this.typeaheadTimer = setTimeout(() => { this.typeahead = ''; }, 600);
+      this.typeaheadTimer = setTimeout(() => {
+        this.typeahead = '';
+      }, 600);
     }
   }
 
@@ -139,5 +184,8 @@ export class CheckoutSelectComponent implements ControlValueAccessor, OnChanges,
     option?.scrollIntoView({block: 'nearest'});
   }
 
-  ngOnDestroy(): void { this.open = false; clearTimeout(this.typeaheadTimer); }
+  ngOnDestroy(): void {
+    this.open = false;
+    clearTimeout(this.typeaheadTimer);
+  }
 }

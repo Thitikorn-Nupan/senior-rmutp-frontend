@@ -104,6 +104,11 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     return this.cartStatusService.cartItems.map(item => ({variantDocumentId: item.variantDocumentId!, quantity: item.quantity}));
   }
 
+  protected variantDescription(id: string): string {
+    const item = this.cartStatusService.cartItems.find(row => row.variantDocumentId === id);
+    return [item?.variantLabel, item?.sku ? `SKU ${item.sku}` : ''].filter(Boolean).join(' · ');
+  }
+
   protected refreshQuote(): void {
     if (this.order || this.busy) return;
     this.errorMessage = '';
@@ -114,6 +119,7 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     // Upgrade carts saved before variant IDs were included, using current catalog data.
     const upgrades = this.cartStatusService.cartItems.map(item => item.variantDocumentId ? of(item)
       : this.productsService.getProductById(item.documentId || item.pid).pipe(map(product => {
+        if ((product.variants?.length ?? 0) > 1) throw new Error('Please remove the older cart item and choose your preferred size again.');
         if (!product.variantDocumentId) throw new Error('A cart item is no longer available.');
         item.documentId = product.documentId;
         item.variantDocumentId = product.variantDocumentId;

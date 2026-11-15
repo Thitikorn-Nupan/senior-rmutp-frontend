@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CartStatusService} from "../../../services/cart-status.service";
+import {MenuLanguageService} from "../../../services/menu-language.service";
 
 @Component({
   selector: 'ecm-cart-status',
@@ -7,17 +8,16 @@ import {CartStatusService} from "../../../services/cart-status.service";
   styleUrl: './cart-status.component.css'
 })
 export class CartStatusComponent implements OnInit {
-
-  protected totalPrice : number = 0.0
-  protected totalQuantity : number = 0
-
-  constructor(private readonly cartStatusService: CartStatusService) {}
-
+  protected totalPrice: number = 0.0
+  protected totalQuantity: number = 0
+  constructor(private readonly cartStatusService: CartStatusService,
+              public readonly menuLanguage: MenuLanguageService) {
+  }
   ngOnInit(): void {
     this.loadCartStatus()
   }
 
-  private loadCartStatus() : void {
+  private loadCartStatus(): void {
     // subscribe to cart total price (subscribe works) when new event receive than make the assignment update ui
     this.cartStatusService.totalPrice.subscribe(response => this.totalPrice = response)
     // subscribe to cart total quantity

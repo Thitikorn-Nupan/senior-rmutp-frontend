@@ -1,25 +1,35 @@
 ﻿<main class="cart-page">
   <div class="cart-container">
-    <a class="back-link" routerLink="/products"><span aria-hidden="true">←</span> Continue shopping</a>
+    <a class="back-link" routerLink="/products">
+      <span aria-hidden="true">←</span> Continue shopping
+    </a>
     <header class="cart-heading">
       <div>
         <p class="eyebrow">YOUR FRAGRANCE SELECTION</p>
         <h1>Your shopping cart</h1>
         <p class="heading-description">A little luxury, ready to make yours.</p>
       </div>
-      <span class="item-count" aria-live="polite" aria-atomic="true">{{ totalQuantity }} {{ totalQuantity === 1 ? 'item' : 'items' }}</span>
+      <span class="item-count"
+            aria-live="polite"
+            aria-atomic="true">
+        {{ totalQuantity }} {{ totalQuantity === 1 ? 'item' : 'items' }}
+      </span>
     </header>
-
     <div *ngIf="!cartItems" class="cart-state" role="status">
       <div class="spinner-border" aria-hidden="true"></div>
       <p>Loading your cart…</p>
     </div>
-
     <section *ngIf="cartItems && cartItems.length === 0" class="empty-cart" aria-labelledby="empty-heading">
       <div class="empty-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-          <path d="M5 7h14l1 14H4L5 7Z" stroke-linejoin="round" />
-          <path d="M8 8V6a4 4 0 0 1 8 0v2" stroke-linecap="round" />
+        <svg width="32"
+             height="32"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="1.4"
+             aria-hidden="true">
+          <path d="M5 7h14l1 14H4L5 7Z" stroke-linejoin="round"/>
+          <path d="M8 8V6a4 4 0 0 1 8 0v2" stroke-linecap="round"/>
         </svg>
       </div>
       <p class="eyebrow">A FRESH START</p>
@@ -33,24 +43,37 @@
         <ul class="cart-list">
           <li *ngFor="let cartItem of cartItems" class="cart-item">
             <div class="item-image">
-              <img [src]="cartItem.imageUrl" [alt]="cartItem.name" loading="lazy" />
+              <img [src]="cartItem.imageUrl" [alt]="cartItem.name" loading="lazy"/>
             </div>
             <div class="item-details">
               <p class="item-eyebrow">PERFUME</p>
               <h2>{{ cartItem.name }}</h2>
+              <p *ngIf="cartItem.sku" class="item-eyebrow">{{ cartItem.variantLabel }} · SKU {{ cartItem.sku }}</p>
               <p class="unit-price">{{ cartItem.price | currency:'THB':'symbol-narrow' }} <span>/ item</span></p>
             </div>
             <div class="item-controls">
               <div class="quantity-control" role="group" [attr.aria-label]="'Quantity for ' + cartItem.name">
-                <button type="button" (click)="decrementQuantity(cartItem)" [disabled]="cartItem.quantity <= 1"
-                        [attr.aria-label]="'Decrease quantity of ' + cartItem.name">−</button>
-                <span class="quantity-value" [attr.aria-label]="'Quantity: ' + cartItem.quantity">{{ cartItem.quantity }}</span>
-                <button type="button" (click)="incrementQuantity(cartItem)"
-                        [attr.aria-label]="'Increase quantity of ' + cartItem.name">+</button>
+                <button type="button"
+                        (click)="decrementQuantity(cartItem)"
+                        [disabled]="cartItem.quantity <= 1"
+                        [attr.aria-label]="'Decrease quantity of ' + cartItem.name">−
+                </button>
+                <span class="quantity-value"
+                      [attr.aria-label]="'Quantity: ' + cartItem.quantity">{{ cartItem.quantity }}</span>
+                <button type="button"
+                        (click)="incrementQuantity(cartItem)"
+                        [disabled]="cartItem.availableStock !== undefined && cartItem.quantity >= cartItem.availableStock"
+                        [attr.aria-label]="'Increase quantity of ' + cartItem.name">+
+                </button>
               </div>
-              <button type="button" class="remove-button" (click)="removeItem(cartItem)" [attr.aria-label]="'Remove ' + cartItem.name + ' from cart'">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
-                  <path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6m4-6v6" stroke-linecap="round" stroke-linejoin="round" />
+              <button type="button"
+                      class="remove-button"
+                      (click)="removeItem(cartItem)"
+                      [attr.aria-label]="'Remove ' + cartItem.name + ' from cart'">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                     aria-hidden="true">
+                  <path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6m4-6v6" stroke-linecap="round"
+                        stroke-linejoin="round"/>
                 </svg>
                 Remove
               </button>
@@ -68,8 +91,14 @@
         <p class="eyebrow">READY WHEN YOU ARE</p>
         <h2 id="summary-heading">Order summary</h2>
         <dl class="summary-lines">
-          <div><dt>Subtotal ({{ totalQuantity }} {{ totalQuantity === 1 ? 'item' : 'items' }})</dt><dd>{{ totalPrice | currency:'THB':'symbol-narrow' }}</dd></div>
-          <div><dt>Shipping</dt><dd class="shipping-free">Free</dd></div>
+          <div>
+            <dt>Subtotal ({{ totalQuantity }} {{ totalQuantity === 1 ? 'item' : 'items' }})</dt>
+            <dd>{{ totalPrice | currency:'THB':'symbol-narrow' }}</dd>
+          </div>
+          <div>
+            <dt>Shipping</dt>
+            <dd class="shipping-free">Free</dd>
+          </div>
         </dl>
         <div class="summary-total" aria-live="polite" aria-atomic="true">
           <span>Total <small>THB</small></span>

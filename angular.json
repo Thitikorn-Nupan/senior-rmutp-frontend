@@ -81,7 +81,8 @@
               "buildTarget": "ecomece-frontend-modify:build:production"
             },
             "development": {
-              "buildTarget": "ecomece-frontend-modify:build:development"
+              "buildTarget": "ecomece-frontend-modify:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
