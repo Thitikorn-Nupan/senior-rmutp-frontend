@@ -12,6 +12,18 @@ export class OrdersHistoryComponent implements OnInit, OnDestroy {
   protected orders: CustomerOrderSummary[] = [];
   protected search = '';
   protected status = '';
+  protected readonly statusOptions = [
+    {name: 'ทั้งหมด', value: ''},
+    {name: 'รอชำระเงิน', value: 'pending_payment'},
+    {name: 'รอตรวจสอบสลิป', value: 'pending_review'},
+    {name: 'ยืนยันคำสั่งซื้อ', value: 'confirmed'},
+    {name: 'กำลังเตรียมสินค้า', value: 'processing'},
+    {name: 'จัดส่งแล้ว', value: 'shipped'},
+    {name: 'สำเร็จ', value: 'completed'},
+    {name: 'ยกเลิก', value: 'cancelled'},
+    {name: 'หมดเวลาชำระเงิน', value: 'expired'},
+    {name: 'รอตรวจสอบข้อมูล', value: 'legacy_review'}
+  ] as const;
   protected page = 1;
   protected pageCount = 0;
   protected total = 0;
@@ -200,4 +212,3 @@ export class OrdersHistoryComponent implements OnInit, OnDestroy {
     return 'ไม่สามารถเชื่อมต่อระบบได้ กรุณาลองอีกครั้ง';
   }
 }
-

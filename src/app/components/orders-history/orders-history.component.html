@@ -8,7 +8,7 @@
     <a routerLink="/products" class="button secondary">เลือกซื้อสินค้า</a>
   </header>
   <form class="filters" (ngSubmit)="load()">
-    <div>
+    <div class="search-filter">
       <label for="order-search">ค้นหาเลขคำสั่งซื้อ</label>
       <input id="order-search"
              name="search"
@@ -17,23 +17,16 @@
              placeholder="เช่น PS-…"
              [disabled]="uploading">
     </div>
-    <div>
+    <div class="status-filter">
       <label for="order-status">สถานะ</label>
-      <select id="order-status"
-              name="status"
-              [(ngModel)]="status"
-              [disabled]="uploading">
-        <option value="">ทั้งหมด</option>
-        <option value="pending_payment">รอชำระเงิน</option>
-        <option value="pending_review">รอตรวจสอบสลิป</option>
-        <option value="confirmed">ยืนยันคำสั่งซื้อ</option>
-        <option value="processing">กำลังเตรียมสินค้า</option>
-        <option value="shipped">จัดส่งแล้ว</option>
-        <option value="completed">สำเร็จ</option>
-        <option value="cancelled">ยกเลิก</option>
-        <option value="expired">หมดเวลาชำระเงิน</option>
-        <option value="legacy_review">รอตรวจสอบข้อมูล</option>
-      </select>
+      <ecm-checkout-select inputId="order-status"
+                           name="status"
+                           [(ngModel)]="status"
+                           [options]="statusOptions"
+                           placeholder="ทั้งหมด"
+                           [required]="false"
+                           [unavailable]="uploading">
+      </ecm-checkout-select>
     </div>
     <button class="button"
             type="submit"
@@ -203,5 +196,3 @@
     </ng-container>
   </section>
 </main>
-
-

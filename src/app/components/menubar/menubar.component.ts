@@ -25,6 +25,7 @@ import {ProfileService} from '../../services/profile.service';
 })
 export class MenubarComponent implements OnInit, OnDestroy, AfterViewChecked {
   mobileMenuOpen = false;
+  sessionDetailsOpen = false;
   @ViewChild('mobileNavigation') private mobileNavigation?: ElementRef<HTMLElement>;
   @ViewChild('menuToggle') private menuToggle?: ElementRef<HTMLButtonElement>;
   private previousOverflow?: string;
@@ -86,6 +87,10 @@ export class MenubarComponent implements OnInit, OnDestroy, AfterViewChecked {
     if ((event.target as Element).closest('a')) this.closeMobileMenu();
   }
 
+  toggleSessionDetails(): void {
+    this.sessionDetailsOpen = !this.sessionDetailsOpen;
+  }
+
   ngAfterViewChecked(): void {
     if (this.focusMenu && this.mobileNavigation) {
       this.mobileNavigation.nativeElement.querySelector<HTMLElement>('[data-menu-autofocus]')?.focus();
@@ -133,6 +138,7 @@ export class MenubarComponent implements OnInit, OnDestroy, AfterViewChecked {
   private loadSession(): void {
     const previousUser = this.user?.uid;
     this.user = this.webStorageService.getUserFormToken()
+    if (!this.user) this.sessionDetailsOpen = false;
     if (!this.user || this.user.uid !== previousUser) this.profiles.clear();
     this.profileRefresh.next();
     this.jwtResponse = this.webStorageService.getSession("jwtResponse");

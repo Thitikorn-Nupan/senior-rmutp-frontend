@@ -45,8 +45,17 @@ input:focus-visible, select:focus-visible, .button:focus-visible {
   margin-bottom: 24px
 }
 
-.filters > div:first-child {
+.search-filter {
   flex: 1
+}
+
+.status-filter {
+  width: 240px
+}
+
+.status-filter ecm-checkout-select {
+  display: block;
+  width: 100%;
 }
 
 .filters label {
@@ -63,6 +72,15 @@ input, select {
   border: 1px solid #cbd4de;
   border-radius: 8px;
   color: #213347
+}
+
+.filters ecm-checkout-select {
+  --select-min-height: 42px;
+  --select-font-size: 14px;
+}
+
+.filters > .button {
+  flex-shrink: 0;
 }
 
 .result-count {

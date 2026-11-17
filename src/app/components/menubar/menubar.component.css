@@ -57,6 +57,73 @@
   min-width: 0;
 }
 
+.session-area {
+  grid-column: 1 / -1;
+  position: relative;
+  border-top: 1px solid #e4e8e4;
+}
+
+.session-toggle {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  padding: 12px 24px;
+  border: 0;
+  background: #f8f9f5;
+  color: #243d35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.session-toggle:hover {
+  background: #f1f5ee;
+}
+
+.session-toggle:focus-visible {
+  outline: 3px solid #ad7f45;
+  outline-offset: -3px;
+}
+
+@media (min-width: 769px) {
+  .session-area {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1000;
+    width: min(420px, calc(100vw - 48px));
+    overflow: hidden;
+    border: 1px solid #dce5d9;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 14px 40px #243d3526, 0 3px 10px #243d3514;
+  }
+
+  .session-toggle {
+    padding: 14px 16px;
+    background: #fff;
+  }
+
+  .session-toggle:hover {
+    background: #f7faf4;
+  }
+}
+
+.session-summary {
+  min-width: 0;
+  flex: 1;
+}
+
+.session-chevron {
+  flex-shrink: 0;
+  color: #68756e;
+  transition: transform .2s ease;
+}
+
+.session-chevron.is-open {
+  transform: rotate(180deg);
+}
+
 .session-info {
   max-width: 1200px;
   margin: 0 auto;
@@ -67,16 +134,23 @@
   gap: 12px 20px;
   font-size: 12px;
   overflow-wrap: anywhere;
-  border-top: 1px solid #e4e8e4;
   background: #f8f9f5;
+}
+
+@media (min-width: 769px) {
+  .session-info {
+    max-width: none;
+    margin: 0;
+    border-top: 1px solid #e4e8e4;
+  }
 }
 
 .session-user {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 160px;
+  min-width: 160px;
 }
 
 .user-icon {
@@ -189,3 +263,8 @@ a:focus-visible {
   border-radius: 4px;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .session-chevron {
+    transition: none;
+  }
+}

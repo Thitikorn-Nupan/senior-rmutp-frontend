@@ -13,6 +13,7 @@ import {CartStatusService} from '../../services/cart-status.service';
 import {ProductsService} from '../../services/products.service';
 import {WebStorageService} from '../../services/web-storage.service';
 import {CheckoutQuote, TransferOrder} from '../../services/checkout.service';
+import {ProfileService} from '../../services/profile.service';
 import {environment} from '../../../environments/environment';
 
 describe('PromptPay checkout workflow', () => {
@@ -40,6 +41,7 @@ describe('PromptPay checkout workflow', () => {
         {provide: CartStatusService, useValue: cart},
         {provide: WebStorageService, useValue: {getUserFormToken: () => ({uid: 7, username: 'customer@example.com'}), getSession: () => ({token: 'customer-token'})}},
         {provide: ProductsService, useValue: {getProductById: () => of({pid: 1, variantDocumentId: 'variantone', price: 120.25})}},
+        {provide: ProfileService, useValue: {profile: () => null, get: () => of({data: {firstName: '', lastName: '', displayName: '', phone: '', email: '', username: '', shippingAddress: null}})}},
         {provide: AddressesService, useValue: {getProvinces: () => of([{pid: 1, name: 'Bangkok'}]), getDistrictsByProvinceName: () => of([{did: 1, name: 'Dusit'}])}},
       ]
     }).compileComponents();

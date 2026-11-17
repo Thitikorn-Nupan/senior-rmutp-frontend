@@ -1,173 +1,168 @@
-import {Component, OnInit} from '@angular/core';
-import {OrderHistoryAdmin} from "../../entities/orders-history-admin/order-history-admin";
-import {OrderHistoryService} from "../../services/order-history.service";
-import {JwtResponse} from "../../entities/register/jwt-response";
-import {Router} from "@angular/router";
-import {User} from "../../entities/user";
-import {WebStorageService} from "../../services/web-storage.service";
-import {FileService} from "../../services/file.service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {Subscription, finalize} from 'rxjs';
+import {SalesHistoryService, SalesOrder} from '../../services/sales-history.service';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-order-history-admin',
   templateUrl: './order-history-admin.component.html',
   styleUrl: './order-history-admin.component.css'
 })
-export class OrderHistoryAdminComponent implements OnInit {
+export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
+  protected orders: SalesOrder[] = [];
+  protected search = '';
+  protected status = '';
+  protected page = 1;
+  protected pageCount = 0;
+  protected total = 0;
+  protected summary = {billTotal: '0.00', verifiedRevenue: '0.00', currency: 'THB'};
+  protected loading = false;
+  protected error = '';
+  protected approving = '';
+  protected receiptLoading = '';
+  protected receiptViewLoading = false;
+  protected receiptViewError = '';
+  protected receiptPreviewUrl = '';
+  protected receiptOrder?: SalesOrder;
+  protected selected?: SalesOrder;
+  private request?: Subscription;
+  private receiptRequest?: Subscription;
 
-  protected declare user: User | null
-  protected declare jwtResponse: JwtResponse
-  protected declare orderHistoriesAdmin: OrderHistoryAdmin[]
-  protected declare orderHistoriesAdminSearchMode: OrderHistoryAdmin[]
-  private declare orderTrackingNumber: string
+  protected readonly statusOptions = [
+    {name: 'ทุกสถานะ', value: ''}, {name: 'รอตรวจสอบสลิป', value: 'pending_review'},
+    {name: 'รอชำระเงิน', value: 'pending_payment'}, {name: 'ยืนยันคำสั่งซื้อ', value: 'confirmed'},
+    {name: 'กำลังเตรียมสินค้า', value: 'processing'}, {name: 'จัดส่งแล้ว', value: 'shipped'},
+    {name: 'สำเร็จ', value: 'completed'}, {name: 'ยกเลิก', value: 'cancelled'}
+  ] as const;
 
-  protected declare form: FormGroup;
-  protected enableForm: boolean = false;
-
-  // ** Popup
-  protected iconMode: 'WARN' | 'ERROR' | 'CONFIRM' = 'WARN';
-  public visible: boolean = false;
-  protected headerTitle: string = 'Update Failed';
-  protected declare body: string;
-
-
-  constructor(private readonly ordersHistoryService: OrderHistoryService,
-              private readonly router: Router,
-              private readonly webStorageService: WebStorageService,
-              private readonly fileService: FileService) {
+  constructor(private readonly sales: SalesHistoryService) {
   }
 
-
-  async ngOnInit(): Promise<void> {
-    // await this.delay(800)
-    // this.user = this.webStorageService.getUserFormToken()
-    // this.jwtResponse = this.webStorageService.getSession("jwtResponse");
-    // this.form = new FormGroup({
-    //     trackingNumber: new FormControl(null, Validators.required)
-    //   }
-    // )
-    // if (this.jwtResponse === null) {
-    //   this.jwtResponse = new JwtResponse()
-    //   this.jwtResponse.token = ''
-    // }
-    // this.loadOrderHistoriesAdmin()
-
-    this.user = this.webStorageService.getUserFormToken()
-    this.jwtResponse = this.webStorageService.getSession("jwtResponse");
-    this.form = new FormGroup({
-        trackingNumber: new FormControl(null, Validators.required)
-      }
-    )
-    if (this.jwtResponse === null) {
-      this.jwtResponse = new JwtResponse()
-      this.jwtResponse.token = ''
-    }
-    await this.delay(800).then(() => (this.loadOrderHistoriesAdmin()))
+  ngOnInit(): void {
+    this.load();
   }
 
-  private loadOrderHistoriesAdmin(): void {
-    this.ordersHistoryService.getOrdersHistoryForAdmin().subscribe(
-      (response: OrderHistoryAdmin[]) => {
-        this.orderHistoriesAdmin = response
-        this.orderHistoriesAdminSearchMode = this.orderHistoriesAdmin
-      }, (errorResponse) => { // Way to Catch Errors in Component
-        this.visible = true
-        this.iconMode = 'ERROR'
-        this.headerTitle = 'Load Order Histories Failed'
-        this.body = errorResponse['error']['description']
-      })
+  ngOnDestroy(): void {
+    this.request?.unsubscribe();
+    this.receiptRequest?.unsubscribe();
+    this.closeReceipt();
   }
 
-  // ** change
-  protected getTotalPrice(): number {
-    let total = 0;
-    for (let i = 0; i < this.orderHistoriesAdminSearchMode.length; i++) {
-      if (this.orderHistoriesAdminSearchMode[i].statusPurchase) {
-        total += (this.orderHistoriesAdminSearchMode[i].price * this.orderHistoriesAdminSearchMode[i].quantity);
-      }
-    }
-    return total
+  protected load(page = 1): void {
+    this.request?.unsubscribe();
+    this.loading = true;
+    this.error = '';
+    this.page = page;
+    this.request = this.sales.list(page, this.search, this.status).pipe(
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: response => {
+        this.orders = response.data;
+        this.total = response.meta.pagination.total;
+        this.pageCount = response.meta.pagination.pageCount;
+        this.summary = response.summary;
+      },
+      error: error => this.error = error.status === 401 || error.status === 403
+        ? 'ไม่มีสิทธิ์เข้าถึงประวัติการขาย' : 'ไม่สามารถโหลดประวัติการขายได้'
+    });
   }
 
-  protected search(): void {
-    if (this.form.valid) {
-      // const trackingNumber = this.form.get('trackingNumber')?.value;
-      this.orderHistoriesAdminSearchMode = this.orderHistoriesAdmin.filter(order => order.orderTrackingNumber.startsWith(this.form.get('trackingNumber')?.value))
-      if (this.orderHistoriesAdminSearchMode.length === 0) {
-        this.orderHistoriesAdminSearchMode = this.orderHistoriesAdmin
-      }
-    } else {
-      this.orderHistoriesAdminSearchMode = this.orderHistoriesAdmin
-    }
+  protected reset(): void {
+    this.search = '';
+    this.status = '';
+    this.load();
   }
 
-  protected onClearSearch(): void {
-    this.orderHistoriesAdminSearchMode = this.orderHistoriesAdmin
+  protected open(order: SalesOrder): void {
+    this.selected = this.selected?.documentId === order.documentId ? undefined : order;
   }
 
-  protected onSwitchMode(): void {
-    this.enableForm = !this.enableForm
+  protected approve(order: SalesOrder): void {
+    if (this.approving || !confirm(`ยืนยันการชำระเงินของ ${order.orderNumber} หรือไม่?`)) return;
+    this.approving = order.documentId;
+    this.sales.approve(order.documentId).pipe(finalize(() => this.approving = '')).subscribe({
+      next: () => this.load(this.page),
+      error: error => this.error = error.error?.error?.message || 'ไม่สามารถยืนยันการชำระเงินได้'
+    });
   }
 
-  protected urlDownloadSlip(qrPurchaseUrl: string) {
-    let fileFullName
-    const index = qrPurchaseUrl.indexOf('qr_purchases');
-    if (index !== -1) {
-      fileFullName = qrPurchaseUrl.substring((index + 1) + 'qr_purchases'.length) // Character not found, return original string
-    }
-    if (fileFullName) {
-      return this.fileService.getDownloadQrUrl(fileFullName)
-    }
-    return null
+  protected downloadReceipt(order: SalesOrder): void {
+    if (this.receiptLoading) return;
+    this.receiptLoading = order.documentId;
+    this.receiptRequest = this.sales.downloadReceipt(order.documentId).pipe(
+      finalize(() => this.receiptLoading = '')
+    ).subscribe({
+      next: blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${order.orderNumber}-slip.png`;
+        link.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => this.error = 'ไม่สามารถดาวน์โหลดสลิปได้'
+    });
   }
 
-
-  protected updateStatusPayment(orderTracking: string): void {
-    this.visible = true
-    this.iconMode = 'CONFIRM'
-    this.headerTitle = 'Confirm Update Payment'
-    this.body = 'Are you sure you want to update status payment?'
-    this.orderTrackingNumber = orderTracking
+  protected viewReceipt(order: SalesOrder): void {
+    if (this.receiptViewLoading) return;
+    this.closeReceipt();
+    this.receiptOrder = order;
+    this.receiptViewLoading = true;
+    this.receiptViewError = '';
+    this.receiptRequest = this.sales.downloadReceipt(order.documentId).pipe(
+      finalize(() => this.receiptViewLoading = false)
+    ).subscribe({
+      next: blob => this.receiptPreviewUrl = URL.createObjectURL(blob),
+      error: () => this.receiptViewError = 'ไม่สามารถเปิดดูสลิปได้'
+    });
   }
 
-  protected seePerfumesSaleOut(): void {
-    this.router.navigate(['orders-history-only-perfumes-admin'])
+  protected closeReceipt(): void {
+    this.receiptRequest?.unsubscribe();
+    this.receiptRequest = undefined;
+    if (this.receiptPreviewUrl) URL.revokeObjectURL(this.receiptPreviewUrl);
+    this.receiptPreviewUrl = '';
+    this.receiptOrder = undefined;
+    this.receiptViewLoading = false;
+    this.receiptViewError = '';
   }
 
-
-  protected setCloseEvent(): void {
-    this.visible = false;
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    if (this.receiptOrder) this.closeReceipt();
   }
 
-  protected setOkEvent(): void {
-    this.visible = false;
-    if (this.iconMode === 'CONFIRM') {
-      this.orderHistoriesAdmin.filter(order => {
-        if (order.orderTrackingNumber === this.orderTrackingNumber) {
-          order.statusPurchase = true
-          // then update on database **  if user refresh. it's updated
-          this.ordersHistoryService.updateStatusPurchaseForAdmin(this.orderTrackingNumber).subscribe(
-            (res) => (console.log(res)),
-            (errorResponse) => { // Way to Catch Errors in Component
-              this.visible = true
-              this.iconMode = 'ERROR'
-              this.headerTitle = 'Update Failed'
-              this.body = errorResponse['error']['description']
-            })
-        }
-      })
-      this.orderHistoriesAdminSearchMode = this.orderHistoriesAdmin
-    }
-    if (this.iconMode === 'ERROR') {
-      this.webStorageService.clearSession()
+  protected image(source?: string): string {
+    if (!source) return 'assets/images/product-placeholder.svg';
+    try {
+      return new URL(source, environment.strapiUrl).href;
+    } catch {
+      return 'assets/images/product-placeholder.svg';
     }
   }
 
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  protected statusLabel(order: SalesOrder): string {
+    if (order.paymentStatus === 'pending_review') return 'รอตรวจสอบสลิป';
+    return ({
+      pending_payment: 'รอชำระเงิน', confirmed: 'ยืนยันคำสั่งซื้อ', processing: 'กำลังเตรียมสินค้า',
+      shipped: 'จัดส่งแล้ว', completed: 'สำเร็จ', cancelled: 'ยกเลิก', expired: 'หมดเวลาชำระเงิน'
+    } as Record<string, string>)[order.orderStatus] || order.orderStatus;
   }
 
-  protected onOpenSlip(qrPurchaseUrl: string): void {
-    window.open(qrPurchaseUrl, '_blank')
+  protected statusClass(order: SalesOrder): string {
+    if (order.paymentStatus === 'pending_review') return 'review';
+    return order.orderStatus;
+  }
+
+  protected money(order: SalesOrder): string {
+    return new Intl.NumberFormat('th-TH', {
+      style: 'currency',
+      currency: order.currency || 'THB'
+    }).format(Number(order.grandTotal));
+  }
+
+  protected track(_: number, order: SalesOrder): string {
+    return order.documentId;
   }
 }

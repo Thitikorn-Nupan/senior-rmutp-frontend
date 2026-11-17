@@ -49,8 +49,12 @@
       <div class="account-nav"><p class="mobile-section-title">{{ menuLanguage.text().account }}</p>
         <ecm-registers-status></ecm-registers-status>
       </div>
-      <section *ngIf="user" class="session-info" [attr.aria-label]="menuLanguage.text().session">
-        <div class="session-user">
+      <section *ngIf="user" class="session-area" [attr.aria-label]="menuLanguage.text().session">
+        <button class="session-toggle"
+                type="button"
+                (click)="toggleSessionDetails()"
+                [attr.aria-expanded]="sessionDetailsOpen"
+                aria-controls="session-details">
           <span class="user-icon" aria-hidden="true">
             <img *ngIf="profileAvatar() && profileAvatar() !== failedAvatarUrl; else defaultUserIcon"
                  [src]="profileAvatar()" width="48" height="48" alt="" (error)="failedAvatarUrl = profileAvatar()"/>
@@ -61,36 +65,46 @@
               </svg>
             </ng-template>
           </span>
-          <div class="user-details">
+          <span class="session-summary">
             <span class="session-label">{{ menuLanguage.text().welcomeBack }}</span>
             <strong class="session-name">{{ profileName() || user.username }}</strong>
-            <span *ngIf="profiles.profile()?.email && profiles.profile()?.email !== (profileName() || user.username)"
-                  class="session-contact">{{ profiles.profile()?.email }}</span>
-            <span *ngIf="profiles.profile()?.phone" class="session-contact">{{ menuLanguage.text().phoneNumber }}
-              : {{ profiles.profile()?.phone }}</span>
-          </div>
-        </div>
-        <div class="session-status">
-          <span class="session-badge"><span class="session-dot"
-                                            aria-hidden="true"></span>{{ menuLanguage.text().signedIn }}</span>
-          <span class="session-role"
-                [class.is-admin]="user.roles === 'ROLE_ADMIN'">{{ user.roles === 'ROLE_ADMIN' ? menuLanguage.text().adminAccount : menuLanguage.text().memberAccount }}</span>
-        </div>
-        <div *ngIf="tokenExpire" class="session-expiry">
-          <svg width="18"
-               height="18"
-               viewBox="0 0 24 24"
-               fill="none"
-               stroke="currentColor"
-               stroke-width="1.6"
-               aria-hidden="true">
-            <circle cx="12" cy="12" r="9"/>
-            <path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/>
+          </span>
+          <svg class="session-chevron" [class.is-open]="sessionDetailsOpen" width="20" height="20"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <div>
-            <span class="session-label">{{ menuLanguage.text().sessionExpires }}</span>
-            <span
-              class="expiry-value">{{ tokenExpire * 1000 | date:'dd MMM yyyy, HH:mm':undefined:menuLanguage.locale() }}</span>
+        </button>
+        <div *ngIf="sessionDetailsOpen" id="session-details" class="session-info">
+          <div class="session-user">
+            <div class="user-details">
+              <span *ngIf="profiles.profile()?.email && profiles.profile()?.email !== (profileName() || user.username)"
+                    class="session-contact">{{ profiles.profile()?.email }}</span>
+              <span *ngIf="profiles.profile()?.phone" class="session-contact">{{ menuLanguage.text().phoneNumber }}
+                : {{ profiles.profile()?.phone }}</span>
+            </div>
+          </div>
+          <div class="session-status">
+            <span class="session-badge"><span class="session-dot"
+                                              aria-hidden="true"></span>{{ menuLanguage.text().signedIn }}</span>
+            <span class="session-role"
+                  [class.is-admin]="user.roles === 'ROLE_ADMIN'">{{ user.roles === 'ROLE_ADMIN' ? menuLanguage.text().adminAccount : menuLanguage.text().memberAccount }}</span>
+          </div>
+          <div *ngIf="tokenExpire" class="session-expiry">
+            <svg width="18"
+                 height="18"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.6"
+                 aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div>
+              <span class="session-label">{{ menuLanguage.text().sessionExpires }}</span>
+              <span
+                class="expiry-value">{{ tokenExpire * 1000 | date:'dd MMM yyyy, HH:mm':undefined:menuLanguage.locale() }}</span>
+            </div>
           </div>
         </div>
       </section>

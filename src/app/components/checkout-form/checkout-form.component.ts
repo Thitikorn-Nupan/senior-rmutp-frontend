@@ -15,6 +15,7 @@ import {
 } from '../../services/checkout.service';
 import {Province} from '../../entities/addresses/province';
 import {District} from '../../entities/addresses/district';
+import {ProfileService, UserProfile} from '../../services/profile.service';
 
 interface PendingCheckout {
   key: string;
@@ -55,16 +56,19 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
   private pending?: PendingCheckout;
   private storageKey = '';
   private provinceRequest?: Subscription;
+  private profileRequest?: Subscription;
   private districtRequests: Partial<Record<'shippingAddress' | 'billingAddress', Subscription>> = {};
   private readonly cartSubscriptions = new Subscription();
   private clock?: ReturnType<typeof setInterval>;
+  private savedProfileAddress: UserProfile['shippingAddress'] = null;
 
   constructor(private readonly addressesService: AddressesService,
               protected readonly cartStatusService: CartStatusService,
               private readonly checkoutService: CheckoutService,
               private readonly formBuilder: FormBuilder,
               private readonly storage: WebStorageService,
-              private readonly productsService: ProductsService) {
+              private readonly productsService: ProductsService,
+              private readonly profileService: ProfileService) {
   }
 
   ngOnInit(): void {
@@ -85,6 +89,7 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
         phone: ['', phone]
       }), shippingAddress: address(), billingAddress: address()
     });
+    this.loadProfileDefaults(user);
     this.initialAndSetDefaultAddresses();
     this.clock = setInterval(() => {
       this.now = Date.now();
@@ -361,7 +366,9 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
       next: provinces => {
         this.provinces = provinces;
         this.addressLoading.provinces = false;
-        const provinceName = provinces[0]?.name ?? null;
+        const savedProvince = this.savedProfileAddress?.province;
+        const provinceName = provinces.find(province => province.name === savedProvince)?.name
+          ?? provinces[0]?.name ?? null;
         if (!provinceName) this.addressErrors.provinces = 'No provinces are available. Please try again later.';
         for (const group of ['shippingAddress', 'billingAddress'] as const) {
           this.form.get(group)?.get('province')?.setValue(provinceName);
@@ -374,6 +381,50 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
         this.addressErrors.provinces = 'Unable to load provinces. Please retry.';
       }
     });
+  }
+
+  private loadProfileDefaults(user: { username?: string } | null): void {
+    if (!user) return;
+    const cachedProfile = this.profileService.profile();
+    if (cachedProfile) {
+      this.applyProfileDefaults(cachedProfile);
+      return;
+    }
+    this.profileRequest = this.profileService.get().subscribe({
+      next: response => this.applyProfileDefaults(response.data),
+      error: () => {
+        // Profile data is optional; the checkout form remains usable with blank defaults.
+      }
+    });
+  }
+
+  private applyProfileDefaults(profile: UserProfile): void {
+    const customer = this.form.get('customer');
+    customer?.patchValue({
+      firstname: profile.firstName || '',
+      lastname: profile.lastName || '',
+      email: profile.email || profile.username || '',
+      phone: profile.phone || ''
+    });
+
+    this.savedProfileAddress = profile.shippingAddress;
+    const savedAddress = profile.shippingAddress;
+    if (!savedAddress) return;
+    const values = {
+      street: [savedAddress.addressLine1, savedAddress.addressLine2].filter(Boolean).join(' '),
+      subdistrict: savedAddress.subdistrict || '',
+      zipcode: savedAddress.postalCode || ''
+    };
+    this.form.get('shippingAddress')?.patchValue(values);
+    this.form.get('billingAddress')?.patchValue(values);
+
+    if (this.provinces.length && savedAddress.province &&
+      this.provinces.some(province => province.name === savedAddress.province)) {
+      for (const group of ['shippingAddress', 'billingAddress'] as const) {
+        this.form.get(group)?.get('province')?.setValue(savedAddress.province);
+        this.loadDistrictOptions(group);
+      }
+    }
   }
 
   protected selectProvinceOnShippingAddress($event: any): void {
@@ -400,7 +451,16 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
       next: districts => {
         if (group === 'shippingAddress') this.shippingAddressDistrict = districts;
         else this.billingAddressDistrict = districts;
-        control?.get('district')?.setValue(districts[0]?.value ?? districts[0]?.name ?? null);
+        const savedDistrict = provinceName === this.savedProfileAddress?.province
+          ? this.savedProfileAddress?.district
+          : undefined;
+        const matchingDistrict = districts.find(district =>
+          district.value === savedDistrict || district.name === savedDistrict);
+        control?.get('district')?.setValue(matchingDistrict?.value
+          ?? matchingDistrict?.name
+          ?? districts[0]?.value
+          ?? districts[0]?.name
+          ?? null);
         this.addressLoading[group] = false;
         if (!districts.length) this.addressErrors[group] = 'No districts are available for this province.';
       },
@@ -417,6 +477,7 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.provinceRequest?.unsubscribe();
+    this.profileRequest?.unsubscribe();
     this.districtRequests.shippingAddress?.unsubscribe();
     this.districtRequests.billingAddress?.unsubscribe();
     this.cartSubscriptions.unsubscribe();

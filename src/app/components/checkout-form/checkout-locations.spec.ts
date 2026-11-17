@@ -11,6 +11,7 @@ import {CartStatusService} from '../../services/cart-status.service';
 import {ProductsService} from '../../services/products.service';
 import {WebStorageService} from '../../services/web-storage.service';
 import {CheckoutService} from '../../services/checkout.service';
+import {ProfileService} from '../../services/profile.service';
 import {environment} from '../../../environments/environment';
 import {checkoutLocationFixture as locations} from './checkout-locations.fixture';
 
@@ -39,6 +40,7 @@ describe('Checkout province/district display with the imported Thai dataset', ()
       providers: [
         {provide: CartStatusService, useValue: {cartItems: [{pid: 1, name: 'Test', variantDocumentId: 'test', quantity: 1, price: 100}], computeCart: () => {}}},
         {provide: ProductsService, useValue: {}},
+        {provide: ProfileService, useValue: {profile: () => null, get: () => of({data: {firstName: '', lastName: '', displayName: '', phone: '', email: '', username: '', shippingAddress: null}})}},
         {provide: WebStorageService, useValue: {getUserFormToken: () => ({uid: 7777, username: 'test@example.invalid'})}},
         {provide: CheckoutService, useValue: {quote: () => of({data: {subtotal: '100', shippingTotal: '0', grandTotal: '100', totalQuantity: 1, currency: 'THB', items: []}})}},
       ]}).compileComponents();

@@ -6,11 +6,6 @@
   display: none;
 }
 
-.session-info {
-  grid-column: 1 / -1;
-  width: 100%;
-}
-
 @media (min-width: 769px) {
   .category-nav {
     grid-row: 2;
@@ -177,8 +172,33 @@
     gap: 12px;
   }
 
+  .session-area {
+    order: 4;
+    position: static;
+    width: auto;
+    overflow: visible;
+    border-top: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .session-toggle {
+    padding: 12px 14px;
+    border: 1px solid #e6ebdf;
+    border-radius: 12px;
+  }
+
+  .session-info {
+    width: 100%;
+    margin-top: 8px;
+    border: 1px solid #e6ebdf;
+    border-radius: 12px;
+  }
+
   .session-user {
     flex-basis: 100%;
+    min-width: 0;
   }
 
   .session-expiry {
