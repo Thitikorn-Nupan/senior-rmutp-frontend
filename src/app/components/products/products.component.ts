@@ -8,6 +8,7 @@ import {CartItem} from "../../entities/purchase/cart-item";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {MenuLanguageService} from '../../services/menu-language.service';
 import {customerProductMessages} from '../product-detail/customer-product.messages';
+import {CartAnimationService} from '../../services/cart-animation.service';
 
 @Component({
   selector: 'app-products',
@@ -36,6 +37,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   constructor(private readonly productsService: ProductsService,
               private readonly activatedRoute: ActivatedRoute,
               private readonly cartStatusService: CartStatusService,
+              private readonly cartAnimation: CartAnimationService,
               private readonly router: Router,
               public readonly language: MenuLanguageService) {
   }
@@ -86,7 +88,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   }
 
-  protected addItem(product: Product): void {
+  protected addItem(product: Product, event: MouseEvent): void {
     if (product.variants.length > 1) {
       this.seeDetail(product.documentId || product.pid);
       return;
@@ -95,6 +97,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     const cartItem: CartItem = new CartItem(product)
     const added = this.cartStatusService.addItemToCart(cartItem);
     this.cartMessage = added ? `${product.name} · ${this.t.added}` : this.t.limit;
+    if (added) this.cartAnimation.flyToCart(event.currentTarget as HTMLElement, product.imageUrl);
   }
 
   protected onSwitchMode(): void {

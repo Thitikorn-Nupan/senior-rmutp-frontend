@@ -47,11 +47,13 @@
       <ul *ngIf="settingsOpen" id="settings-menu" class="management-menu">
         <li><a routerLink="/profile" (click)="settingsOpen = false"
                routerLinkActive="current">{{ menuLanguage.text().personalInformation }}</a></li>
+        <li *ngIf="isAdminLogin"><a routerLink="/member-management" (click)="settingsOpen = false"
+                                  routerLinkActive="current">{{ menuLanguage.text().manageMembers }}</a></li>
       </ul>
     </div>
     <a routerLink="/orders-history" routerLinkActive="current">{{ menuLanguage.text().ordersHistory }}</a>
     <button type="button"
-            (click)="logout()">
+            (click)="requestLogout()">
       {{ menuLanguage.text().logout }}
     </button>
   </ng-container>
@@ -64,3 +66,11 @@
     {{ menuLanguage.language() === 'th' ? 'EN' : 'ไทย' }}
   </button>
 </nav>
+
+<pop-up [visible]="logoutConfirmationVisible"
+        [headerTitle]="logoutConfirmationTitle"
+        [body]="logoutConfirmationBody"
+        iconMode="CONFIRM"
+        (closeEvent)="cancelLogout()"
+        (okEvent)="confirmLogout()">
+</pop-up>

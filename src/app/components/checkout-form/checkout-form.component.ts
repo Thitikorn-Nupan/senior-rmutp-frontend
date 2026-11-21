@@ -16,6 +16,8 @@ import {
 import {Province} from '../../entities/addresses/province';
 import {District} from '../../entities/addresses/district';
 import {ProfileService, UserProfile} from '../../services/profile.service';
+import {AlertService} from '../../services/alert.service';
+import {MenuLanguageService} from '../../services/menu-language.service';
 
 interface PendingCheckout {
   key: string;
@@ -23,6 +25,8 @@ interface PendingCheckout {
   cartSignature: string;
   cartCleared?: boolean;
 }
+
+type PaymentMethod = 'bank' | 'promptpay' | 'card';
 
 @Component({
   selector: 'app-checkout-form',
@@ -44,6 +48,8 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
   protected fileError = '';
   protected receipt?: File;
   protected receiptPreview = '';
+  protected paymentMethod: PaymentMethod = 'promptpay';
+  protected copiedAccount = '';
   protected quote?: CheckoutQuote;
   protected order?: TransferOrder;
   protected totalPrice = 0;
@@ -68,7 +74,9 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
               private readonly formBuilder: FormBuilder,
               private readonly storage: WebStorageService,
               private readonly productsService: ProductsService,
-              private readonly profileService: ProfileService) {
+              private readonly profileService: ProfileService,
+              private readonly alerts: AlertService,
+              private readonly language: MenuLanguageService) {
   }
 
   ngOnInit(): void {
@@ -109,6 +117,36 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
 
   protected get receiptSubmitted(): boolean {
     return this.order?.paymentStatus === 'pending_review' || Boolean(this.order?.payment.receiptSubmitted);
+  }
+
+  protected get paymentMethodLabel(): string {
+    if (this.language.language() === 'th') {
+      return {bank: 'โอนผ่านบัญชีธนาคาร', promptpay: 'PromptPay QR', card: 'บัตรเครดิต / เดบิต'}[this.paymentMethod];
+    }
+    return {bank: 'Bank transfer', promptpay: 'PromptPay QR', card: 'Credit / debit card'}[this.paymentMethod];
+  }
+
+  protected get transferTitle(): string {
+    if (this.language.language() === 'th') {
+      return this.paymentMethod === 'bank' ? 'โอนเงินและแนบสลิป' : 'สแกนและแนบสลิป';
+    }
+    return this.paymentMethod === 'bank' ? 'Transfer and attach your receipt' : 'Scan and attach your receipt';
+  }
+
+  protected selectPaymentMethod(method: PaymentMethod): void {
+    this.paymentMethod = method;
+    this.copiedAccount = '';
+  }
+
+  protected copyAccount(account: string): void {
+    const copied = navigator.clipboard?.writeText(account.replace(/-/g, ''));
+    if (!copied) return;
+    copied.then(() => {
+      this.copiedAccount = account;
+      setTimeout(() => this.copiedAccount = '', 1800);
+    }).catch(() => {
+      this.copiedAccount = '';
+    });
   }
 
   protected get expired(): boolean {
@@ -230,20 +268,38 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
 
   protected checkout(): void {
     if (this.busy || this.restoring || this.expired || this.receiptSubmitted) return;
+    if (this.paymentMethod === 'card') {
+      this.errorMessage = this.language.language() === 'th'
+        ? 'ระบบชำระด้วยบัตรกำลังจัดเตรียม กรุณาเลือกโอนผ่านบัญชีธนาคารหรือ PromptPay'
+        : 'Card payments are being prepared. Please choose bank transfer or PromptPay.';
+      return;
+    }
     this.form.markAllAsTouched();
     if (!this.order && (this.form.invalid || !this.quote || !this.totalQuantity)) {
       this.errorMessage = 'Please check the required fields and refresh the order total before continuing.';
       return;
     }
     if (this.order && !this.receipt) {
-      this.fileError = 'Please attach your payment receipt.';
+      this.fileError = this.language.language() === 'th' ? 'กรุณาแนบหลักฐานการชำระเงิน' : 'Please attach your payment receipt.';
       return;
     }
     this.errorMessage = '';
     this.iconMode = 'CONFIRM';
-    this.headerTitle = this.order ? 'Submit payment receipt?' : 'Create your order?';
-    this.body = this.order ? 'Your receipt will be sent to the shop for review. Payment will remain pending until it is verified.'
-      : 'Your items will be reserved and the final amount will be shown with the PromptPay QR code.';
+    const thai = this.language.language() === 'th';
+    this.headerTitle = this.order
+      ? thai ? 'ยืนยันการส่งหลักฐานชำระเงิน?' : 'Submit payment receipt?'
+      : thai ? 'ยืนยันการสร้างคำสั่งซื้อ?' : 'Create your order?';
+    this.body = this.order
+      ? thai
+        ? 'หลักฐานการชำระเงินจะถูกส่งให้ร้านตรวจสอบ สถานะการชำระเงินจะรอการยืนยันจนกว่าร้านจะตรวจสอบเสร็จ'
+        : 'Your receipt will be sent to the shop for review. Payment will remain pending until it is verified.'
+      : this.paymentMethod === 'bank'
+        ? thai
+          ? 'สินค้าจะถูกจองไว้ และระบบจะแสดงรายละเอียดบัญชีธนาคารในขั้นตอนถัดไป'
+          : 'Your items will be reserved and the bank account details will appear in the next step.'
+        : thai
+          ? 'สินค้าจะถูกจองไว้ และระบบจะแสดงยอดชำระพร้อม PromptPay QR ในขั้นตอนถัดไป'
+          : 'Your items will be reserved and the final amount will be shown with the PromptPay QR code.';
     this.visible = true;
   }
 
@@ -320,7 +376,17 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
         this.busy = false;
       })
     ).subscribe({
-      next: response => this.acceptOrder(response.data),
+      next: response => {
+        this.acceptOrder(response.data);
+        const thai = this.language.language() === 'th';
+        this.alerts.show({
+          header: thai ? 'ส่งหลักฐานชำระเงินสำเร็จ' : 'Payment receipt submitted',
+          detail: thai
+            ? `คำสั่งซื้อ ${response.data.orderNumber} อยู่ระหว่างรอร้านค้าตรวจสอบ`
+            : `Order ${response.data.orderNumber} is awaiting the shop’s review.`,
+          status: 'success',
+        });
+      },
       error: error => {
         this.errorMessage = this.errorText(error);
       }
@@ -403,7 +469,7 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     customer?.patchValue({
       firstname: profile.firstName || '',
       lastname: profile.lastName || '',
-      email: profile.email || profile.username || '',
+      email: profile.email || profile.username || customer?.get('email')?.value || '',
       phone: profile.phone || ''
     });
 

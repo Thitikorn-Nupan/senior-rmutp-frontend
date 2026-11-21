@@ -19,6 +19,7 @@ export class RegistersStatusComponent implements OnInit {
   protected isAdminLogin: boolean = false
   protected isToggle: boolean = false
   protected settingsOpen = false;
+  protected logoutConfirmationVisible = false;
 
   constructor(private readonly router: Router,
               private readonly webStorageService: WebStorageService,
@@ -52,9 +53,30 @@ export class RegistersStatusComponent implements OnInit {
     }
   }
 
-  protected logout(): void {
+  protected requestLogout(): void {
+    this.settingsOpen = false;
+    this.isToggle = false;
+    this.logoutConfirmationVisible = true;
+  }
+
+  protected cancelLogout(): void {
+    this.logoutConfirmationVisible = false;
+  }
+
+  protected confirmLogout(): void {
+    this.logoutConfirmationVisible = false;
     this.webStorageService.clearSession();
     void this.router.navigate(['/products']);
+  }
+
+  protected get logoutConfirmationTitle(): string {
+    return this.menuLanguage.language() === 'th' ? 'ยืนยันการออกจากระบบ?' : 'Confirm logout?';
+  }
+
+  protected get logoutConfirmationBody(): string {
+    return this.menuLanguage.language() === 'th'
+      ? 'คุณต้องการออกจากระบบใช่หรือไม่'
+      : 'Are you sure you want to log out?';
   }
 
   protected toggle(): void {

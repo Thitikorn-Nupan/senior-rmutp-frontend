@@ -1,0 +1,71 @@
+<main class="members-page" [attr.lang]="language.language()">
+  <div class="members-shell">
+    <header class="page-heading">
+      <div><p class="eyebrow">{{ text().eyebrow }}</p>
+        <h1>{{ text().title }}<span>.</span></h1>
+        <p>{{ text().intro }}</p></div>
+      <div class="summary"><strong>{{ total | number }}</strong><span>{{ text().members }}</span></div>
+    </header>
+
+    <form class="filters" (ngSubmit)="load()">
+      <div class="search-filter"><label for="member-search">{{ text().searchLabel }}</label>
+        <input id="member-search" name="search" [(ngModel)]="search" type="search" maxlength="64"
+               [placeholder]="text().searchPlaceholder"/>
+      </div>
+      <button class="button primary" type="submit" [disabled]="loading">{{ text().search }}</button>
+      <button class="button secondary" type="button" (click)="reset()" [disabled]="loading">{{ text().clear }}</button>
+    </form>
+
+    <div *ngIf="loading" class="empty-state" role="status"><span class="loading-ring"></span>
+      <p>{{ text().loading }}</p></div>
+    <div *ngIf="!loading && error" class="empty-state" role="alert"><span class="empty-icon">!</span>
+      <h2>{{ error }}</h2>
+      <button class="button secondary" type="button" (click)="load()">{{ text().retry }}</button>
+    </div>
+    <div *ngIf="!loading && !error && !members.length" class="empty-state"><span class="empty-icon">◇</span>
+      <h2>{{ text().emptyTitle }}</h2>
+      <p>{{ text().emptyDetail }}</p></div>
+
+    <section *ngIf="!loading && !error && members.length" class="member-list" [attr.aria-label]="text().title">
+      <article class="member-card" *ngFor="let member of members; trackBy: track">
+        <button class="member-summary" type="button" (click)="open(member)"
+                [attr.aria-expanded]="selected?.id === member.id">
+          <span class="member-avatar" aria-hidden="true">{{ memberName(member).slice(0, 1).toUpperCase() }}</span>
+          <span class="member-main"><strong>{{ memberName(member) }}</strong><small>{{ member.email }}</small></span>
+          <span class="member-phone">{{ member.phone || '—' }}</span>
+          <span class="order-count">{{ member.orderCount }} {{ text().orders }}</span>
+          <svg class="chevron" [class.is-open]="selected?.id === member.id" width="20" height="20" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div *ngIf="selected?.id === member.id" class="member-detail">
+          <p class="member-meta">{{ text().phone }}: {{ member.phone || '—' }}
+            · {{ text().registered }} {{ member.createdAt | date:'dd/MM/yyyy' }}</p>
+          <p *ngIf="!member.orders.length" class="no-orders">{{ text().noOrders }}</p>
+          <div *ngFor="let order of member.orders" class="order-card">
+            <div class="order-heading">
+              <strong>{{ order.orderNumber }}</strong><span>{{ order.placedAt | date:'dd/MM/yyyy HH:mm' }}</span><span
+              class="status-badge" [class]="statusClass(order)">{{ statusLabel(order) }}</span><b>{{ money(order) }}</b>
+            </div>
+            <div class="order-items">
+              <div *ngFor="let item of order.items"><span>{{ item.name }} <small>{{ item.sku }}
+                · {{ item.quantity }} {{ text().items }}</small></span><b>{{ item.lineTotal | currency:order.currency:'symbol-narrow' }}</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <nav *ngIf="!loading && !error && pageCount > 1" class="pagination" [attr.aria-label]="text().title">
+      <button class="button secondary" type="button" (click)="load(page - 1)"
+              [disabled]="page <= 1">{{ text().previous }}
+      </button>
+      <span>{{ text().page }} {{ page }} / {{ pageCount }}</span>
+      <button class="button secondary" type="button" (click)="load(page + 1)"
+              [disabled]="page >= pageCount">{{ text().next }}
+      </button>
+    </nav>
+  </div>
+</main>

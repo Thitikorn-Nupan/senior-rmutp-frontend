@@ -1,6 +1,6 @@
-﻿.payment-options {
+.payment-options {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   padding: 0;
   margin: 0;
@@ -10,9 +10,9 @@
 .payment-option {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
-  padding: 16px 12px;
+  padding: 16px;
   border: 1px solid #dce3dc;
   border-radius: 10px;
   cursor: pointer;
@@ -21,7 +21,24 @@
 .payment-option.selected {
   background: #f2f5ef;
   border-color: #708b75;
+  box-shadow: 0 0 0 2px rgb(112 139 117 / 12%);
 }
+
+.payment-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: #edf2ec;
+  color: #243d35;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.payment-icon.promptpay { background: #e9f0fb; color: #1b579f; }
+.payment-icon.card { background: #f6eee5; color: #8a5a30; font-size: 22px; }
 
 .payment-option input {
   width: 16px;
@@ -55,6 +72,82 @@
   margin-top: 24px;
   padding-top: 24px;
 }
+
+.bank-accounts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+
+.bank-account {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #dce3dc;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.bank-account > div:not(.bank-logo) { min-width: 0; }
+.bank-account strong, .bank-account span, .bank-account small { display: block; overflow-wrap: anywhere; }
+.bank-account strong { font-size: 12px; color: #243d35; }
+.bank-account span { margin-top: 3px; font-size: 13px; font-weight: 700; letter-spacing: .3px; }
+.bank-account small { margin-top: 2px; color: #68756e; font-size: 10px; }
+
+.bank-logo {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+
+.kbank-logo { background: #16834a; }
+.bbl-logo { background: #1d5fab; }
+
+.bank-account button {
+  min-height: 32px;
+  padding: 6px 9px;
+  border: 1px solid #cbd6ca;
+  border-radius: 6px;
+  color: #243d35;
+  background: #f8f9f5;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.bank-account button:hover { background: #edf2ec; }
+.transfer-bank-accounts { margin: 16px 0; }
+
+.coming-soon {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 5px 8px;
+  border-radius: 20px;
+  color: #805608;
+  background: #fff3d8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.card-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 310px;
+  min-height: 146px;
+  justify-content: flex-end;
+  padding: 20px;
+  border-radius: 13px;
+  color: #fff;
+  background: linear-gradient(135deg, #233e6b, #647ca2);
+  box-shadow: 0 10px 22px rgb(35 62 107 / 20%);
+}
+
+.card-preview span { font-size: 18px; letter-spacing: 1.8px; }
+.card-preview small { font-size: 11px; opacity: .85; }
 
 .payment-label {
   display: block;
@@ -132,4 +225,11 @@
   .payment-options {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .bank-accounts { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .payment-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .payment-option:last-child { grid-column: span 2; }
 }

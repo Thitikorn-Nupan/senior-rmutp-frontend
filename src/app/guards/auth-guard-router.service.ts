@@ -47,6 +47,9 @@ export class AuthGuardRouter implements CanActivate {
     } else if (user?.roles !== 'ROLE_ADMIN' && path === 'orders-history-admin') { // case user still logged in
       this.router.navigate([''])
       return false
+    } else if (user?.roles !== 'ROLE_ADMIN' && path === 'member-management') {
+      this.router.navigate([''])
+      return false
     }
     return true
   }

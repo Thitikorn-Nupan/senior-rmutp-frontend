@@ -63,7 +63,7 @@
           <div class="product-actions">
             <a class="detail-button" [routerLink]="['/product-detail', product.documentId || product.pid]"
                [attr.aria-label]="'View details for ' + product.name">Details</a>
-            <button type="button" class="add-button" (click)="addItem(product)" [disabled]="product.availableStock <= 0"
+            <button type="button" class="add-button" (click)="addItem(product, $event)" [disabled]="product.availableStock <= 0"
                     [attr.aria-label]="(product.variants.length > 1 ? t.choose : t.add) + ' · ' + product.name">{{ product.variants.length > 1 ? t.choose : t.add }} <span aria-hidden="true">{{ product.variants.length > 1 ? '→' : '+' }}</span>
             </button>
           </div>

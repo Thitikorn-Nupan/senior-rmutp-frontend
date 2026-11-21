@@ -9,6 +9,7 @@ import {selectProductVariant} from '../../services/catalog-api';
 import {AlertService} from '../../services/alert.service';
 import {MenuLanguageService} from '../../services/menu-language.service';
 import {customerProductMessages} from './customer-product.messages';
+import {CartAnimationService} from '../../services/cart-animation.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -24,7 +25,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
               private readonly activatedRoute: ActivatedRoute,
               private readonly productsService: ProductsService,
               public readonly language: MenuLanguageService,
-              private readonly alerts: AlertService) {
+              private readonly alerts: AlertService,
+              private readonly cartAnimation: CartAnimationService) {
   }
 
   get t() {
@@ -71,13 +73,14 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     this.request?.unsubscribe();
   }
 
-  protected addItem(product: Product) {
+  protected addItem(product: Product, event: MouseEvent) {
     if (!this.canAdd) {
       this.alerts.show({header: this.t.limit, detail: this.t.limitDetail, status: 'warning'});
       return;
     }
     const cartItem: CartItem = new CartItem(product)
     const added = this.cartStatusService.addItemToCart(cartItem);
+    if (added) this.cartAnimation.flyToCart(event.currentTarget as HTMLElement, product.imageUrl);
     this.alerts.show(added
       ? {header: this.t.added, detail: `${product.name} · ${product.variantLabel || product.sku}`, status: 'success'}
       : {header: this.t.limit, detail: this.t.limitDetail, status: 'warning'});

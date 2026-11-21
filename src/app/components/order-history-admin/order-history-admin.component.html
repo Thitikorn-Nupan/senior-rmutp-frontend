@@ -65,7 +65,7 @@
           </div>
           <div class="detail-actions">
             <button *ngIf="order.paymentStatus === 'pending_review'" class="button primary" type="button"
-                    (click)="approve(order)"
+                    (click)="requestApproval(order)"
                     [disabled]="approving === order.documentId">{{ approving === order.documentId ? 'กำลังยืนยัน…' : 'ยืนยันการชำระเงิน' }}
             </button>
             <button *ngIf="order.paymentStatus === 'pending_review'" class="button secondary" type="button"
@@ -97,6 +97,14 @@
     </nav>
   </div>
 </main>
+
+<pop-up [visible]="approvalConfirmationVisible"
+        [headerTitle]="approvalConfirmationTitle"
+        [body]="approvalConfirmationBody"
+        iconMode="CONFIRM"
+        (closeEvent)="cancelApproval()"
+        (okEvent)="confirmApproval()">
+</pop-up>
 
 <div *ngIf="receiptOrder" class="receipt-backdrop" role="presentation" (click)="closeReceipt()">
   <section class="receipt-dialog" role="dialog" aria-modal="true" aria-labelledby="receipt-title"

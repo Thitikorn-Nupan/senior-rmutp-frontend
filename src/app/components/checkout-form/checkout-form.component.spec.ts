@@ -117,6 +117,17 @@ describe('PromptPay checkout workflow', () => {
     expect(fixture.nativeElement.querySelector('.qr-image')).toBeNull();
   });
 
+  it('shows the selected bank-transfer accounts before an order is created', () => {
+    loadQuote();
+    const bank = fixture.nativeElement.querySelector('input[value="bank"]') as HTMLInputElement;
+    bank.checked = true;
+    bank.dispatchEvent(new Event('change', {bubbles: true}));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('091-190-6902');
+    expect(fixture.nativeElement.textContent).toContain('025-057-3912');
+    expect(fixture.nativeElement.querySelector('.purchase-button').textContent).toContain('bank details');
+  });
+
   it('maps required customer/address fields and uses an authenticated idempotency key', () => {
     loadQuote(); fillDetails(); confirm();
     const request = http.expectOne(base + '/orders');

@@ -1,4 +1,5 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, Output} from '@angular/core';
+import {MenuLanguageService} from '../../services/menu-language.service';
 
 @Component({
   selector: 'pop-up',
@@ -20,13 +21,24 @@ export class PopUpComponent {
   @Output()
   public closeEvent: EventEmitter<any> = new EventEmitter();
 
-  constructor() {}
+  constructor(public readonly language: MenuLanguageService) {}
 
-  protected getOkEvent() {
+  protected get labels(): { cancel: string; confirm: string; close: string } {
+    return this.language.language() === 'th'
+      ? {cancel: 'ยกเลิก', confirm: 'ยืนยัน', close: 'ปิดหน้าต่าง'}
+      : {cancel: 'Cancel', confirm: 'Confirm', close: 'Close dialog'};
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    if (this.visible) this.getCloseEvent();
+  }
+
+  protected getOkEvent(): void {
     this.okEvent.emit()
   }
 
-  protected getCloseEvent() {
+  protected getCloseEvent(): void {
     this.closeEvent.emit()
   }
 }

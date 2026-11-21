@@ -2,6 +2,8 @@ import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Subscription, finalize} from 'rxjs';
 import {SalesHistoryService, SalesOrder} from '../../services/sales-history.service';
 import {environment} from '../../../environments/environment';
+import {AlertService} from '../../services/alert.service';
+import {MenuLanguageService} from '../../services/menu-language.service';
 
 @Component({
   selector: 'app-order-history-admin',
@@ -25,6 +27,8 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
   protected receiptPreviewUrl = '';
   protected receiptOrder?: SalesOrder;
   protected selected?: SalesOrder;
+  protected approvalOrder?: SalesOrder;
+  protected approvalConfirmationVisible = false;
   private request?: Subscription;
   private receiptRequest?: Subscription;
 
@@ -35,7 +39,9 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
     {name: 'สำเร็จ', value: 'completed'}, {name: 'ยกเลิก', value: 'cancelled'}
   ] as const;
 
-  constructor(private readonly sales: SalesHistoryService) {
+  constructor(private readonly sales: SalesHistoryService,
+              private readonly alerts: AlertService,
+              private readonly language: MenuLanguageService) {
   }
 
   ngOnInit(): void {
@@ -75,6 +81,47 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
 
   protected open(order: SalesOrder): void {
     this.selected = this.selected?.documentId === order.documentId ? undefined : order;
+  }
+
+  protected requestApproval(order: SalesOrder): void {
+    if (this.approving) return;
+    this.approvalOrder = order;
+    this.approvalConfirmationVisible = true;
+  }
+
+  protected cancelApproval(): void {
+    this.approvalConfirmationVisible = false;
+    this.approvalOrder = undefined;
+  }
+
+  protected confirmApproval(): void {
+    const order = this.approvalOrder;
+    if (!order || this.approving) return;
+    this.cancelApproval();
+    this.approving = order.documentId;
+    this.sales.approve(order.documentId).pipe(finalize(() => this.approving = '')).subscribe({
+      next: () => {
+        const thai = this.language.language() === 'th';
+        this.alerts.show({
+          header: thai ? 'ยืนยันการชำระเงินสำเร็จ' : 'Payment confirmed',
+          detail: thai ? `คำสั่งซื้อ ${order.orderNumber} ได้รับการยืนยันแล้ว` : `Order ${order.orderNumber} has been confirmed.`,
+          status: 'success'
+        });
+        this.load(this.page);
+      },
+      error: error => this.error = error.error?.error?.message || 'Unable to confirm payment.'
+    });
+  }
+
+  protected get approvalConfirmationTitle(): string {
+    return this.language.language() === 'th' ? 'ยืนยันการชำระเงิน?' : 'Confirm payment?';
+  }
+
+  protected get approvalConfirmationBody(): string {
+    if (!this.approvalOrder) return '';
+    return this.language.language() === 'th'
+      ? `คุณต้องการยืนยันการชำระเงินของ ${this.approvalOrder.orderNumber} ใช่หรือไม่`
+      : `Are you sure you want to confirm payment for ${this.approvalOrder.orderNumber}?`;
   }
 
   protected approve(order: SalesOrder): void {
