@@ -1,11 +1,16 @@
 ﻿<main class="history">
   <header class="history-heading">
-    <div>
-      <p class="eyebrow">บัญชีของฉัน</p>
+    <div class="heading-copy">
+      <p class="eyebrow"><span class="eyebrow-icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="8" r="3.5"/>
+          <path d="M5 21v-2a7 7 0 0 1 14 0v2" stroke-linecap="round"/>
+        </svg>
+      </span>บัญชีของฉัน</p>
       <h1>ประวัติคำสั่งซื้อ</h1>
-      <p>ติดตามสถานะ ดูรายละเอียด และตรวจสอบการชำระเงินของคุณ</p>
+      <p class="intro">ติดตามสถานะ ดูรายละเอียด และตรวจสอบการชำระเงินของคุณ</p>
     </div>
-    <a routerLink="/products" class="button secondary">เลือกซื้อสินค้า</a>
+    <a routerLink="/products" class="button secondary heading-action">เลือกซื้อสินค้า</a>
   </header>
   <form class="filters" (ngSubmit)="load()">
     <div class="search-filter">

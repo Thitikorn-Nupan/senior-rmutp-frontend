@@ -1,5 +1,11 @@
 export const customerProductMessages = {
   th: {
+    searchLabel: 'ค้นหาน้ำหอมตามชื่อ',
+    searchPlaceholder: 'ค้นหาน้ำหอมตามชื่อ…',
+    search: 'ค้นหา',
+    clearSearch: 'ล้างคำค้นหา',
+    viewProduct: 'ดูสินค้า',
+    viewProductDetails: 'ดูรายละเอียดสินค้า',
     all: 'สินค้าทั้งหมด',
     details: 'รายละเอียดสินค้า',
     collection: 'คอลเลกชันน้ำหอม',
@@ -25,6 +31,12 @@ export const customerProductMessages = {
     retry: 'โหลดสินค้าไม่สำเร็จ กรุณาลองอีกครั้ง',
   },
   en: {
+    searchLabel: 'Search perfumes by name',
+    searchPlaceholder: 'Search perfumes by name…',
+    search: 'Search',
+    clearSearch: 'Clear search',
+    viewProduct: 'View product',
+    viewProductDetails: 'View product details',
     all: 'All products',
     details: 'Product details',
     collection: 'THE FRAGRANCE COLLECTION',

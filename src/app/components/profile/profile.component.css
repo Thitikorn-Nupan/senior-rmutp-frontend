@@ -21,31 +21,117 @@
 .back-link {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   min-height: 44px;
-  color: #68756e;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #49624e;
   text-decoration: none;
   font-size: 13px;
+  transition: background 160ms ease, border-color 160ms ease
+}
+
+.back-link:hover {
+  border-color: #dce3dc;
+  background: #fff
 }
 
 .page-heading {
-  margin: 20px 0 28px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 12px 0 28px;
+  padding: 28px 30px;
+  overflow: hidden;
+  border: 1px solid #1f705b;
+  border-radius: 18px;
+  background: linear-gradient(122deg, #173f36 0%, #1d6854 62%, #2a8068 100%);
+  box-shadow: 0 12px 30px #173f3624
+}
+
+.page-heading::before, .page-heading::after {
+  content: '';
+  position: absolute;
+  border: 1px solid #ffffff20;
+  border-radius: 50%;
+  pointer-events: none
+}
+
+.page-heading::before {
+  width: 240px;
+  height: 240px;
+  top: -160px;
+  right: 38px
+}
+
+.page-heading::after {
+  width: 145px;
+  height: 145px;
+  right: -68px;
+  bottom: -84px
+}
+
+.heading-copy, .heading-mark {
+  position: relative;
+  z-index: 1
 }
 
 .eyebrow {
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  color: #8a6b41;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: #d8f0e7;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .02em
+}
+
+.eyebrow-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: #ffffff1a
 }
 
 .page-heading h1 {
-  font-size: 30px;
+  font-size: clamp(28px, 4vw, 34px);
   margin: 8px 0 12px;
+  color: #fff;
+  line-height: 1.15
 }
 
-.page-heading p,.profile-card p {
+.page-heading h1 span {
+  color: #f1c675
+}
+
+.page-heading .intro,.profile-card p {
   color: #68756e;
   line-height: 1.7;
   font-size: 14px;
+}
+
+.page-heading .intro {
+  max-width: 570px;
+  margin: 0;
+  color: #dcece6
+}
+
+.heading-mark {
+  display: grid;
+  place-items: center;
+  width: 86px;
+  height: 86px;
+  flex-shrink: 0;
+  border: 1px solid #ffffff2e;
+  border-radius: 22px;
+  background: #ffffff16;
+  color: #ffe0a1
 }
 
 .profile-card {
@@ -241,6 +327,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible {
 
   .page-heading h1 {
     font-size: 25px;
+  }
+
+  .page-heading {
+    align-items: flex-start;
+    padding: 24px 20px
+  }
+
+  .heading-mark {
+    display: none
   }
 
   .profile-card {

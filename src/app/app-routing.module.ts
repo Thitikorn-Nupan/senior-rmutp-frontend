@@ -9,7 +9,9 @@ import {CheckoutFormComponent} from "./components/checkout-form/checkout-form.co
 import {OrdersHistoryComponent} from "./components/orders-history/orders-history.component";
 import {OrderHistoryAdminComponent} from "./components/order-history-admin/order-history-admin.component";
 import {AuthGuardRouter} from "./guards/auth-guard-router.service";
-import {OrderHistoryOnlyPerfumesAdminComponent} from "./components/order-history-only-perfumes-admin/order-history-only-perfumes-admin.component";
+import {
+  OrderHistoryOnlyPerfumesAdminComponent
+} from "./components/order-history-only-perfumes-admin/order-history-only-perfumes-admin.component";
 import {ProductsAdminComponent} from "./components/products-admin/products-admin.component";
 import {ProfileComponent} from './components/profile/profile.component';
 import {MemberManagementComponent} from './components/member-management/member-management.component';
@@ -28,7 +30,11 @@ const routes: Routes = [
   {path: 'checkout', component: CheckoutFormComponent, canActivate: [AuthGuardRouter]},
   {path: 'orders-history', component: OrdersHistoryComponent, canActivate: [AuthGuardRouter]},
   {path: 'orders-history-admin', component: OrderHistoryAdminComponent, canActivate: [AuthGuardRouter]},
-  {path: 'orders-history-only-perfumes-admin', component: OrderHistoryOnlyPerfumesAdminComponent, canActivate: [AuthGuardRouter]},
+  {
+    path: 'orders-history-only-perfumes-admin',
+    component: OrderHistoryOnlyPerfumesAdminComponent,
+    canActivate: [AuthGuardRouter]
+  },
   {path: '', redirectTo: '/products', pathMatch: 'full'}, //  ** first cases
   {path: '**', redirectTo: '/products', pathMatch: 'full'}
 ];

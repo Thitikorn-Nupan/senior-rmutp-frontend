@@ -38,7 +38,7 @@ export class SalesHistoryService {
   }
 
   list(page = 1, search = '', status = ''): Observable<SalesOrderPage> {
-    let params = new HttpParams().set('page', page).set('pageSize', 12);
+    let params = new HttpParams().set('page', page).set('pageSize', 10);
     if (search.trim()) params = params.set('search', search.trim());
     if (status) params = params.set('status', status);
     return this.http.get<SalesOrderPage>(this.url, {headers: this.headers(), params});

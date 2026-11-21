@@ -32,5 +32,16 @@ export class ProductCategoriesComponent implements OnInit {
     });
   }
 
+  protected categoryLabel(categoryName: string): string {
+    const thaiLabels: Record<string, string> = {
+      unisex: 'ยูนิเซ็กส์',
+      male: 'ผู้ชาย',
+      female: 'ผู้หญิง',
+    };
+
+    return this.menuLanguage.language() === 'th'
+      ? thaiLabels[categoryName.trim().toLowerCase()] ?? categoryName
+      : categoryName;
+  }
 
 }

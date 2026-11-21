@@ -38,6 +38,7 @@ export class MenubarComponent implements OnInit, OnDestroy, AfterViewChecked {
     return profile?.displayName.trim() || [profile?.firstName, profile?.lastName].filter(Boolean).join(' ').trim();
   });
 
+
   protected declare user: User | null
   protected declare jwtResponse: JwtResponse
   protected declare tokenExpire: number | null

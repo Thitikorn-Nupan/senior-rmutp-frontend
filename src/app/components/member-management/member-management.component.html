@@ -1,10 +1,28 @@
 <main class="members-page" [attr.lang]="language.language()">
   <div class="members-shell">
     <header class="page-heading">
-      <div><p class="eyebrow">{{ text().eyebrow }}</p>
-        <h1>{{ text().title }}<span>.</span></h1>
-        <p>{{ text().intro }}</p></div>
-      <div class="summary"><strong>{{ total | number }}</strong><span>{{ text().members }}</span></div>
+      <div class="heading-copy">
+        <p class="eyebrow"><span class="eyebrow-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="9" cy="8" r="3"/>
+            <circle cx="17" cy="9" r="2.2"/>
+            <path d="M3.5 20v-1.5a5.5 5.5 0 0 1 11 0V20M15 14.5a4.5 4.5 0 0 1 5.5 4.4V20" stroke-linecap="round"/>
+          </svg>
+        </span>{{ text().eyebrow }}</p>
+        <h1>{{ text().title }}</h1>
+
+        <p class="intro">{{ text().intro }}</p>
+      </div>
+      <div class="summary" [attr.aria-label]="total + ' ' + text().members">
+        <span class="summary-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="8" cy="8" r="3"/>
+            <circle cx="17" cy="9" r="2.5"/>
+            <path d="M2.5 20v-1.5a5.5 5.5 0 0 1 11 0V20M14.5 15a4.5 4.5 0 0 1 6 4.3V20" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="summary-copy"><strong>{{ total | number }}</strong><span>{{ text().members }}</span></span>
+      </div>
     </header>
 
     <form class="filters" (ngSubmit)="load()">

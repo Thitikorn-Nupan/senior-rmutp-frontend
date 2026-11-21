@@ -1,5 +1,5 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {Subscription, finalize} from 'rxjs';
+import {Subscription, finalize, forkJoin, map, timer} from 'rxjs';
 import {SalesHistoryService, SalesOrder} from '../../services/sales-history.service';
 import {environment} from '../../../environments/environment';
 import {AlertService} from '../../services/alert.service';
@@ -19,6 +19,7 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
   protected total = 0;
   protected summary = {billTotal: '0.00', verifiedRevenue: '0.00', currency: 'THB'};
   protected loading = false;
+  protected readonly loadingRows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   protected error = '';
   protected approving = '';
   protected receiptLoading = '';
@@ -31,6 +32,7 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
   protected approvalConfirmationVisible = false;
   private request?: Subscription;
   private receiptRequest?: Subscription;
+  private readonly minimumLoadingMs = 500;
 
   protected readonly statusOptions = [
     {name: 'ทุกสถานะ', value: ''}, {name: 'รอตรวจสอบสลิป', value: 'pending_review'},
@@ -59,7 +61,11 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = '';
     this.page = page;
-    this.request = this.sales.list(page, this.search, this.status).pipe(
+    this.request = forkJoin([
+      this.sales.list(page, this.search, this.status),
+      timer(this.minimumLoadingMs)
+    ]).pipe(
+      map(([response]) => response),
       finalize(() => this.loading = false)
     ).subscribe({
       next: response => {
@@ -77,6 +83,15 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
     this.search = '';
     this.status = '';
     this.load();
+  }
+
+  protected getPageNumbers(): number[] {
+    return Array.from({length: this.pageCount}, (_, index) => index + 1);
+  }
+
+  protected changePage(page: number): void {
+    if (page < 1 || page > this.pageCount || page === this.page) return;
+    this.load(page);
   }
 
   protected open(order: SalesOrder): void {

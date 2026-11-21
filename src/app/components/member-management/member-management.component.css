@@ -14,42 +14,122 @@
 .page-heading {
   display: flex;
   justify-content: space-between;
-  align-items: end;
+  align-items: center;
   gap: 24px;
   margin-bottom: 28px;
+  padding: 28px 30px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(122deg, #173f36 0%, #1d6854 62%, #2a8068 100%);
+  border: 1px solid #1f705b;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px #173f3624;
+}
+
+.page-heading::before, .page-heading::after {
+  content: '';
+  position: absolute;
+  border: 1px solid #ffffff20;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.page-heading::before {
+  width: 250px;
+  height: 250px;
+  top: -155px;
+  right: 110px;
+}
+
+.page-heading::after {
+  width: 160px;
+  height: 160px;
+  right: -80px;
+  bottom: -92px;
+}
+
+.heading-copy, .summary {
+  position: relative;
+  z-index: 1;
 }
 
 .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   margin: 0;
-  color: #176451;
+  color: #d8f0e7;
   font-size: 13px;
   font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.eyebrow-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: #ffffff1a;
 }
 
 .page-heading h1 {
   margin: 6px 0 8px;
-  font-size: 30px;
+  font-size: clamp(28px, 4vw, 34px);
+  color: #fff;
+  line-height: 1.15;
 }
 
 .page-heading h1 span {
-  color: #d39a45;
+  color: #f1c675;
 }
 
-.page-heading p:not(.eyebrow) {
+.page-heading .intro {
   margin: 0;
-  color: #637185;
+  max-width: 650px;
+  color: #dcece6;
+  line-height: 1.55;
 }
 
 .summary {
   display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  min-width: 168px;
+  padding: 15px 17px;
+  border: 1px solid #ffffff2e;
+  border-radius: 14px;
+  background: #ffffff16;
+  color: #edf8f3;
+}
+
+.summary-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #ffffff24;
+  color: #ffe0a1;
+}
+
+.summary-copy {
+  display: flex;
   flex-direction: column;
-  align-items: end;
-  color: #637185;
+  gap: 2px;
 }
 
 .summary strong {
-  font-size: 28px;
-  color: #176451;
+  font-size: 30px;
+  line-height: 1;
+  color: #fff;
+}
+
+.summary-copy > span {
+  font-size: 13px;
+  color: #dcece6;
 }
 
 .filters {
@@ -290,10 +370,12 @@
   .page-heading {
     align-items: flex-start;
     flex-direction: column;
+    gap: 20px;
+    padding: 24px 20px;
   }
 
   .summary {
-    align-items: flex-start;
+    min-width: 0;
   }
 
   .filters {

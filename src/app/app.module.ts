@@ -22,7 +22,6 @@ import {OrderHistoryAdminComponent} from './components/order-history-admin/order
 import {
   OrderHistoryOnlyPerfumesAdminComponent
 } from './components/order-history-only-perfumes-admin/order-history-only-perfumes-admin.component';
-import {AddProductComponent} from './components/add-product/add-product.component';
 import {ProductsAdminComponent} from './components/products-admin/products-admin.component';
 import {PopUpComponent} from './components/pop-up/pop-up.component';
 import {CheckoutSelectComponent} from './components/checkout-form/checkout-select/checkout-select.component';
@@ -45,7 +44,6 @@ import {CheckoutSelectComponent} from './components/checkout-form/checkout-selec
     OrdersHistoryComponent,
     OrderHistoryAdminComponent,
     OrderHistoryOnlyPerfumesAdminComponent,
-    AddProductComponent,
     ProductsAdminComponent,
     PopUpComponent
   ],

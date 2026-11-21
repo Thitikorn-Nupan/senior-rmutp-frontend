@@ -13,14 +13,15 @@ import {CartAnimationService} from '../../services/cart-animation.service';
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
-  styleUrls: ['./products.component.css', './products-loading.css']
+  styleUrls: ['./products.component.css', './products-loading.css'],
+  host: {'[attr.lang]': 'language.language()'}
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   protected loading = true;
   protected errorMessage = '';
   protected cartMessage = '';
   protected readonly skeletonCards = [0, 1, 2, 3, 4, 5];
-  private readonly minimumLoadingMs = 1000;
+  private readonly minimumLoadingMs = 500;
   private request?: Subscription;
   private routeSubscription?: Subscription;
 

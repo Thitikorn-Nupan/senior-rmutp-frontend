@@ -1,10 +1,27 @@
 <main class="sales-page">
   <div class="sales-shell">
     <header class="page-heading">
-      <div><p class="eyebrow">จัดการร้านค้า</p>
-        <h1>ประวัติการขาย<span>.</span></h1>
-        <p class="intro">ตรวจสอบคำสั่งซื้อ หลักฐานการชำระเงิน และยืนยันรายการขายอย่างปลอดภัย</p></div>
-      <div class="summary"><strong>{{ total | number }}</strong><span>รายการทั้งหมด</span></div>
+      <div class="heading-copy">
+        <p class="eyebrow"><span class="eyebrow-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 10.5V20h16v-9.5M3 5h18l-1.5 5.5a3 3 0 0 1-5.5 1.1 3 3 0 0 1-5.2 0 3 3 0 0 1-5.5-1.1L3 5Z"
+                  stroke-linejoin="round"/>
+            <path d="M9 20v-5h6v5" stroke-linejoin="round"/>
+          </svg>
+        </span>จัดการร้านค้า
+        </p>
+        <h1>ประวัติการขาย</h1>
+        <p class="intro">ตรวจสอบคำสั่งซื้อ หลักฐานการชำระเงิน และยืนยันรายการขายอย่างปลอดภัย</p>
+      </div>
+      <div class="summary" aria-label="จำนวนรายการขายทั้งหมด">
+        <span class="summary-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 5h16v14H4z" stroke-linejoin="round"/>
+            <path d="M8 9h8M8 13h5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="summary-copy"><strong>{{ total | number }}</strong><span>รายการทั้งหมด</span></span>
+      </div>
     </header>
 
     <form class="filters" (ngSubmit)="load()">
@@ -23,7 +40,19 @@
       <button class="button secondary" type="button" (click)="reset()" [disabled]="loading">ล้างตัวกรอง</button>
     </form>
 
-    <div *ngIf="loading" class="empty-state" role="status"><span class="loading-ring"></span>
+    <div *ngIf="loading" class="sales-loading" role="status" aria-live="polite">
+      <div class="sales-skeleton-list" aria-hidden="true">
+        <div *ngFor="let row of loadingRows" class="sale-card skeleton-sale-card">
+          <div class="skeleton-sale-summary">
+            <span class="skeleton-line skeleton-order"></span>
+            <span class="skeleton-line skeleton-date"></span>
+            <span class="skeleton-badge"></span>
+            <span class="skeleton-line skeleton-total"></span>
+            <span class="skeleton-chevron"></span>
+          </div>
+        </div>
+      </div>
+      <span class="loading-ring" aria-hidden="true"></span>
       <p>กำลังโหลดประวัติการขาย…</p></div>
     <div *ngIf="!loading && error" class="empty-state" role="alert"><span class="empty-icon">!</span>
       <h2>{{ error }}</h2>
@@ -83,17 +112,29 @@
     <section *ngIf="!loading && !error" class="sales-totals" aria-label="สรุปยอดการขาย">
       <div class="total-card">
         <span class="total-icon" aria-hidden="true">฿</span>
-        <div><small>ยอดบิลทั้งหมด</small><strong>{{ summary.billTotal | currency:summary.currency:'symbol-narrow' }}</strong><p>รวมทุก Order โดยไม่กรองสถานะ</p></div>
+        <div>
+          <small>ยอดบิลทั้งหมด</small><strong>{{ summary.billTotal | currency:summary.currency:'symbol-narrow' }}</strong>
+          <p>รวมทุก Order โดยไม่กรองสถานะ</p></div>
       </div>
       <div class="total-card verified">
         <span class="total-icon" aria-hidden="true">✓</span>
-        <div><small>รายได้จริงที่ตรวจสอบแล้ว</small><strong>{{ summary.verifiedRevenue | currency:summary.currency:'symbol-narrow' }}</strong><p>เฉพาะรายการที่ชำระเงินสำเร็จ</p></div>
+        <div>
+          <small>รายได้จริงที่ตรวจสอบแล้ว</small><strong>{{ summary.verifiedRevenue | currency:summary.currency:'symbol-narrow' }}</strong>
+          <p>เฉพาะรายการที่ชำระเงินสำเร็จ</p></div>
       </div>
     </section>
-    <nav *ngIf="pageCount > 1" class="pagination" aria-label="หน้าประวัติการขาย">
-      <button class="button secondary" (click)="load(page - 1)" [disabled]="page <= 1">ก่อนหน้า</button>
-      <span>หน้า {{ page }} / {{ pageCount }}</span>
-      <button class="button secondary" (click)="load(page + 1)" [disabled]="page >= pageCount">ถัดไป</button>
+    <nav *ngIf="!loading && !error && pageCount > 1" class="sales-pagination" aria-label="หน้าประวัติการขาย">
+      <button type="button" (click)="changePage(page - 1)" [disabled]="page === 1"
+              aria-label="หน้าก่อนหน้า">← <span>ก่อนหน้า</span></button>
+      <div class="page-numbers">
+        <button *ngFor="let pageNumber of getPageNumbers()" type="button" (click)="changePage(pageNumber)"
+                [class.selected]="pageNumber === page" [attr.aria-current]="pageNumber === page ? 'page' : null"
+                [attr.aria-label]="'หน้า ' + pageNumber">{{ pageNumber }}
+        </button>
+      </div>
+      <button type="button" (click)="changePage(page + 1)" [disabled]="page === pageCount"
+              aria-label="หน้าถัดไป"><span>ถัดไป</span> →
+      </button>
     </nav>
   </div>
 </main>

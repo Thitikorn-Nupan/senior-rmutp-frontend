@@ -1,27 +1,27 @@
 ﻿<main class="catalog">
   <div class="catalog-inner">
-    <header class="collection-heading">
+    <!-- no need yet <header class="collection-heading">
       <span *ngIf="!errorMessage" class="results-count">{{ loading ? 'Updating collection…' : totalPageNumber + (totalPageNumber === 1 ? ' perfume' : ' perfumes') }}</span>
-    </header>
+    </header>-->
     <form *ngIf="form" class="search-form" [formGroup]="form" (ngSubmit)="search()" role="search">
-      <label class="visually-hidden" for="perfume-search">Search perfumes by name</label>
+      <label class="visually-hidden" for="perfume-search">{{ t.searchLabel }}</label>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
            aria-hidden="true">
         <circle cx="10.5" cy="10.5" r="6.5"/>
         <path d="m16 16 4 4" stroke-linecap="round"/>
       </svg>
-      <input formControlName="name" id="perfume-search" type="search" placeholder="Search perfumes by name…"
+      <input formControlName="name" id="perfume-search" type="search" [placeholder]="t.searchPlaceholder"
              autocomplete="off"/>
       <button *ngIf="form.get('name')?.value" type="button" class="clear-search" (click)="clear()"
-              aria-label="Clear search">×
+              [attr.aria-label]="t.clearSearch">×
       </button>
-      <button type="submit" class="search-button">Search</button>
+      <button type="submit" class="search-button">{{ t.search }}</button>
     </form>
 
-    <div *ngIf="loading" class="collection-loading" role="status" aria-live="polite" aria-atomic="true">
+    <!--no need yet <div *ngIf="loading" class="collection-loading" role="status" aria-live="polite" aria-atomic="true">
       <span class="loading-dots" aria-hidden="true"><i></i><i></i><i></i></span>
       Finding your fragrances…
-    </div>
+    </div>-->
     <div *ngIf="loading" class="product-grid skeleton-grid" aria-hidden="true">
       <div *ngFor="let card of skeletonCards" class="product-card skeleton-card">
         <div class="product-image skeleton-block"></div>
@@ -49,7 +49,7 @@
              aria-label="Perfumes">
       <article *ngFor="let product of productsByPageNumber; let index = index" class="product-card" [style.--card-index]="index">
         <a class="product-image" [routerLink]="['/product-detail', product.documentId || product.pid]"
-           [attr.aria-label]="'View ' + product.name">
+           [attr.aria-label]="t.viewProduct + ' ' + product.name">
           <img [src]="product.imageUrl" [alt]="product.name" loading="lazy"/>
         </a>
         <div class="product-info">
@@ -62,7 +62,7 @@
           </p>
           <div class="product-actions">
             <a class="detail-button" [routerLink]="['/product-detail', product.documentId || product.pid]"
-               [attr.aria-label]="'View details for ' + product.name">Details</a>
+               [attr.aria-label]="t.viewProductDetails + ' ' + product.name">{{ t.details }}</a>
             <button type="button" class="add-button" (click)="addItem(product, $event)" [disabled]="product.availableStock <= 0"
                     [attr.aria-label]="(product.variants.length > 1 ? t.choose : t.add) + ' · ' + product.name">{{ product.variants.length > 1 ? t.choose : t.add }} <span aria-hidden="true">{{ product.variants.length > 1 ? '→' : '+' }}</span>
             </button>

@@ -46,33 +46,94 @@ select:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   margin-bottom: 28px;
+  padding: 28px 30px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(122deg, #173f36 0%, #1d6854 62%, #2a8068 100%);
+  border: 1px solid #1f705b;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px #173f3624;
+}
+
+.page-heading::before, .page-heading::after {
+  content: '';
+  position: absolute;
+  border: 1px solid #ffffff20;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.page-heading::before {
+  width: 250px;
+  height: 250px;
+  top: -155px;
+  right: 110px;
+}
+
+.page-heading::after {
+  width: 160px;
+  height: 160px;
+  right: -80px;
+  bottom: -92px;
+}
+
+.heading-copy, .heading-action {
+  position: relative;
+  z-index: 1;
 }
 
 .eyebrow {
-  font-size: 10px;
-  letter-spacing: 1.8px;
-  color: #7a856e;
-  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: #d8f0e7;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.eyebrow-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: #ffffff1a;
 }
 
 h1 {
-  font-size: 34px;
+  font-size: clamp(28px, 4vw, 34px);
   font-weight: 600;
   letter-spacing: -1px;
-  margin: 0 0 10px;
+  margin: 6px 0 8px;
+  color: #fff;
+  line-height: 1.15;
 }
 
 h1 span {
-  color: #ad7f45;
+  color: #f1c675;
 }
 
 .intro {
-  color: #758178;
+  max-width: 650px;
+  color: #dcece6;
   font-size: 13px;
-  line-height: 1.8;
+  line-height: 1.55;
   margin: 0;
+}
+
+.heading-action {
+  flex-shrink: 0;
+  border-color: #ffffff2e;
+  background: #ffffff16;
+  color: #fff;
+}
+
+.heading-action:hover {
+  background: #ffffff29;
 }
 
 .button {
@@ -95,6 +156,10 @@ h1 span {
 
 .primary:hover {
   background: #37584b;
+}
+
+.heading-action.primary:hover {
+  background: #ffffff29;
 }
 
 .secondary {
@@ -275,7 +340,13 @@ h1 span {
 
   .page-heading {
     align-items: flex-start;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px 20px;
+  }
+
+  .heading-action {
+    width: 100%;
   }
 
   h1 {
