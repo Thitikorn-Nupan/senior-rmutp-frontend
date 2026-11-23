@@ -221,6 +221,11 @@
   color: #243d35;
 }
 
+:host([lang='th']) .payment-option small,
+:host([lang='th']) .payment-help {
+  line-height: 1.8;
+}
+
 @media (max-width: 640px) {
   .payment-options {
     grid-template-columns: minmax(0, 1fr);

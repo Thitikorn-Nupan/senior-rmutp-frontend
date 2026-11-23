@@ -9,6 +9,14 @@
   font-family: inherit;
 }
 
+:host([lang='th']) {
+  font-family: Tahoma, Arial, sans-serif;
+}
+
+:host([lang='th']) .eyebrow {
+  letter-spacing: .5px;
+}
+
 .checkout-page {
   min-height: 65vh;
   background: #f8f9f5;
@@ -31,29 +39,124 @@
 }
 
 .checkout-heading {
-  margin: 20px 0 28px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 12px 0 28px;
+  padding: 28px 30px;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(122deg, #173f36 0%, #1d6854 62%, #2a8068 100%);
+  border: 1px solid #1f705b;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px #173f3624;
+}
+
+.checkout-heading::before,
+.checkout-heading::after {
+  position: absolute;
+  border: 1px solid #ffffff20;
+  border-radius: 50%;
+  content: '';
+  pointer-events: none;
+}
+
+.checkout-heading::before {
+  width: 250px;
+  height: 250px;
+  top: -155px;
+  right: 110px;
+}
+
+.checkout-heading::after {
+  width: 160px;
+  height: 160px;
+  right: -80px;
+  bottom: -92px;
+}
+
+.heading-copy,
+.checkout-assurance {
+  position: relative;
+  z-index: 1;
 }
 
 .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #8a6b41;
-  margin: 0 0 12px;
-}
-
-h1 {
-  font-size: clamp(28px, 4vw, 38px);
-  font-weight: 500;
-  letter-spacing: -1px;
-  margin: 0 0 10px;
-}
-
-.checkout-heading > p:last-child {
-  color: #68756e;
-  font-size: 14px;
-  line-height: 1.7;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: #d8f0e7;
   margin: 0;
+}
+
+.eyebrow-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: #ffffff1a;
+}
+
+.checkout-heading h1 {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -.8px;
+  margin: 8px 0;
+}
+
+.intro {
+  max-width: 650px;
+  color: #dcece6;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.checkout-assurance {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  max-width: 230px;
+  padding: 15px 17px;
+  border: 1px solid #ffffff2e;
+  border-radius: 14px;
+  background: #ffffff16;
+  color: #edf8f3;
+}
+
+.assurance-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  color: #ffe0a1;
+  background: #ffffff24;
+}
+
+.checkout-assurance strong,
+.checkout-assurance small {
+  display: block;
+}
+
+.checkout-assurance strong {
+  font-size: 13px;
+}
+
+.checkout-assurance small {
+  margin-top: 3px;
+  color: #dcece6;
+  font-size: 11px;
+  line-height: 1.45;
 }
 
 .checkout-layout {
@@ -237,7 +340,16 @@ a:focus-visible, button:focus-visible, .copy-address input:focus-visible {
   }
 
   .checkout-heading {
-    margin: 16px 0 24px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+    margin: 8px 0 24px;
+    padding: 22px 20px;
+  }
+
+  .checkout-assurance {
+    max-width: none;
+    width: 100%;
   }
 
   .form-section {

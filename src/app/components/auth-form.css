@@ -9,6 +9,14 @@
   font-family: inherit;
 }
 
+:host([lang='th']) {
+  font-family: Tahoma, Arial, sans-serif;
+}
+
+:host([lang='th']) .eyebrow {
+  letter-spacing: .5px;
+}
+
 .auth-page {
   background: #f8f9f5;
   padding: 40px 24px 56px;

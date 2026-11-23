@@ -1,201 +1,158 @@
-﻿<main class="history">
+<main class="history">
   <header class="history-heading">
     <div class="heading-copy">
-      <p class="eyebrow"><span class="eyebrow-icon" aria-hidden="true">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <circle cx="12" cy="8" r="3.5"/>
-          <path d="M5 21v-2a7 7 0 0 1 14 0v2" stroke-linecap="round"/>
-        </svg>
-      </span>บัญชีของฉัน</p>
-      <h1>ประวัติคำสั่งซื้อ</h1>
-      <p class="intro">ติดตามสถานะ ดูรายละเอียด และตรวจสอบการชำระเงินของคุณ</p>
+      <p class="eyebrow"><span class="eyebrow-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24"
+                                                                            fill="none" stroke="currentColor"
+                                                                            stroke-width="1.8"><circle cx="12" cy="8"
+                                                                                                       r="3.5"/><path
+        d="M5 21v-2a7 7 0 0 1 14 0v2" stroke-linecap="round"/></svg></span>{{ text.account }}
+      </p>
+      <h1>{{ text.title }}</h1>
+      <p class="intro">{{ text.intro }}</p>
     </div>
-    <a routerLink="/products" class="button secondary heading-action">เลือกซื้อสินค้า</a>
-  </header>
+    <a routerLink="/products" class="button secondary heading-action">{{ text.shop }}</a></header>
   <form class="filters" (ngSubmit)="load()">
-    <div class="search-filter">
-      <label for="order-search">ค้นหาเลขคำสั่งซื้อ</label>
-      <input id="order-search"
-             name="search"
-             [(ngModel)]="search"
-             maxlength="64"
-             placeholder="เช่น PS-…"
-             [disabled]="uploading">
+    <div class="search-filter"><label for="order-search">{{ text.search }}</label><input id="order-search" name="search"
+                                                                                         [(ngModel)]="search"
+                                                                                         maxlength="64"
+                                                                                         [placeholder]="text.searchPlaceholder"
+                                                                                         [disabled]="uploading"></div>
+    <div class="status-filter"><label for="order-status">{{ text.status }}</label>
+      <ecm-checkout-select inputId="order-status" name="status" [(ngModel)]="status" [options]="statusOptions"
+                           [placeholder]="text.all" [required]="false" [unavailable]="uploading"></ecm-checkout-select>
     </div>
-    <div class="status-filter">
-      <label for="order-status">สถานะ</label>
-      <ecm-checkout-select inputId="order-status"
-                           name="status"
-                           [(ngModel)]="status"
-                           [options]="statusOptions"
-                           placeholder="ทั้งหมด"
-                           [required]="false"
-                           [unavailable]="uploading">
-      </ecm-checkout-select>
-    </div>
-    <button class="button"
-            type="submit"
-            [disabled]="loading || uploading">ค้นหา
-    </button>
-    <button class="button secondary"
-            type="button"
-            (click)="reset()"
-            [disabled]="loading || uploading">ล้างตัวกรอง
+    <button class="button" type="submit" [disabled]="loading || uploading">{{ text.submit }}</button>
+    <button class="button secondary" type="button" (click)="reset()"
+            [disabled]="loading || uploading">{{ text.reset }}
     </button>
   </form>
-  <section [attr.aria-busy]="loading" aria-label="รายการคำสั่งซื้อ">
-    <div *ngIf="loading"
-         class="empty"
-         role="status">
-      <span class="spinner-border spinner-border-sm"
-            aria-hidden="true">
-      </span> กำลังโหลดประวัติคำสั่งซื้อ…
+  <section [attr.aria-busy]="loading" [attr.aria-label]="text.orders">
+    <div *ngIf="loading" class="empty" role="status"><span class="spinner-border spinner-border-sm"
+                                                           aria-hidden="true"></span> {{ text.loading }}
     </div>
-    <div *ngIf="error" class="empty" role="alert">
-      <p>{{ error }}</p>
-      <button class="button" (click)="load(page)">ลองอีกครั้ง</button>
-      <a routerLink="/login" class="button secondary">เข้าสู่ระบบ</a>
-    </div>
+    <div *ngIf="error" class="empty" role="alert"><p>{{ error }}</p>
+      <button class="button" (click)="load(page)">{{ text.retry }}</button>
+      <a routerLink="/login" class="button secondary">{{ text.login }}</a></div>
     <ng-container *ngIf="!loading && !error">
-      <p class="result-count" aria-live="polite">พบ {{ total | number }} คำสั่งซื้อ · เรียงจากล่าสุด</p>
-      <div *ngIf="!orders.length" class="empty">
-        <h2>{{ search || status ? 'ไม่พบคำสั่งซื้อที่ตรงกับตัวกรอง' : 'ยังไม่มีคำสั่งซื้อ' }}</h2>
-        <p>{{ search || status ? 'ลองค้นหาด้วยเลขคำสั่งซื้ออื่น หรือแสดงสถานะทั้งหมด' : 'เมื่อสั่งซื้อสินค้าแล้ว คุณสามารถติดตามสถานะได้ที่นี่' }}</p>
-        <button *ngIf="search || status" class="button secondary" (click)="reset()">แสดงทั้งหมด</button>
-        <a *ngIf="!search && !status" routerLink="/products" class="button">เลือกซื้อสินค้า</a>
-      </div>
+      <p class="result-count" aria-live="polite">{{ text.found }} {{ total | number }} {{ text.ordersSuffix }}
+        · {{ text.newest }}</p>
+      <div *ngIf="!orders.length" class="empty"><h2>{{ search || status ? text.noFilterResults : text.noOrders }}</h2>
+        <p>{{ search || status ? text.noFilterHelp : text.noOrdersHelp }}</p>
+        <button *ngIf="search || status" class="button secondary" (click)="reset()">{{ text.showAll }}</button>
+        <a *ngIf="!search && !status" routerLink="/products" class="button">{{ text.shop }}</a></div>
       <article class="order-card" *ngFor="let order of orders; trackBy: trackOrder">
         <header class="order-header">
-          <div>
-            <p class="muted">เลขคำสั่งซื้อ</p>
+          <div><p class="muted">{{ text.orderNumber }}</p>
             <h2>{{ order.orderNumber }}</h2>
-            <time>{{ order.placedAt | date:'dd/MM/yyyy HH:mm':'+0700' }} น.</time>
+            <time>{{ order.placedAt | date:'dd/MM/yyyy HH:mm':'+0700':language.locale() }}</time>
           </div>
-          <div class="badges">
-            <span class="badge-status"
-                  [class.ended]="order.orderStatus === 'expired' || order.orderStatus === 'cancelled'">{{ orderLabel(order.orderStatus, order.paymentStatus) }}</span>
-            <span class="badge-status payment"
-                  [class.paid]="order.paymentStatus === 'paid'">{{ paymentLabel(order.paymentStatus) }}
-            </span>
-          </div>
+          <div class="badges"><span class="badge-status"
+                                    [class.ended]="order.orderStatus === 'expired' || order.orderStatus === 'cancelled'">{{ orderLabel(order.orderStatus, order.paymentStatus) }}</span><span
+            class="badge-status payment"
+            [class.paid]="order.paymentStatus === 'paid'">{{ paymentLabel(order.paymentStatus) }}</span></div>
         </header>
-        <div class="order-summary">
-          <img [src]="image(firstItem(order)?.image)" alt="" (error)="imageError($event)">
-          <div class="product-preview"><strong>{{ firstItem(order)?.name || 'คำสั่งซื้อสินค้า' }}</strong>
-            <p>{{ order.totalQuantity | number }} ชิ้น <span *ngIf="order.items.length > 1">· {{ order.items.length }}
-              รายการ</span></p>
-          </div>
+        <div class="order-summary"><img [src]="image(firstItem(order)?.image)" alt="" (error)="imageError($event)">
+          <div class="product-preview"><strong>{{ firstItem(order)?.name || text.productOrder }}</strong>
+            <p>{{ order.totalQuantity | number }} {{ text.pieces }} <span
+              *ngIf="order.items.length > 1">· {{ order.items.length }} {{ text.entries }}</span></p></div>
           <div class="order-total">
-            <span>ยอดรวม</span><strong>{{ order.grandTotal | currency:order.currency:'symbol-narrow' }}</strong>
+            <span>{{ text.total }}</span><strong>{{ order.grandTotal | currency:order.currency:'symbol-narrow':undefined:language.locale() }}</strong>
           </div>
         </div>
         <div class="order-actions">
-          <button class="button secondary" [disabled]="uploading"
-                  (click)="openDetail(order)"
+          <button class="button secondary" [disabled]="uploading" (click)="openDetail(order)"
                   [attr.aria-expanded]="selectedId === order.documentId"
-                  [attr.aria-controls]="'detail-' + order.documentId">{{ selectedId === order.documentId ? 'ปิดรายละเอียด' : 'ดูรายละเอียด' }}
+                  [attr.aria-controls]="'detail-' + order.documentId">{{ selectedId === order.documentId ? text.close : text.details }}
           </button>
         </div>
-        <section *ngIf="selectedId === order.documentId"
-                 class="order-detail"
-                 [id]="'detail-' + order.documentId"
-                 [attr.aria-busy]="detailLoading"
-                 aria-label="รายละเอียดคำสั่งซื้อ">
-          <p *ngIf="detailLoading" role="status">กำลังโหลดรายละเอียด…</p>
+        <section *ngIf="selectedId === order.documentId" class="order-detail" [id]="'detail-' + order.documentId"
+                 [attr.aria-busy]="detailLoading" [attr.aria-label]="text.orderDetails">
+          <p *ngIf="detailLoading" role="status">{{ text.loadingDetails }}</p>
           <div *ngIf="detailError" role="alert"><p>{{ detailError }}</p>
-            <button class="button secondary" (click)="fetchDetail()">ลองอีกครั้ง</button>
+            <button class="button secondary" (click)="fetchDetail()">{{ text.retry }}</button>
           </div>
           <ng-container *ngIf="detail && !detailLoading && !detailError">
-            <h3>สินค้าที่สั่งซื้อ</h3>
-            <div class="item" *ngFor="let item of detail.items">
-              <img [src]="image(item.image)" alt="" (error)="imageError($event)">
+            <h3>{{ text.orderedProducts }}</h3>
+            <div class="item" *ngFor="let item of detail.items"><img [src]="image(item.image)" alt=""
+                                                                     (error)="imageError($event)">
               <div><strong>{{ item.name }}</strong>
                 <p class="muted">SKU: {{ item.sku }}</p>
-                <p>{{ item.quantity }} × {{ item.unitPrice | currency:detail.currency:'symbol-narrow' }}</p></div>
-              <strong>{{ item.lineTotal | currency:detail.currency:'symbol-narrow' }}</strong>
+                <p>{{ item.quantity }}
+                  × {{ item.unitPrice | currency:detail.currency:'symbol-narrow':undefined:language.locale() }}</p>
+              </div>
+              <strong>{{ item.lineTotal | currency:detail.currency:'symbol-narrow':undefined:language.locale() }}</strong>
             </div>
             <div class="detail-grid">
-              <section><h3>ที่อยู่จัดส่ง</h3>
+              <section><h3>{{ text.shippingAddress }}</h3>
                 <ng-container *ngIf="detail.shippingAddress as address"><p>{{ address.recipientName }}
                   · {{ address.phone }}</p>
                   <p>{{ address.addressLine1 }} {{ address.subdistrict }} {{ address.district }} {{ address.province }} {{ address.postalCode }}</p>
                 </ng-container>
-                <p *ngIf="!detail.shippingAddress">ไม่มีข้อมูลที่อยู่จัดส่ง</p>
-                <p *ngIf="detail.shippingTrackingNumber"><strong>เลขพัสดุ:</strong> {{ detail.shippingTrackingNumber }}
-                  <br>{{ detail.carrier }}</p>
-                <p *ngIf="detail.shippedAt">จัดส่งเมื่อ {{ detail.shippedAt | date:'dd/MM/yyyy HH:mm':'+0700' }} น.</p>
+                <p *ngIf="!detail.shippingAddress">{{ text.noShippingAddress }}</p>
+                <p *ngIf="detail.shippingTrackingNumber">
+                  <strong>{{ text.tracking }}</strong> {{ detail.shippingTrackingNumber }}<br>{{ detail.carrier }}</p>
+                <p
+                  *ngIf="detail.shippedAt">{{ text.shippedAt }} {{ detail.shippedAt | date:'dd/MM/yyyy HH:mm':'+0700':language.locale() }}</p>
               </section>
               <dl class="totals">
                 <div>
-                  <dt>ยอดสินค้า</dt>
-                  <dd>{{ detail.subtotal | currency:detail.currency:'symbol-narrow' }}</dd>
+                  <dt>{{ text.subtotal }}</dt>
+                  <dd>{{ detail.subtotal | currency:detail.currency:'symbol-narrow':undefined:language.locale() }}</dd>
                 </div>
                 <div>
-                  <dt>ค่าจัดส่ง</dt>
-                  <dd>{{ detail.shippingTotal | currency:detail.currency:'symbol-narrow' }}</dd>
+                  <dt>{{ text.shipping }}</dt>
+                  <dd>{{ detail.shippingTotal | currency:detail.currency:'symbol-narrow':undefined:language.locale() }}</dd>
                 </div>
                 <div *ngIf="+(detail.discountTotal || 0) > 0">
-                  <dt>ส่วนลด</dt>
-                  <dd>−{{ detail.discountTotal | currency:detail.currency:'symbol-narrow' }}</dd>
+                  <dt>{{ text.discount }}</dt>
+                  <dd>
+                    −{{ detail.discountTotal | currency:detail.currency:'symbol-narrow':undefined:language.locale() }}
+                  </dd>
                 </div>
                 <div *ngIf="+(detail.taxTotal || 0) > 0">
-                  <dt>ภาษี</dt>
-                  <dd>{{ detail.taxTotal | currency:detail.currency:'symbol-narrow' }}</dd>
+                  <dt>{{ text.tax }}</dt>
+                  <dd>{{ detail.taxTotal | currency:detail.currency:'symbol-narrow':undefined:language.locale() }}</dd>
                 </div>
                 <div class="grand-total">
-                  <dt>ยอดสุทธิ</dt>
-                  <dd>{{ detail.grandTotal | currency:detail.currency:'symbol-narrow' }}</dd>
+                  <dt>{{ text.grandTotal }}</dt>
+                  <dd>{{ detail.grandTotal | currency:detail.currency:'symbol-narrow':undefined:language.locale() }}</dd>
                 </div>
               </dl>
             </div>
-            <section class="payment-info"><h3>การชำระเงิน</h3>
-              <p>{{ paymentLabel(detail.paymentStatus) }}<span *ngIf="detail.payment?.method === 'bank_transfer'"> · โอนเงินผ่านธนาคาร</span>
-              </p>
-              <p *ngIf="detail.payment?.reference" class="muted">
-                เลขอ้างอิงการชำระเงิน: {{ detail.payment.reference }}
-              </p>
-              <p *ngIf="detail.paymentStatus === 'pending_review'">
-                ได้รับหลักฐานแล้ว
-                เจ้าหน้าที่กำลังตรวจสอบการชำระเงิน
-              </p>
-              <p *ngIf="detail.payment?.submittedAt">
-                ส่งหลักฐานเมื่อ {{ detail.payment.submittedAt | date:'dd/MM/yyyy HH:mm':'+0700' }} น.
-              </p>
-              <p *ngIf="detail.orderStatus === 'expired'">
-                คำสั่งซื้อนี้หมดเวลาชำระเงินแล้ว กรุณาสั่งซื้อใหม่
-              </p>
-              <form *ngIf="canPay(detail)"
-                    (ngSubmit)="submitReceipt()"
-                    class="receipt-form">
-                <p>หากโอนเงินแล้ว
-                  สามารถแนบสลิปได้ที่นี่ ภายใน {{ detail.expiresAt | date:'dd/MM/yyyy HH:mm':'+0700' }} น.
-                </p>
-                <label [for]="'receipt-' + order.documentId">หลักฐานการโอนเงิน</label>
-                <input type="file"
-                       [id]="'receipt-' + order.documentId"
-                       accept="image/jpeg,image/png,image/webp"
-                       (change)="chooseReceipt($event)"
-                       [disabled]="uploading"
-                       [attr.aria-describedby]="'receipt-help-' + order.documentId">
-                <small [id]="'receipt-help-' + order.documentId">JPG, PNG หรือ WebP ขนาดไม่เกิน 5 MB</small>
-                <button type="submit"
-                        class="button"
-                        [disabled]="!receipt || uploading">{{ uploading ? 'กำลังส่งหลักฐาน…' : 'ส่งหลักฐานการโอนเงิน' }}
+            <section class="payment-info"><h3>{{ text.payment }}</h3>
+              <p>{{ paymentLabel(detail.paymentStatus) }}<span
+                *ngIf="detail.payment?.method === 'bank_transfer'"> · {{ text.bankTransfer }}</span></p>
+              <p *ngIf="detail.payment?.reference"
+                 class="muted">{{ text.paymentReference }} {{ detail.payment.reference }}</p>
+              <p *ngIf="detail.paymentStatus === 'pending_review'">{{ text.receiptReceived }}</p>
+              <p
+                *ngIf="detail.payment?.submittedAt">{{ text.receiptSentAt }} {{ detail.payment.submittedAt | date:'dd/MM/yyyy HH:mm':'+0700':language.locale() }}</p>
+              <p *ngIf="detail.orderStatus === 'expired'">{{ text.expiredOrder }}</p>
+              <form *ngIf="canPay(detail)" (ngSubmit)="submitReceipt()" class="receipt-form">
+                <p>{{ text.receiptHelp }} {{ detail.expiresAt | date:'dd/MM/yyyy HH:mm':'+0700':language.locale() }}</p>
+                <label [for]="'receipt-' + order.documentId">{{ text.receipt }}</label><input type="file"
+                                                                                              [id]="'receipt-' + order.documentId"
+                                                                                              accept="image/jpeg,image/png,image/webp"
+                                                                                              (change)="chooseReceipt($event)"
+                                                                                              [disabled]="uploading"
+                                                                                              [attr.aria-describedby]="'receipt-help-' + order.documentId"><small
+                [id]="'receipt-help-' + order.documentId">{{ text.imageRules }}</small>
+                <button type="submit" class="button"
+                        [disabled]="!receipt || uploading">{{ uploading ? text.sending : text.sendReceipt }}
                 </button>
               </form>
               <p *ngIf="receiptError" class="error-text" role="alert">{{ receiptError }}</p>
-              <p *ngIf="receiptSuccess" class="success-text" role="status">{{ receiptSuccess }}</p>
-            </section>
+              <p *ngIf="receiptSuccess" class="success-text" role="status">{{ receiptSuccess }}</p></section>
           </ng-container>
         </section>
       </article>
-      <nav *ngIf="pageCount > 1" class="pagination-bar" aria-label="หน้าประวัติคำสั่งซื้อ">
-        <button class="button secondary" (click)="load(page - 1)" [disabled]="page <= 1 || uploading">
-          ก่อนหน้า
+      <nav *ngIf="pageCount > 1" class="pagination-bar" [attr.aria-label]="text.title">
+        <button class="button secondary" (click)="load(page - 1)"
+                [disabled]="page <= 1 || uploading">{{ text.previous }}
         </button>
-        <span>หน้า {{ page }} จาก {{ pageCount }}</span>
-        <button class="button secondary" (click)="load(page + 1)" [disabled]="page >= pageCount || uploading">
-          ถัดไป
+        <span>{{ text.page }} {{ page }} {{ text.of }} {{ pageCount }}</span>
+        <button class="button secondary" (click)="load(page + 1)"
+                [disabled]="page >= pageCount || uploading">{{ text.next }}
         </button>
       </nav>
     </ng-container>

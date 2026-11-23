@@ -21,13 +21,14 @@
     </div>
     <section *ngIf="cartItems && cartItems.length === 0" class="empty-cart" aria-labelledby="empty-heading">
       <div class="empty-icon">
-        <svg width="32"
-             height="32"
-             viewBox="0 0 24 24"
-             fill="none"
-             stroke="currentColor"
-             stroke-width="1.4"
-             aria-hidden="true">
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.4"
+          aria-hidden="true">
           <path d="M5 7h14l1 14H4L5 7Z" stroke-linejoin="round"/>
           <path d="M8 8V6a4 4 0 0 1 8 0v2" stroke-linecap="round"/>
         </svg>
@@ -37,7 +38,6 @@
       <p>Your cart is empty. Explore the collection and find a fragrance that feels like you.</p>
       <a class="primary-action" routerLink="/products">Explore perfumes <span aria-hidden="true">→</span></a>
     </section>
-
     <div *ngIf="cartItems && cartItems.length > 0" class="cart-layout">
       <section class="cart-products" aria-label="Items in your cart">
         <ul class="cart-list">
@@ -53,25 +53,37 @@
             </div>
             <div class="item-controls">
               <div class="quantity-control" role="group" [attr.aria-label]="'Quantity for ' + cartItem.name">
-                <button type="button"
-                        (click)="decrementQuantity(cartItem)"
-                        [disabled]="cartItem.quantity <= 1"
-                        [attr.aria-label]="'Decrease quantity of ' + cartItem.name">−
+                <button
+                  type="button"
+                  (click)="decrementQuantity(cartItem)"
+                  [disabled]="cartItem.quantity <= 1"
+                  [attr.aria-label]="'Decrease quantity of ' + cartItem.name">−
                 </button>
-                <span class="quantity-value"
-                      [attr.aria-label]="'Quantity: ' + cartItem.quantity">{{ cartItem.quantity }}</span>
-                <button type="button"
-                        (click)="incrementQuantity(cartItem)"
-                        [disabled]="cartItem.availableStock !== undefined && cartItem.quantity >= cartItem.availableStock"
-                        [attr.aria-label]="'Increase quantity of ' + cartItem.name">+
+                <span
+                  class="quantity-value"
+                  [attr.aria-label]="'Quantity: ' + cartItem.quantity">{{ cartItem.quantity }}
+                </span>
+                <button
+                  type="button"
+                  (click)="incrementQuantity(cartItem)"
+                  [disabled]="cartItem.availableStock !== undefined && cartItem.quantity >= cartItem.availableStock"
+                  [attr.aria-label]="'Increase quantity of ' + cartItem.name">
+                  +
                 </button>
               </div>
-              <button type="button"
-                      class="remove-button"
-                      (click)="removeItem(cartItem)"
-                      [attr.aria-label]="'Remove ' + cartItem.name + ' from cart'">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-                     aria-hidden="true">
+              <button
+                type="button"
+                class="remove-button"
+                (click)="removeItem(cartItem)"
+                [attr.aria-label]="'Remove ' + cartItem.name + ' from cart'">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  aria-hidden="true">
                   <path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6m4-6v6" stroke-linecap="round"
                         stroke-linejoin="round"/>
                 </svg>
@@ -86,7 +98,6 @@
         </ul>
         <p class="cart-hint">Adjust quantities above, or keep exploring the collection.</p>
       </section>
-
       <aside class="order-summary" aria-labelledby="summary-heading">
         <p class="eyebrow">READY WHEN YOU ARE</p>
         <h2 id="summary-heading">Order summary</h2>

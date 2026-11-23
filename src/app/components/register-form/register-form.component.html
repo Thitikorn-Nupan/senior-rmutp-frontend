@@ -1,73 +1,14 @@
 <main class="auth-page">
   <div class="auth-container">
-    <a class="back-link" routerLink="/products"><span aria-hidden="true">←</span> Back to the collection</a>
-    <div class="auth-card">
-      <section class="auth-content" aria-labelledby="auth-heading">
-        <header class="auth-heading">
-          <a class="auth-brand" routerLink="/products" aria-label="Perfumes Shop home">
-            <img src="logo.png" width="72" height="72" alt="Perfumes Shop"/>
-          </a>
-          <p class="eyebrow">JOIN THE COLLECTION</p>
-          <h1 id="auth-heading">Create your account</h1>
-          <p class="form-intro">Start with your email and a password.</p>
-        </header>
-        <form *ngIf="form"
-              [formGroup]="form"
-              (ngSubmit)="form.markAllAsTouched(); signIn()">
-          <div class="field">
-            <label for="register-email">Email address</label>
-            <input id="register-email"
-                   formControlName="username"
-                   type="email"
-                   autocomplete="email"
-                   autocapitalize="none"
-                   spellcheck="false"
-                   placeholder="you@example.com"
-                   required
-                   [attr.aria-invalid]="form.get('username')?.invalid && form.get('username')?.touched ? 'true' : null"
-                   [attr.aria-describedby]="form.get('username')?.invalid && form.get('username')?.touched ? 'username-error' : null"/>
-            <p *ngIf="form.get('username')?.invalid && form.get('username')?.touched" id="username-error"
-               class="field-error" aria-live="polite">Please enter your email address.</p>
-          </div>
-
-          <div class="field">
-            <label for="register-password">Password</label>
-            <div class="password-field">
-              <input id="register-password"
-                     formControlName="password"
-                     [type]="showPassword ? 'text' : 'password'"
-                     autocomplete="new-password"
-                     placeholder="Create a password"
-                     required
-                     [attr.aria-invalid]="form.get('password')?.invalid && form.get('password')?.touched ? 'true' : null"
-                     [attr.aria-describedby]="form.get('password')?.invalid && form.get('password')?.touched ? 'password-error' : null"/>
-              <button type="button"
-                      class="password-toggle"
-                      (click)="showPassword = !showPassword"
-                      [attr.aria-pressed]="showPassword"
-                      aria-label="Show password"
-                      aria-controls="register-password">
-                {{ showPassword ? 'Hide' : 'Show' }}
-              </button>
-            </div>
-            <p *ngIf="form.get('password')?.invalid && form.get('password')?.touched" id="password-error"
-               class="field-error" aria-live="polite">Please enter a password.</p>
-          </div>
-          <button type="submit" class="submit-button">Create account <span aria-hidden="true">→</span></button>
-        </form>
-        <p class="switch-form">Already have an account? <a routerLink="/login">Login</a></p>
-      </section>
-    </div>
+    <a class="back-link" routerLink="/products"><span aria-hidden="true">&larr;</span> {{ language.text().backToCollection }}</a>
+    <div class="auth-card"><section class="auth-content" aria-labelledby="auth-heading">
+      <header class="auth-heading"><a class="auth-brand" routerLink="/products" [attr.aria-label]="language.text().shopHome"><img src="logo.png" width="72" height="72" alt=""/></a><p class="eyebrow">{{ language.text().joinEyebrow }}</p><h1 id="auth-heading">{{ language.text().registerTitle }}</h1><p class="form-intro">{{ language.text().registerIntro }}</p></header>
+      <form *ngIf="form" [formGroup]="form" (ngSubmit)="form.markAllAsTouched(); signIn()">
+        <div class="field"><label for="register-email">{{ language.text().emailAddress }}</label><input id="register-email" formControlName="username" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="you@example.com" required [attr.aria-invalid]="form.get('username')?.invalid && form.get('username')?.touched ? 'true' : null" [attr.aria-describedby]="form.get('username')?.invalid && form.get('username')?.touched ? 'username-error' : null"/><p *ngIf="form.get('username')?.invalid && form.get('username')?.touched" id="username-error" class="field-error" aria-live="polite">{{ language.text().enterEmailAddress }}</p></div>
+        <div class="field"><label for="register-password">{{ language.text().password }}</label><div class="password-field"><input id="register-password" formControlName="password" [type]="showPassword ? 'text' : 'password'" autocomplete="new-password" [placeholder]="language.text().createPassword" required [attr.aria-invalid]="form.get('password')?.invalid && form.get('password')?.touched ? 'true' : null" [attr.aria-describedby]="form.get('password')?.invalid && form.get('password')?.touched ? 'password-error' : null"/><button type="button" class="password-toggle" (click)="showPassword = !showPassword" [attr.aria-pressed]="showPassword" [attr.aria-label]="showPassword ? language.text().hidePassword : language.text().showPassword" aria-controls="register-password">{{ showPassword ? language.text().hidePassword : language.text().showPassword }}</button></div><p *ngIf="form.get('password')?.invalid && form.get('password')?.touched" id="password-error" class="field-error" aria-live="polite">{{ language.text().enterNewPassword }}</p></div>
+        <button type="submit" class="submit-button">{{ language.text().createAccount }} <span aria-hidden="true">&rarr;</span></button>
+      </form>
+      <p class="switch-form">{{ language.text().existingAccount }} <a routerLink="/login">{{ language.text().login }}</a></p>
+    </section></div>
   </div>
 </main>
-
-<!-- Legacy popup retained; notifications now use the global Alert component.
-<pop-up
-  [visible]="visible"
-  [headerTitle]="headerTitle"
-  [iconMode]="iconMode"
-  [body]="body"
-  (closeEvent)="setCloseEvent()"
-  (okEvent)="setOkEvent()">
-</pop-up>
--->

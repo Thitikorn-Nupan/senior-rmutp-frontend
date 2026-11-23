@@ -28,8 +28,80 @@ interface PendingCheckout {
 
 type PaymentMethod = 'bank' | 'promptpay' | 'card';
 
+const checkoutText = {
+  en: {
+    backToCart: 'Back to your cart', finalDetails: 'THE FINAL DETAILS', makeItYours: 'Make it yours',
+    intro: "Tell us where to send your fragrances and choose how you'd like to pay.", secureCheckout: 'Secure checkout', secureCheckoutDetail: 'Your order details are protected', refreshTotal: 'Refresh total',
+    checkExistingOrder: 'Check existing order', loginAgain: 'Login again', cartEmpty: 'Your cart is empty',
+    exploreCollection: 'Explore the collection', requiredFields: 'Fields marked * are required.', loadingProvinces: 'Loading provinces…',
+    retry: 'Retry', details: 'Your details', receivingOrder: 'Who will be receiving this order?', firstName: 'First name',
+    lastName: 'Last name', emailAddress: 'Email address', phoneNumber: 'Phone number', enterFirstName: 'Please enter your first name.',
+    enterLastName: 'Please enter your last name.', enterEmail: 'Please enter your email address.', validPhone: 'Please enter a valid phone number.',
+    shippingAddress: 'Shipping address', deliveryAddress: 'Where should your order be delivered?', streetAddress: 'Street address',
+    streetPlaceholder: 'House number, building and street', enterStreet: 'Please enter the street address.', province: 'Province',
+    selectProvince: 'Select province', selectProvinceError: 'Please select a province.', district: 'District', loadingDistricts: 'Loading districts…',
+    selectDistrict: 'Select district', selectDistrictError: 'Please select a district.', subdistrict: 'Subdistrict / Khwaeng',
+    subdistrictPlaceholder: 'Enter subdistrict or khwaeng', validSubdistrict: 'Please enter a valid subdistrict / khwaeng.', postalCode: 'Postal code',
+    postalPlaceholder: 'e.g. 10200', enterPostalCode: 'Please enter the postal code.', billingAddress: 'Billing address',
+    billingDescription: 'Review the address for your payment details.', copyShipping: 'Copy current shipping address',
+    copyShippingDetail: 'You can review or edit the copied details below.', billingStreetPlaceholder: 'House number, building, street and subdistrict',
+    choosePayment: 'Choose payment method', choosePaymentDetail: 'Select the method that is most convenient for you.', paymentMethod: 'Payment method',
+    bankTransfer: 'Bank transfer', bankTransferDetail: 'Transfer to the shop account, then attach your receipt.', promptPayDetail: 'Scan the shop QR code and attach your receipt.',
+    card: 'Credit / debit card', cardDetail: 'Secure card checkout will be available soon.', createOrderFirst: 'Create your order first. We will show the total and let you attach a payment receipt in the next step.',
+    copied: 'Copied', copy: 'Copy', promptPayFirst: 'Create your order first, then scan the PromptPay QR code and attach your receipt.',
+    cardPreparing: 'Card payments are being prepared', cardHelp: 'Please choose bank transfer or PromptPay to complete this order today.', checkingOrder: 'Checking your existing order…',
+    receiptReceived: 'RECEIPT RECEIVED', paymentAwaitingReview: 'Thank you. Your payment is awaiting review.', receiptSaved: 'Your order has been saved. The shop will verify your receipt before confirming payment.',
+    continueShopping: 'Continue shopping', checkoutAnother: 'Checkout another order', order: 'ORDER', savedDetails: 'Your saved details', shipTo: 'Ship to',
+    viewBilling: 'View billing address', paymentExpired: 'This payment window has expired', expiredHelp: 'If you have already transferred money, contact the shop before placing another order.',
+    refreshStatus: 'Refresh status', returnCheckout: 'Return to checkout', reservedItems: 'Your items are reserved while you complete payment.', submitBy: 'Submit your receipt by',
+    amountToTransfer: 'Amount to transfer', bankTransferHelp: 'Transfer the exact amount to either account above, then attach the receipt for review.',
+    promptPayHelp: 'Scan with your banking app and enter the exact total shown above. Then attach the receipt for review.', receipt: 'Payment receipt', receiptHelp: 'JPG, PNG or WebP · Up to 5 MB',
+    receiptPreview: 'Preview of the selected payment receipt', orderSummary: 'ORDER SUMMARY', lastLook: 'ONE LAST LOOK', yourOrder: 'Your order', editCart: 'Edit cart',
+    checkingPrices: 'Checking prices and availability…', items: 'Items', subtotal: 'Subtotal', shipping: 'Shipping', free: 'Free', total: 'Total',
+    pleaseWait: 'Please wait…', cardSoon: 'Card payments coming soon', submitReceipt: 'Submit receipt for review', createBankOrder: 'Create order & show bank details',
+    createQrOrder: 'Create order & show QR', pendingReview: 'Payment pending review. Keep your order number for reference.', paymentPending: 'Your payment will be marked pending until the shop verifies your receipt.',
+    priceCalculated: 'The amount is calculated from current product prices by the shop.', requiredCheckout: 'Please check the required fields and refresh the order total before continuing.',
+    invalidReceipt: 'Choose a JPG, PNG or WebP image up to 5 MB.', sessionExpired: 'Your session has expired. Please log in again to continue.',
+    unavailable: 'Unable to complete the request. Please try again.', noProvinces: 'No provinces are available. Please try again later.', loadProvinces: 'Unable to load provinces. Please retry.',
+    noDistricts: 'No districts are available for this province.', loadDistricts: 'Unable to load districts. Please retry.'
+  },
+  th: {
+    backToCart: 'กลับไปยังตะกร้าสินค้า', finalDetails: 'รายละเอียดขั้นสุดท้าย', makeItYours: 'สั่งซื้อสินค้าของคุณ',
+    intro: 'ระบุที่อยู่จัดส่งและเลือกวิธีชำระเงินที่คุณสะดวก', secureCheckout: 'ชำระเงินอย่างปลอดภัย', secureCheckoutDetail: 'ข้อมูลคำสั่งซื้อของคุณได้รับการปกป้อง', refreshTotal: 'คำนวณยอดรวมใหม่', checkExistingOrder: 'ตรวจสอบคำสั่งซื้อเดิม', loginAgain: 'เข้าสู่ระบบอีกครั้ง', cartEmpty: 'ตะกร้าสินค้าของคุณว่าง',
+    exploreCollection: 'เลือกชมสินค้า', requiredFields: 'ช่องที่มีเครื่องหมาย * จำเป็นต้องกรอก', loadingProvinces: 'กำลังโหลดจังหวัด…', retry: 'ลองใหม่',
+    details: 'ข้อมูลผู้สั่งซื้อ', receivingOrder: 'ใครจะเป็นผู้รับคำสั่งซื้อนี้?', firstName: 'ชื่อ', lastName: 'นามสกุล', emailAddress: 'อีเมล', phoneNumber: 'หมายเลขโทรศัพท์',
+    enterFirstName: 'กรุณากรอกชื่อ', enterLastName: 'กรุณากรอกนามสกุล', enterEmail: 'กรุณากรอกอีเมล', validPhone: 'กรุณากรอกหมายเลขโทรศัพท์ให้ถูกต้อง',
+    shippingAddress: 'ที่อยู่จัดส่ง', deliveryAddress: 'ต้องการให้จัดส่งคำสั่งซื้อไปที่ใด?', streetAddress: 'บ้านเลขที่ / ถนน', streetPlaceholder: 'บ้านเลขที่ อาคาร และถนน',
+    enterStreet: 'กรุณากรอกที่อยู่', province: 'จังหวัด', selectProvince: 'เลือกจังหวัด', selectProvinceError: 'กรุณาเลือกจังหวัด', district: 'อำเภอ / เขต', loadingDistricts: 'กำลังโหลดอำเภอ / เขต…',
+    selectDistrict: 'เลือกอำเภอ / เขต', selectDistrictError: 'กรุณาเลือกอำเภอ / เขต', subdistrict: 'ตำบล / แขวง', subdistrictPlaceholder: 'กรอกตำบลหรือแขวง',
+    validSubdistrict: 'กรุณากรอกตำบลหรือแขวงให้ถูกต้อง', postalCode: 'รหัสไปรษณีย์', postalPlaceholder: 'เช่น 10200', enterPostalCode: 'กรุณากรอกรหัสไปรษณีย์',
+    billingAddress: 'ที่อยู่สำหรับออกใบเสร็จ', billingDescription: 'ตรวจสอบที่อยู่สำหรับรายละเอียดการชำระเงิน', copyShipping: 'ใช้ที่อยู่จัดส่งปัจจุบัน',
+    copyShippingDetail: 'คุณสามารถตรวจสอบหรือแก้ไขรายละเอียดที่คัดลอกไว้ด้านล่าง', billingStreetPlaceholder: 'บ้านเลขที่ อาคาร ถนน และตำบล / แขวง',
+    choosePayment: 'เลือกวิธีชำระเงิน', choosePaymentDetail: 'เลือกวิธีที่สะดวกสำหรับคุณ', paymentMethod: 'วิธีชำระเงิน',
+    bankTransfer: 'โอนผ่านบัญชีธนาคาร', bankTransferDetail: 'โอนเงินเข้าบัญชีร้านค้า แล้วแนบหลักฐานการชำระเงิน', promptPayDetail: 'สแกน QR ของร้านค้า แล้วแนบหลักฐานการชำระเงิน',
+    card: 'บัตรเครดิต / เดบิต', cardDetail: 'ระบบชำระเงินด้วยบัตรจะพร้อมใช้งานเร็ว ๆ นี้', createOrderFirst: 'สร้างคำสั่งซื้อก่อน ระบบจะแสดงยอดชำระและให้คุณแนบหลักฐานการชำระเงินในขั้นตอนถัดไป',
+    copied: 'คัดลอกแล้ว', copy: 'คัดลอก', promptPayFirst: 'สร้างคำสั่งซื้อก่อน จากนั้นสแกน PromptPay QR และแนบหลักฐานการชำระเงิน',
+    cardPreparing: 'ระบบชำระเงินด้วยบัตรกำลังจัดเตรียม', cardHelp: 'กรุณาเลือกโอนผ่านบัญชีธนาคารหรือ PromptPay เพื่อชำระเงินวันนี้', checkingOrder: 'กำลังตรวจสอบคำสั่งซื้อเดิม…',
+    receiptReceived: 'ได้รับหลักฐานการชำระเงินแล้ว', paymentAwaitingReview: 'ขอบคุณ ระบบกำลังรอตรวจสอบการชำระเงินของคุณ', receiptSaved: 'บันทึกคำสั่งซื้อแล้ว ร้านค้าจะตรวจสอบหลักฐานก่อนยืนยันการชำระเงิน',
+    continueShopping: 'เลือกซื้อสินค้าต่อ', checkoutAnother: 'สั่งซื้อรายการอื่น', order: 'คำสั่งซื้อ', savedDetails: 'รายละเอียดที่บันทึกไว้', shipTo: 'จัดส่งไปที่',
+    viewBilling: 'ดูที่อยู่สำหรับออกใบเสร็จ', paymentExpired: 'หมดเวลาสำหรับการชำระเงินนี้', expiredHelp: 'หากคุณโอนเงินแล้ว โปรดติดต่อร้านค้าก่อนสร้างคำสั่งซื้อใหม่',
+    refreshStatus: 'รีเฟรชสถานะ', returnCheckout: 'กลับไปหน้าชำระเงิน', reservedItems: 'สินค้าของคุณถูกจองไว้ระหว่างดำเนินการชำระเงิน', submitBy: 'ส่งหลักฐานการชำระเงินภายใน',
+    amountToTransfer: 'ยอดที่ต้องโอน', bankTransferHelp: 'โอนเงินตามยอดที่ระบุไปยังบัญชีข้างต้น แล้วแนบหลักฐานเพื่อให้ร้านค้าตรวจสอบ',
+    promptPayHelp: 'สแกนด้วยแอปธนาคารและชำระตามยอดที่แสดง จากนั้นแนบหลักฐานเพื่อให้ร้านค้าตรวจสอบ', receipt: 'หลักฐานการชำระเงิน', receiptHelp: 'JPG, PNG หรือ WebP · ขนาดไม่เกิน 5 MB',
+    receiptPreview: 'ตัวอย่างหลักฐานการชำระเงินที่เลือก', orderSummary: 'สรุปคำสั่งซื้อ', lastLook: 'ตรวจสอบอีกครั้ง', yourOrder: 'คำสั่งซื้อของคุณ', editCart: 'แก้ไขตะกร้าสินค้า',
+    checkingPrices: 'กำลังตรวจสอบราคาและสินค้า…', items: 'รายการ', subtotal: 'ยอดรวมสินค้า', shipping: 'ค่าจัดส่ง', free: 'ฟรี', total: 'ยอดรวม',
+    pleaseWait: 'กรุณารอสักครู่…', cardSoon: 'ระบบบัตรจะพร้อมใช้งานเร็ว ๆ นี้', submitReceipt: 'ส่งหลักฐานให้ตรวจสอบ', createBankOrder: 'สร้างคำสั่งซื้อและดูบัญชีธนาคาร',
+    createQrOrder: 'สร้างคำสั่งซื้อและดู QR', pendingReview: 'รอตรวจสอบการชำระเงิน โปรดเก็บหมายเลขคำสั่งซื้อไว้อ้างอิง', paymentPending: 'สถานะการชำระเงินจะรอการยืนยันจนกว่าร้านค้าจะตรวจสอบหลักฐาน',
+    priceCalculated: 'ร้านค้าคำนวณยอดเงินจากราคาสินค้าปัจจุบัน', requiredCheckout: 'กรุณาตรวจสอบช่องที่จำเป็นและคำนวณยอดคำสั่งซื้อใหม่ก่อนดำเนินการต่อ',
+    invalidReceipt: 'กรุณาเลือกไฟล์ JPG, PNG หรือ WebP ขนาดไม่เกิน 5 MB', sessionExpired: 'เซสชันของคุณหมดอายุแล้ว โปรดเข้าสู่ระบบอีกครั้งเพื่อดำเนินการต่อ',
+    unavailable: 'ไม่สามารถดำเนินการได้ โปรดลองอีกครั้ง', noProvinces: 'ไม่มีข้อมูลจังหวัด โปรดลองอีกครั้งภายหลัง', loadProvinces: 'ไม่สามารถโหลดข้อมูลจังหวัดได้ โปรดลองใหม่',
+    noDistricts: 'ไม่มีข้อมูลอำเภอ / เขตสำหรับจังหวัดนี้', loadDistricts: 'ไม่สามารถโหลดข้อมูลอำเภอ / เขตได้ โปรดลองใหม่'
+  }
+} as const;
+
 @Component({
   selector: 'app-checkout-form',
+  host: {'[attr.lang]': 'language.language()'},
   templateUrl: './checkout-form.component.html',
   styleUrls: ['./checkout-form.component.css', './checkout-payment.css', './checkout-summary.css', './checkout-transfer.css']
 })
@@ -76,7 +148,11 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
               private readonly productsService: ProductsService,
               private readonly profileService: ProfileService,
               private readonly alerts: AlertService,
-              private readonly language: MenuLanguageService) {
+              protected readonly language: MenuLanguageService) {
+  }
+
+  protected get text(): Record<keyof typeof checkoutText.en, string> {
+    return checkoutText[this.language.language()];
   }
 
   ngOnInit(): void {
@@ -276,7 +352,7 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     }
     this.form.markAllAsTouched();
     if (!this.order && (this.form.invalid || !this.quote || !this.totalQuantity)) {
-      this.errorMessage = 'Please check the required fields and refresh the order total before continuing.';
+      this.errorMessage = this.text.requiredCheckout;
       return;
     }
     if (this.order && !this.receipt) {
@@ -359,7 +435,7 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
     const file = input.files?.[0];
     if (!file) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024 || !file.size) {
-      this.fileError = 'Choose a JPG, PNG or WebP image up to 5 MB.';
+      this.fileError = this.text.invalidReceipt;
       input.value = '';
       return;
     }
@@ -368,7 +444,9 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
   }
 
   private sendReceipt(): void {
-    if (!this.order || !this.receipt || this.expired) return;
+    if (!this.order || !this.receipt || this.expired) {
+      return;
+    }
     this.busy = true;
     this.errorMessage = '';
     this.cartSubscriptions.add(this.checkoutService.submitReceipt(this.order.documentId, this.receipt).pipe(
@@ -394,7 +472,9 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
   }
 
   protected startAgain(): void {
-    if (this.busy || (this.order && !this.expired && !this.receiptSubmitted)) return;
+    if (this.busy || (this.order && !this.expired && !this.receiptSubmitted)) {
+      return;
+    }
     sessionStorage.removeItem(this.storageKey);
     this.pending = undefined;
     this.order = undefined;
@@ -412,8 +492,8 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
   }
 
   private errorText(error: any): string {
-    if (error.status === 401 || error.status === 403) return 'Your session has expired. Please log in again to continue.';
-    return error.error?.error?.message || error.message || 'Unable to complete the request. Please try again.';
+    if (error.status === 401 || error.status === 403) return this.text.sessionExpired;
+    return error.error?.error?.message || error.message || this.text.unavailable;
   }
 
   private initialAndSetDefaultAddresses(refresh = false): void {
@@ -435,7 +515,7 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
         const savedProvince = this.savedProfileAddress?.province;
         const provinceName = provinces.find(province => province.name === savedProvince)?.name
           ?? provinces[0]?.name ?? null;
-        if (!provinceName) this.addressErrors.provinces = 'No provinces are available. Please try again later.';
+        if (!provinceName) this.addressErrors.provinces = this.text.noProvinces;
         for (const group of ['shippingAddress', 'billingAddress'] as const) {
           this.form.get(group)?.get('province')?.setValue(provinceName);
           this.loadDistrictOptions(group);
@@ -444,7 +524,7 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
       error: () => {
         this.provinces = [];
         this.addressLoading.provinces = false;
-        this.addressErrors.provinces = 'Unable to load provinces. Please retry.';
+        this.addressErrors.provinces = this.text.loadProvinces;
       }
     });
   }
@@ -528,11 +608,11 @@ export class CheckoutFormComponent implements OnInit, OnDestroy {
           ?? districts[0]?.name
           ?? null);
         this.addressLoading[group] = false;
-        if (!districts.length) this.addressErrors[group] = 'No districts are available for this province.';
+        if (!districts.length) this.addressErrors[group] = this.text.noDistricts;
       },
       error: () => {
         this.addressLoading[group] = false;
-        this.addressErrors[group] = 'Unable to load districts. Please retry.';
+        this.addressErrors[group] = this.text.loadDistricts;
       }
     });
   }

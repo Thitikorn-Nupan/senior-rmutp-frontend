@@ -47,6 +47,48 @@ a:hover, button:hover, .current {
   cursor: pointer;
 }
 
+.language-toggle:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+.language-switch-overlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(20 34 29 / 72%);
+  backdrop-filter: blur(3px);
+}
+
+.language-switch-dialog {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  color: #fff;
+  background: #243d35;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 28%);
+  font: 600 14px Arial, sans-serif;
+}
+
+.language-switch-spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgb(255 255 255 / 30%);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: language-switch-spin 700ms linear infinite;
+}
+
+@keyframes language-switch-spin {
+  to { transform: rotate(360deg); }
+}
+
 a:focus-visible, button:focus-visible {
   outline: 3px solid #ad7f45;
   outline-offset: 2px;
@@ -119,6 +161,7 @@ a:focus-visible, button:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .management-toggle, .management-chevron { transition: none; }
+  .language-switch-spinner { animation-duration: 1.8s; }
 }
 
 @media (max-width: 768px) {

@@ -59,13 +59,21 @@
   </ng-container>
   <button type="button"
           class="language-toggle"
-          (click)="menuLanguage.toggleLanguage()"
+          (click)="switchLanguage()"
+          [disabled]="languageSwitching"
           [attr.aria-label]="menuLanguage.text().switchLanguage"
           [attr.title]="menuLanguage.text().switchLanguage"
           [attr.lang]="menuLanguage.language() === 'th' ? 'en' : 'th'">
     {{ menuLanguage.language() === 'th' ? 'EN' : 'ไทย' }}
   </button>
 </nav>
+
+<div *ngIf="languageSwitching" class="language-switch-overlay" role="status" aria-live="polite">
+  <div class="language-switch-dialog">
+    <span class="language-switch-spinner" aria-hidden="true"></span>
+    <span>{{ menuLanguage.text().switchingLanguage }}</span>
+  </div>
+</div>
 
 <pop-up [visible]="logoutConfirmationVisible"
         [headerTitle]="logoutConfirmationTitle"

@@ -13,7 +13,15 @@
         <h1>ประวัติการขาย</h1>
         <p class="intro">ตรวจสอบคำสั่งซื้อ หลักฐานการชำระเงิน และยืนยันรายการขายอย่างปลอดภัย</p>
       </div>
-      <div class="summary" aria-label="จำนวนรายการขายทั้งหมด">
+      <div class="heading-actions">
+        <button type="button" class="documents-button" (click)="openDocuments()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M7 3h7l4 4v14H7z" stroke-linejoin="round"/>
+            <path d="M14 3v5h5M10 13h5M10 17h5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          เอกสาร
+        </button>
+        <div class="summary" aria-label="จำนวนรายการขายทั้งหมด">
         <span class="summary-icon" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M4 5h16v14H4z" stroke-linejoin="round"/>
@@ -21,6 +29,7 @@
           </svg>
         </span>
         <span class="summary-copy"><strong>{{ total | number }}</strong><span>รายการทั้งหมด</span></span>
+      </div>
       </div>
     </header>
 
@@ -51,7 +60,7 @@
             <span class="skeleton-chevron"></span>
           </div>
         </div>
-      </div>
+        </div>
       <span class="loading-ring" aria-hidden="true"></span>
       <p>กำลังโหลดประวัติการขาย…</p></div>
     <div *ngIf="!loading && error" class="empty-state" role="alert"><span class="empty-icon">!</span>
@@ -168,6 +177,22 @@
       </div>
       <img *ngIf="!receiptViewLoading && receiptPreviewUrl" class="receipt-image"
            [src]="receiptPreviewUrl" [alt]="'สลิปการชำระเงิน ' + receiptOrder.orderNumber"/>
+    </div>
+  </section>
+</div>
+
+<div *ngIf="documentsOpen" class="documents-backdrop" (click)="closeDocuments()">
+  <section class="documents-dialog" role="dialog" aria-modal="true" aria-labelledby="documents-title" (click)="$event.stopPropagation()">
+    <header class="documents-heading">
+      <div><p class="documents-kicker">เอกสาร</p><h2 id="documents-title">รายงานประวัติการขาย</h2><p>ดูตัวอย่างรายงานและเลือกรูปแบบไฟล์สำหรับดาวน์โหลด</p></div>
+      <button type="button" class="documents-close" aria-label="ปิดหน้าต่าง" (click)="closeDocuments()">&times;</button>
+    </header>
+    <div class="documents-layout">
+      <section class="pdf-preview" aria-label="ตัวอย่างเอกสาร PDF">
+        <div class="pdf-toolbar"><span class="pdf-file-icon" aria-hidden="true">PDF</span><span>ตัวอย่างเอกสาร PDF</span><span class="pdf-page">1 / 1</span></div>
+        <article class="pdf-page" aria-hidden="true"><div class="pdf-brand"><span></span><strong>PERFUMES SHOP</strong></div><h3>รายงานประวัติการขาย</h3><p class="pdf-period">ข้อมูลการขายปัจจุบัน</p><div class="pdf-rule"></div><div class="pdf-stat-row"><div><small>รายการขายทั้งหมด</small><strong>{{ total | number }}</strong></div><div><small>ยอดบิลทั้งหมด</small><strong>{{ summary.billTotal | currency:summary.currency:'symbol-narrow':undefined:language.locale() }}</strong></div><div><small>รายได้ที่ยืนยันแล้ว</small><strong>{{ summary.verifiedRevenue | currency:summary.currency:'symbol-narrow':undefined:language.locale() }}</strong></div></div><p class="pdf-summary">สรุปรายการขาย สถานะการชำระเงิน และยอดขายสำหรับใช้ในการบริหารร้านค้า</p><div class="pdf-lines"><span></span><span></span><span></span><span></span></div><footer>จัดทำเมื่อ · {{ reportDate | date:'dd MMM yyyy':undefined:language.locale() }}</footer></article>
+      </section>
+      <aside class="document-downloads"><h3>ดาวน์โหลดเอกสาร</h3><p>การแสดงตัวอย่างและดาวน์โหลดไฟล์จะพร้อมใช้งานเร็ว ๆ นี้</p><button type="button" class="document-download pdf" disabled><span aria-hidden="true">PDF</span>ดาวน์โหลด PDF</button><button type="button" class="document-download excel" disabled><span aria-hidden="true">XLS</span>ดาวน์โหลด Excel</button></aside>
     </div>
   </section>
 </div>

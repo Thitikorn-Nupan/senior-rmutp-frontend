@@ -20,6 +20,7 @@ export class RegistersStatusComponent implements OnInit {
   protected isToggle: boolean = false
   protected settingsOpen = false;
   protected logoutConfirmationVisible = false;
+  protected languageSwitching = false;
 
   constructor(private readonly router: Router,
               private readonly webStorageService: WebStorageService,
@@ -87,6 +88,18 @@ export class RegistersStatusComponent implements OnInit {
   protected toggleSettings(): void {
     this.isToggle = false;
     this.settingsOpen = !this.settingsOpen;
+  }
+
+  protected switchLanguage(): void {
+    if (this.languageSwitching) return;
+    this.languageSwitching = true;
+
+    requestAnimationFrame(() => {
+      this.menuLanguage.toggleLanguage();
+      setTimeout(() => {
+        this.languageSwitching = false;
+      }, 250);
+    });
   }
 
   @HostListener('document:click', ['$event'])

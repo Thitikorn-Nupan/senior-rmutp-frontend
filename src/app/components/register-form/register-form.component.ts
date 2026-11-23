@@ -11,6 +11,7 @@ import {authErrorMessage} from '../../services/auth-error-message';
 
 @Component({
   selector: 'app-register-form',
+  host: {'[attr.lang]': 'language.language()'},
   templateUrl: './register-form.component.html',
   styleUrls: ['../auth-form.css', './register-form.component.css']
 })
@@ -30,7 +31,7 @@ export class RegisterFormComponent implements OnInit {
               private readonly webStorageService: WebStorageService,
               private readonly router: Router,
               private readonly alerts: AlertService,
-              private readonly language: MenuLanguageService) {
+              protected readonly language: MenuLanguageService) {
   }
 
   ngOnInit(): void {

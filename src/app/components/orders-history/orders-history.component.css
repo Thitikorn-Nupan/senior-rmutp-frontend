@@ -110,6 +110,7 @@
   background: #ffffff29 !important
 }
 
+
 .order-card {
   background: white;
   border: 1px solid #e1e7ed;
@@ -227,6 +228,7 @@
   .heading-action {
     width: 100%
   }
+
 
   .filters {
     flex-wrap: wrap;

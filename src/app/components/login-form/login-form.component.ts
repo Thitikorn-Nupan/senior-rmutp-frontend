@@ -11,6 +11,7 @@ import {authErrorMessage} from '../../services/auth-error-message';
 
 @Component({
   selector: 'app-login-form',
+  host: {'[attr.lang]': 'language.language()'},
   templateUrl: './login-form.component.html',
   styleUrls: ['../auth-form.css', './login-form.component.css']
 })
@@ -32,7 +33,7 @@ export class LoginFormComponent implements OnInit {
               private readonly router: Router,
               private readonly activatedRoute: ActivatedRoute,
               private readonly alerts: AlertService,
-              private readonly language: MenuLanguageService) {
+              protected readonly language: MenuLanguageService) {
   }
 
   ngOnInit(): void {

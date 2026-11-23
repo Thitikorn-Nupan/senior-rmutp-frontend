@@ -30,6 +30,8 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
   protected selected?: SalesOrder;
   protected approvalOrder?: SalesOrder;
   protected approvalConfirmationVisible = false;
+  protected documentsOpen = false;
+  protected readonly reportDate = new Date();
   private request?: Subscription;
   private receiptRequest?: Subscription;
   private readonly minimumLoadingMs = 500;
@@ -43,7 +45,7 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
 
   constructor(private readonly sales: SalesHistoryService,
               private readonly alerts: AlertService,
-              private readonly language: MenuLanguageService) {
+              protected readonly language: MenuLanguageService) {
   }
 
   ngOnInit(): void {
@@ -83,6 +85,14 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
     this.search = '';
     this.status = '';
     this.load();
+  }
+
+  protected openDocuments(): void {
+    this.documentsOpen = true;
+  }
+
+  protected closeDocuments(): void {
+    this.documentsOpen = false;
   }
 
   protected getPageNumbers(): number[] {
@@ -192,7 +202,8 @@ export class OrderHistoryAdminComponent implements OnInit, OnDestroy {
 
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
-    if (this.receiptOrder) this.closeReceipt();
+    if (this.documentsOpen) this.closeDocuments();
+    else if (this.receiptOrder) this.closeReceipt();
   }
 
   protected image(source?: string): string {
