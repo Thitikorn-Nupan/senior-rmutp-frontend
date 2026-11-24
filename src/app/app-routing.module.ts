@@ -15,10 +15,12 @@ import {
 import {ProductsAdminComponent} from "./components/products-admin/products-admin.component";
 import {ProfileComponent} from './components/profile/profile.component';
 import {MemberManagementComponent} from './components/member-management/member-management.component';
+import {FragranceCategoryManagementComponent} from './components/fragrance-category-management/fragrance-category-management.component';
 
 const routes: Routes = [
   {path: 'profile', component: ProfileComponent, canActivate: [AuthGuardRouter]},
   {path: 'member-management', component: MemberManagementComponent, canActivate: [AuthGuardRouter]},
+  {path: 'fragrance-category-management', component: FragranceCategoryManagementComponent, canActivate: [AuthGuardRouter]},
   {path: 'login', component: LoginFormComponent, canActivate: [AuthGuardRouter]},
   {path: 'register', component: RegisterFormComponent},
   {path: 'add-product', component: ProductsAdminComponent, data: {create: true}, canActivate: [AuthGuardRouter]},

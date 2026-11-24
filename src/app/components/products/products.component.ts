@@ -43,6 +43,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
               public readonly language: MenuLanguageService) {
   }
 
+  protected reviewLabel(count: number): string {
+    if (this.language.language() === 'th') return `${count} รีวิว`;
+    return `${count} ${count === 1 ? 'review' : 'reviews'}`;
+  }
+
   get t() {
     return customerProductMessages[this.language.language()];
   }

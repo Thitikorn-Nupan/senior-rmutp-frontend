@@ -34,9 +34,10 @@ export class ProductCategoriesComponent implements OnInit {
 
   protected categoryLabel(categoryName: string): string {
     const thaiLabels: Record<string, string> = {
-      unisex: 'ยูนิเซ็กส์',
-      male: 'ผู้ชาย',
-      female: 'ผู้หญิง',
+      unisex: 'น้ำหอมทุกเพศ',
+      male: 'น้ำหอมผู้ชาย',
+      female: 'น้ำหอมผู้หญิง',
+      home: 'น้ำหอมสำหรับใช้ในบ้าน',
     };
 
     return this.menuLanguage.language() === 'th'

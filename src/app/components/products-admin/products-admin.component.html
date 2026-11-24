@@ -2,10 +2,11 @@
   <div class="admin-shell">
     <header class="page-heading">
       <div class="heading-copy">
-       <!-- <h1>{{ t.title }}</h1>-->
+        <p class="eyebrow">{{ t.eyebrow }}</p>
+        <h1>{{ t.title }}</h1>
         <p class="intro">{{ t.intro }}</p>
       </div>
-      <button class="button primary heading-action"
+      <button class="button heading-action"
               type="button"
               (click)="openEditor()">
         <span aria-hidden="true">＋</span>
@@ -176,11 +177,11 @@
         </label>
         <div class="gender-fields">
           <div class="field">
-            <label for="product-gender">{{ t.gender }}</label>
-            <ecm-checkout-select inputId="product-gender"
-                                 formControlName="gender"
-                                 [options]="genderOptions()"
-                                 [placeholder]="t.gender"
+            <label for="product-category">{{ t.category }}</label>
+            <ecm-checkout-select inputId="product-category"
+                                 formControlName="categoryDocumentId"
+                                 [options]="editorCategoryOptions()"
+                                 [placeholder]="t.category"
                                  [unavailable]="saving">
             </ecm-checkout-select>
           </div>

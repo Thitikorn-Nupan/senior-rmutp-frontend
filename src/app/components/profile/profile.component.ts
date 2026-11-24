@@ -84,17 +84,18 @@ export class ProfileComponent implements OnInit {
   }
 
   private fill(data: UserProfile): void {
+    const shippingAddress = data.shippingAddress ?? {
+      addressLine1: '',
+      addressLine2: '',
+      subdistrict: '',
+      district: '',
+      province: '',
+      postalCode: '',
+      countryCode: 'TH'
+    };
     this.form.reset({
       firstName: data.firstName, lastName: data.lastName, displayName: data.displayName, phone: data.phone,
-      shippingAddress: data.shippingAddress ?? {
-        addressLine1: '',
-        addressLine2: '',
-        subdistrict: '',
-        district: '',
-        province: '',
-        postalCode: '',
-        countryCode: 'TH'
-      }
+      shippingAddress: {...shippingAddress, countryCode: 'TH'}
     });
   }
 

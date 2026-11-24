@@ -19,6 +19,7 @@ export interface CatalogProduct {
     stockReserved: number;
     image?: { url: string };
   }[];
+  reviewCount?: number;
 }
 
 export interface CatalogPage {
@@ -39,6 +40,7 @@ export function toProduct(data: CatalogProduct): Product {
   product.documentId = data.documentId;
   product.variantDocumentId = variant?.documentId;
   product.pcId = data.categories?.[0]?.id ?? 0;
+  product.reviewCount = Number.isSafeInteger(data.reviewCount) && data.reviewCount! >= 0 ? data.reviewCount! : 0;
   product.variants = variants.map(v => ({
     documentId: v.documentId, sku: v.sku,
     label: v.label?.trim() || (v.sizeMl ? `${Number(v.sizeMl)} ml${v.concentration && v.concentration !== 'unspecified' ? ' · ' + v.concentration.toUpperCase() : ''}` : v.sku),

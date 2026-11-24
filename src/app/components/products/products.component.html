@@ -56,10 +56,12 @@
           <p class="product-sku">{{ product.variants.length > 1 ? product.variants.length + ' ' + t.options : product.sku }}</p>
           <h2><a [routerLink]="['/product-detail', product.documentId || product.pid]">{{ product.name }}</a></h2>
           <p class="product-price">{{ product.variants.length > 1 ? t.from + ' ' : '' }}{{ product.price | currency:'THB':'symbol-narrow':undefined:language.locale() }}</p>
-          <p class="product-stock" [class.unavailable]="product.availableStock <= 0">
-            <span
-              aria-hidden="true"></span>{{ product.availableStock > 0 ? t.inStock + ' · ' + product.availableStock + ' ' + t.units : t.unavailable }}
-          </p>
+          <div class="product-meta">
+            <p class="product-stock" [class.unavailable]="product.availableStock <= 0">
+              <span aria-hidden="true"></span>{{ product.availableStock > 0 ? t.inStock + ' · ' + product.availableStock + ' ' + t.units : t.unavailable }}
+            </p>
+            <span class="review-count" [attr.aria-label]="reviewLabel(product.reviewCount)">{{ reviewLabel(product.reviewCount) }}</span>
+          </div>
           <div class="product-actions">
             <a class="detail-button" [routerLink]="['/product-detail', product.documentId || product.pid]"
                [attr.aria-label]="t.viewProductDetails + ' ' + product.name">{{ t.details }}</a>

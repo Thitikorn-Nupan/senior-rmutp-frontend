@@ -74,5 +74,65 @@
         <a class="continue-link" routerLink="/products">{{ t.continue }} <span aria-hidden="true">→</span></a>
       </div>
     </article>
+
+    <section *ngIf="product && !errorMessage" class="reviews-section" aria-labelledby="reviews-heading">
+      <header class="reviews-heading">
+        <div>
+          <p class="eyebrow">{{ reviewText.title }}</p>
+          <h2 id="reviews-heading">{{ product.reviewCount }} {{ reviewText.count }}</h2>
+        </div>
+      </header>
+
+      <p *ngIf="reviewsLoading" class="reviews-state" role="status">{{ t.loading }}</p>
+      <p *ngIf="reviewsError" class="reviews-state" role="alert">{{ reviewsError }}</p>
+      <p *ngIf="!reviewsLoading && !reviewsError && !reviews.length" class="reviews-state">{{ reviewText.empty }}</p>
+
+      <div *ngIf="!reviewsLoading && reviews.length" class="review-list">
+        <article *ngFor="let review of reviews" class="review-card" [class.has-image]="review.imageUrl">
+          <div class="review-content">
+            <header>
+              <strong>{{ review.authorName }}</strong>
+              <time
+                [attr.datetime]="review.createdAt">{{ review.createdAt | date:'medium':undefined:language.locale() }}
+              </time>
+            </header>
+            <p>{{ review.message }}</p>
+            <img *ngIf="review.imageUrl" class="review-photo" [src]="reviewImageUrl(review)"
+                 [alt]="review.authorName + ' review photo'"/>
+          </div>
+        </article>
+      </div>
+
+      <nav *ngIf="!reviewsLoading && reviewPageCount > 1" class="review-pagination" [attr.aria-label]="reviewText.title">
+        <button type="button" (click)="changeReviewPage(reviewPage - 1)" [disabled]="reviewPage === 1">← <span>{{ reviewText.previous }}</span></button>
+        <div class="page-numbers">
+          <button *ngFor="let page of reviewPages()" type="button" (click)="changeReviewPage(page)" [class.selected]="page === reviewPage" [attr.aria-current]="page === reviewPage ? 'page' : null">{{ page }}</button>
+        </div>
+        <button type="button" (click)="changeReviewPage(reviewPage + 1)" [disabled]="reviewPage === reviewPageCount"><span>{{ reviewText.next }}</span> →</button>
+      </nav>
+
+      <form *ngIf="canWriteReview" class="review-form" [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+        <h3>{{ reviewText.form }}</h3>
+        <textarea id="review-message" formControlName="message" rows="5" maxlength="2000"
+                  [placeholder]="reviewText.placeholder" [attr.aria-label]="reviewText.message" [attr.aria-invalid]="reviewForm.controls.message.invalid && reviewForm.controls.message.touched"></textarea>
+        <p *ngIf="reviewForm.controls.message.invalid && reviewForm.controls.message.touched"
+           class="field-error">{{ reviewText.message }} is required.</p>
+        <div class="review-upload">
+          <label class="visually-hidden" for="review-image">{{ reviewText.image }}</label>
+          <input id="review-image" class="receipt-input" type="file" accept="image/jpeg,image/png,image/webp"
+                 (change)="selectReviewImage($event)"/>
+          <span class="image-hint">{{ reviewText.imageHint }}</span>
+        </div>
+        <div *ngIf="reviewImagePreview" class="review-image-preview">
+          <img [src]="reviewImagePreview" [alt]="reviewText.image"/>
+          <button type="button" (click)="removeReviewImage()">{{ reviewText.removeImage }}</button>
+        </div>
+        <button class="submit-review" type="submit"
+                [disabled]="reviewSubmitting">{{ reviewSubmitting ? reviewText.sending : reviewText.submit }}
+        </button>
+      </form>
+
+      <p *ngIf="!canWriteReview" class="review-login-note"><a routerLink="/login">{{ reviewText.signIn }}</a></p>
+    </section>
   </div>
 </main>

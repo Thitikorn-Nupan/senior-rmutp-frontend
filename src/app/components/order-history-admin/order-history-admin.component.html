@@ -15,11 +15,11 @@
       </div>
       <div class="heading-actions">
         <button type="button" class="documents-button" (click)="openDocuments()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <span class="documents-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M7 3h7l4 4v14H7z" stroke-linejoin="round"/>
             <path d="M14 3v5h5M10 13h5M10 17h5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          เอกสาร
+          </svg></span>
+          <span class="documents-copy">เอกสาร</span>
         </button>
         <div class="summary" aria-label="จำนวนรายการขายทั้งหมด">
         <span class="summary-icon" aria-hidden="true">
@@ -28,8 +28,8 @@
             <path d="M8 9h8M8 13h5" stroke-linecap="round"/>
           </svg>
         </span>
-        <span class="summary-copy"><strong>{{ total | number }}</strong><span>รายการทั้งหมด</span></span>
-      </div>
+          <span class="summary-copy"><strong>{{ total | number }}</strong><span>รายการทั้งหมด</span></span>
+        </div>
       </div>
     </header>
 
@@ -60,7 +60,7 @@
             <span class="skeleton-chevron"></span>
           </div>
         </div>
-        </div>
+      </div>
       <span class="loading-ring" aria-hidden="true"></span>
       <p>กำลังโหลดประวัติการขาย…</p></div>
     <div *ngIf="!loading && error" class="empty-state" role="alert"><span class="empty-icon">!</span>
@@ -182,17 +182,97 @@
 </div>
 
 <div *ngIf="documentsOpen" class="documents-backdrop" (click)="closeDocuments()">
-  <section class="documents-dialog" role="dialog" aria-modal="true" aria-labelledby="documents-title" (click)="$event.stopPropagation()">
+  <section class="documents-dialog" role="dialog" aria-modal="true" aria-labelledby="documents-title"
+           (click)="$event.stopPropagation()">
     <header class="documents-heading">
-      <div><p class="documents-kicker">เอกสาร</p><h2 id="documents-title">รายงานประวัติการขาย</h2><p>ดูตัวอย่างรายงานและเลือกรูปแบบไฟล์สำหรับดาวน์โหลด</p></div>
+      <div><p class="documents-kicker">เอกสาร</p>
+        <h2 id="documents-title">รายงานประวัติการขาย</h2>
+        <p>ดูตัวอย่างรายงานและเลือกรูปแบบไฟล์สำหรับดาวน์โหลด</p></div>
       <button type="button" class="documents-close" aria-label="ปิดหน้าต่าง" (click)="closeDocuments()">&times;</button>
     </header>
     <div class="documents-layout">
       <section class="pdf-preview" aria-label="ตัวอย่างเอกสาร PDF">
-        <div class="pdf-toolbar"><span class="pdf-file-icon" aria-hidden="true">PDF</span><span>ตัวอย่างเอกสาร PDF</span><span class="pdf-page">1 / 1</span></div>
-        <article class="pdf-page" aria-hidden="true"><div class="pdf-brand"><span></span><strong>PERFUMES SHOP</strong></div><h3>รายงานประวัติการขาย</h3><p class="pdf-period">ข้อมูลการขายปัจจุบัน</p><div class="pdf-rule"></div><div class="pdf-stat-row"><div><small>รายการขายทั้งหมด</small><strong>{{ total | number }}</strong></div><div><small>ยอดบิลทั้งหมด</small><strong>{{ summary.billTotal | currency:summary.currency:'symbol-narrow':undefined:language.locale() }}</strong></div><div><small>รายได้ที่ยืนยันแล้ว</small><strong>{{ summary.verifiedRevenue | currency:summary.currency:'symbol-narrow':undefined:language.locale() }}</strong></div></div><p class="pdf-summary">สรุปรายการขาย สถานะการชำระเงิน และยอดขายสำหรับใช้ในการบริหารร้านค้า</p><div class="pdf-lines"><span></span><span></span><span></span><span></span></div><footer>จัดทำเมื่อ · {{ reportDate | date:'dd MMM yyyy':undefined:language.locale() }}</footer></article>
+        <div *ngIf="documentsLoading" class="document-preview-loading" role="status"><span class="loading-ring"
+                                                                                           aria-hidden="true"></span>
+          <p>กำลังเตรียมตัวอย่างเอกสาร…</p></div>
+        <article *ngIf="!documentsLoading" class="pdf-page pdf-document-preview"
+                 aria-label="ตัวอย่างรายงานประวัติการขาย">
+          <header class="preview-document-header">
+            <div class="preview-brand"><img src="logo.png" alt="โลโก้ PERFUMES SHOP"/>
+              <div><strong>PERFUMES SHOP</strong><span>รายงานประวัติการขาย</span></div>
+            </div>
+            <div class="preview-meta">
+              <span>จัดทำเมื่อ {{ reportDate | date:'dd MMM yyyy HH:mm':undefined:language.locale() }}</span><span>จำนวน {{ total | number }}
+              คำสั่งซื้อ</span></div>
+          </header>
+          <section class="preview-summary">
+            <div><small>รายการขายทั้งหมด</small><strong>{{ total | number }}</strong></div>
+            <div>
+              <small>ยอดบิลทั้งหมด</small><strong>{{ summary.billTotal | currency:summary.currency:'symbol-narrow':undefined:language.locale() }}</strong>
+            </div>
+            <div>
+              <small>รายได้ที่ยืนยันแล้ว</small><strong>{{ summary.verifiedRevenue | currency:summary.currency:'symbol-narrow':undefined:language.locale() }}</strong>
+            </div>
+          </section>
+          <div class="preview-table-scroll">
+            <table class="preview-report-table">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>เลขที่คำสั่งซื้อ</th>
+                <th>วันที่สั่งซื้อ</th>
+                <th>ลูกค้า</th>
+                <th>โทรศัพท์</th>
+                <th>สินค้า</th>
+                <th>ชำระเงิน</th>
+                <th>สถานะ</th>
+                <th>ยอดรวม</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let order of currentPreviewOrders; let index = index">
+                <td>{{ previewPage * 6 + index + 1 }}</td>
+                <td>{{ order.orderNumber }}</td>
+                <td>{{ order.placedAt | date:'dd/MM/yy HH:mm' }}</td>
+                <td>{{ order.customerName }}</td>
+                <td>{{ order.customerPhone || '—' }}</td>
+                <td><span *ngFor="let item of order.items; let last = last">{{ item.name }}
+                  ×{{ item.quantity }}{{ last ? '' : ', ' }}</span></td>
+                <td>{{ order.payment?.status || order.paymentStatus }}</td>
+                <td>{{ statusLabel(order) }}</td>
+                <td>{{ money(order) }}</td>
+              </tr>
+              <tr *ngIf="!currentPreviewOrders.length">
+                <td colspan="9">ยังไม่มีข้อมูลคำสั่งซื้อสำหรับแสดงตัวอย่าง</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <footer class="preview-document-footer">
+            <span>เอกสารสำหรับใช้ภายในร้านค้า</span><span>หน้า {{ previewPage + 1 }} / {{ previewPages.length }}</span>
+          </footer>
+        </article>
+        <nav *ngIf="!documentsLoading" class="preview-pagination" aria-label="เปลี่ยนหน้าตัวอย่างเอกสาร">
+          <button type="button" (click)="previousPreviewPage()" [disabled]="previewPage === 0" title="หน้าก่อนหน้า"
+                  aria-label="หน้าก่อนหน้า">‹
+          </button>
+          <span>หน้า {{ previewPage + 1 }} จาก {{ previewPages.length }}</span>
+          <button type="button" (click)="nextPreviewPage()" [disabled]="previewPage === previewPages.length - 1"
+                  title="หน้าถัดไป" aria-label="หน้าถัดไป">›
+          </button>
+        </nav>
       </section>
-      <aside class="document-downloads"><h3>ดาวน์โหลดเอกสาร</h3><p>การแสดงตัวอย่างและดาวน์โหลดไฟล์จะพร้อมใช้งานเร็ว ๆ นี้</p><button type="button" class="document-download pdf" disabled><span aria-hidden="true">PDF</span>ดาวน์โหลด PDF</button><button type="button" class="document-download excel" disabled><span aria-hidden="true">XLS</span>ดาวน์โหลด Excel</button></aside>
+      <aside class="document-downloads"><h3>ดาวน์โหลดเอกสาร</h3>
+        <p>PDF มีตราร้าน สรุปยอด และรายละเอียดคำสั่งซื้อครบถ้วน ส่วน Excel
+          พร้อมเปิดใช้งานเพื่อจัดการข้อมูลต่อได้ทันที</p>
+        <button type="button" class="document-download pdf" (click)="downloadPdf()" [disabled]="!!documentExporting">
+          <span aria-hidden="true">PDF</span>{{ documentExporting === 'pdf' ? 'กำลังสร้าง PDF…' : 'ดาวน์โหลด PDF' }}
+        </button>
+        <button type="button" class="document-download excel" (click)="downloadExcel()"
+                [disabled]="!!documentExporting"><span
+          aria-hidden="true">XLS</span>{{ documentExporting === 'excel' ? 'กำลังสร้าง Excel…' : 'ดาวน์โหลด Excel' }}
+        </button>
+      </aside>
     </div>
   </section>
 </div>

@@ -8,7 +8,8 @@
             <circle cx="12" cy="8" r="3.5"/>
             <path d="M5 21v-2a7 7 0 0 1 14 0v2" stroke-linecap="round"/>
           </svg>
-        </span>{{ text().account }}</p>
+        </span>{{ text().account }}
+        </p>
         <h1>{{ text().title }}</h1>
         <p class="intro">{{ text().intro }}</p>
       </div>
@@ -87,11 +88,12 @@
               <small *ngIf="invalid('shippingAddress.' + field.key)" [id]="field.key + '-error'"
                      class="field-error">{{ text().fieldError }}</small>
             </div>
-            <div class="field"><label for="profile-country">{{ text().country }}</label><select id="profile-country"
-                                                                                                formControlName="countryCode"
-                                                                                                autocomplete="country">
-              <option value="TH">{{ text().thailand }}</option>
-            </select></div>
+            <div class="field"><label for="profile-country">{{ text().country }}</label><input id="profile-country"
+                                                                                                    class="country-input"
+                                                                                                    type="text"
+                                                                                                    [value]="text().thailand"
+                                                                                                    autocomplete="country-name"
+                                                                                                    disabled/></div>
           </div>
         </section>
       </fieldset>

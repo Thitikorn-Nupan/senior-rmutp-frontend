@@ -180,6 +180,23 @@ h2 a {
   margin: 0 0 18px
 }
 
+.product-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 18px;
+}
+
+.product-meta .product-stock { margin: 0; }
+
+.review-count {
+  flex-shrink: 0;
+  color: #68756e;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
 .product-stock span {
   width: 6px;
   height: 6px;
@@ -336,6 +353,9 @@ a:focus-visible, button:focus-visible {
     font-size: 10px;
     margin-bottom: 14px
   }
+
+  .product-meta { margin-bottom: 14px; gap: 6px; }
+  .review-count { font-size: 10px; }
 
   .product-actions {
     flex-direction: column;

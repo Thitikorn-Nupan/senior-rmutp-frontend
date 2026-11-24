@@ -25,6 +25,7 @@ import {
 import {ProductsAdminComponent} from './components/products-admin/products-admin.component';
 import {PopUpComponent} from './components/pop-up/pop-up.component';
 import {CheckoutSelectComponent} from './components/checkout-form/checkout-select/checkout-select.component';
+import {FragranceCategoryManagementComponent} from './components/fragrance-category-management/fragrance-category-management.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import {CheckoutSelectComponent} from './components/checkout-form/checkout-selec
     OrderHistoryAdminComponent,
     OrderHistoryOnlyPerfumesAdminComponent,
     ProductsAdminComponent,
-    PopUpComponent
+    PopUpComponent,
+    FragranceCategoryManagementComponent
   ],
   imports: [
     BrowserModule,

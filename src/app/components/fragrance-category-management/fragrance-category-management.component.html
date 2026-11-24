@@ -1,0 +1,56 @@
+<main class="page" [attr.lang]="language.language()">
+  <div class="shell">
+    <header>
+      <div><p>ADMIN WORKSPACE</p>
+        <h1>{{ t.title }}</h1><small>{{ t.intro }}</small></div>
+      <button class="button light" (click)="open()">＋ {{ t.add }}</button>
+    </header>
+    <section class="stats">
+      <div>{{ t.title }}<b>{{ categories.length }}</b></div>
+      <div>{{ t.active }}<b>{{ active }}</b></div>
+      <div>{{ t.perfumes }}<b>{{ assigned }}</b></div>
+    </section>
+    <div *ngIf="loading" class="empty">{{ t.loading }}</div>
+    <div *ngIf="!loading&&failed" class="empty"><p>{{ t.loadFailed }}</p>
+      <button class="button" (click)="load()">{{ t.retry }}</button>
+    </div>
+    <div *ngIf="!loading&&!failed&&!categories.length" class="empty"><p>{{ t.empty }}</p>
+      <button class="button" (click)="open()">{{ t.add }}</button>
+    </div>
+    <section *ngIf="!loading&&!failed&&categories.length" class="grid">
+      <article *ngFor="let c of categories;trackBy:track">
+        <div class="top"><span>◈</span><em [class.off]="!c.isActive">{{ c.isActive ? t.active : t.inactive }}</em></div>
+        <h2>{{ c.name }}</h2>
+        <p>{{ c.description || '—' }}</p>
+        <div class="facts"><span>{{ t.order }}
+          <b>{{ c.sortOrder }}</b></span><span>{{ c.productCount }} {{ t.perfumes }}</span></div>
+        <footer>
+          <button (click)="open(c)">{{ t.edit }}</button>
+          <button class="delete" (click)="ask(c)">{{ t.remove }}</button>
+        </footer>
+      </article>
+    </section>
+  </div>
+  <div *ngIf="editor||deleting" class="shade" (click)="close()"></div>
+  <section *ngIf="editor" class="dialog"><h2>{{ editing ? t.editTitle : t.addTitle }}</h2>
+    <form [formGroup]="form" (ngSubmit)="save()"><label>{{ t.name }} *<input formControlName="name" maxlength="120"
+                                                                             autofocus></label><label>{{ t.description }}
+      <textarea formControlName="description" rows="4"></textarea></label><label>{{ t.order }}<input
+      formControlName="sortOrder" type="number" min="0"></label><label class="check"><input formControlName="isActive"
+                                                                                            type="checkbox">{{ t.publish }}</label>
+      <footer>
+        <button class="button secondary" type="button" (click)="close()">{{ t.cancel }}</button>
+        <button class="button" [disabled]="saving">{{ saving ? t.saving : t.save }}</button>
+      </footer>
+    </form>
+  </section>
+  <section *ngIf="deleting as c" class="dialog"><h2>{{ t.deleteTitle }}</h2><strong>{{ c.name }}</strong>
+    <p>{{ c.productCount ? t.blocked : t.deleteDetail }}</p>
+    <footer>
+      <button class="button secondary" (click)="close()">{{ t.cancel }}</button>
+      <button class="button danger" [disabled]="saving||c.productCount>0"
+              (click)="remove()">{{ saving ? t.deleting : t.confirm }}
+      </button>
+    </footer>
+  </section>
+</main>

@@ -47,7 +47,7 @@ export interface ProductManagementInput {
   expectedUpdatedAt?: string;
   name: string;
   description: string;
-  gender: string;
+  categoryDocumentId: string;
   isActive: boolean;
   images: number[];
   variants: Omit<ManagedVariant, 'stockReserved'>[];

@@ -53,7 +53,7 @@ export class ProductsAdminComponent implements OnInit, OnDestroy, AfterViewCheck
       validators: [Validators.required, Validators.maxLength(255), Validators.pattern(/\S/)]
     }),
     description: new FormControl('', {nonNullable: true, validators: [Validators.maxLength(20000)]}),
-    gender: new FormControl('unisex', {nonNullable: true}),
+    categoryDocumentId: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
     isActive: new FormControl(true, {nonNullable: true}),
     variants: new FormArray<FormGroup>([]),
   });
@@ -79,13 +79,7 @@ export class ProductsAdminComponent implements OnInit, OnDestroy, AfterViewCheck
     return this.form.controls.variants;
   }
 
-  readonly genderOptions = computed(() => {
-    const text = productAdminMessages[this.language.language()];
-    return [{name: text.unisex, value: 'unisex'}, {name: text.male, value: 'male'}, {
-      name: text.female,
-      value: 'female'
-    }];
-  });
+  readonly editorCategoryOptions = computed(() => this.categories().map(item => ({name: item.name, value: item.documentId})));
 
   readonly categoryOptions = computed(() => [
     {name: this.t.allCategories, value: ''},
@@ -170,7 +164,7 @@ export class ProductsAdminComponent implements OnInit, OnDestroy, AfterViewCheck
     if (this.saving) return;
     this.editing = product;
     this.form.reset({
-      name: product?.name ?? '', description: product?.description ?? '', gender: product?.gender ?? 'unisex',
+      name: product?.name ?? '', description: product?.description ?? '', categoryDocumentId: product?.categories.at(0)?.documentId ?? this.categories().at(0)?.documentId ?? '',
       isActive: product?.isActive ?? true,
     });
     this.variants.clear();

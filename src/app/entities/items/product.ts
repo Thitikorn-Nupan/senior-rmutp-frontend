@@ -24,6 +24,7 @@ export class Product {
   public price: number
   public imageUrl: string
   public unitInStock: number
+  public reviewCount = 0;
   public pcId!: number
 
   constructor(pid: number, sku: string, name: string, description: string, price: number, imageUrl: string, unitInStock: number) {

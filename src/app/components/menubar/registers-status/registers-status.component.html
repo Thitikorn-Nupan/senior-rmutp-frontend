@@ -31,6 +31,7 @@
     <ul *ngIf="isToggle" id="management-menu" class="management-menu" (keydown.escape)="isToggle = false">
       <li><a routerLink="/orders-history-admin" (click)="toggle()">{{ menuLanguage.text().salesHistory }}</a></li>
       <li><a routerLink="/product-admin" (click)="toggle()">{{ menuLanguage.text().managePerfumes }}</a></li>
+      <li><a routerLink="/fragrance-category-management" (click)="toggle()">{{ menuLanguage.text().manageFragranceCategories }}</a></li>
       <!--<li><a routerLink="/add-product" (click)="toggle()">{{ menuLanguage.text().addPerfume }}</a></li>-->
     </ul>
   </div>

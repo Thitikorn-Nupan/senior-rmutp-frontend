@@ -21,6 +21,7 @@ export class AuthGuardRouter implements CanActivate {
   constructor(private readonly router: Router,
               private readonly webStorageService: WebStorageService) {
   }
+
   // if return false won go to any path you set
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
     const user: any = this.webStorageService.getUserFormToken()
@@ -48,6 +49,9 @@ export class AuthGuardRouter implements CanActivate {
       this.router.navigate([''])
       return false
     } else if (user?.roles !== 'ROLE_ADMIN' && path === 'member-management') {
+      this.router.navigate([''])
+      return false
+    } else if (user?.roles !== 'ROLE_ADMIN' && path === 'fragrance-category-management') {
       this.router.navigate([''])
       return false
     }

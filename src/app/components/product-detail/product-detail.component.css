@@ -281,10 +281,12 @@ a:focus-visible, button:focus-visible {
     margin-top: 24px;
     padding-top: 20px;
   }
+
 }
 
 @media (max-width: 359px) {
   .purchase-actions {
     flex-direction: column;
   }
+
 }
